@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
@@ -26,9 +27,12 @@ namespace Jpp.Ironstone.Core
     /// Loader class, the main entry point for the full application suite. Implements IExtensionApplication is it
     /// automatically initialised and terminated by AutoCad.
     /// </summary>
-    class CoreExtensionApplication
+    class CoreExtensionApplication : IExtensionApplication
     {
         #region Public Variables
+
+        public static CoreExtensionApplication _current;
+
         /// <summary>
         /// Returns true if currently running under the Core Console
         /// </summary>
@@ -86,7 +90,8 @@ namespace Jpp.Ironstone.Core
         /// Is software running under civil 3d? Null when this has not yet been checked
         /// </summary>
         private static bool? _civil3D;
-        
+
+        private UnityContainer _container;
         private ILogger _logger;
         private IAuthentication _authentication;
         #endregion
@@ -98,6 +103,8 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public void Initialize()
         {
+            _current = this;
+
             //If not running in console only, detect if ribbon is currently loaded, and if not wait until the application is Idle.
             //Throws an error if try to add to the menu with the ribbon unloaded
             if (CoreConsole)
@@ -147,15 +154,15 @@ namespace Jpp.Ironstone.Core
         public void InitExtension()
         {
             //Unity registration
-            UnityContainer container = new UnityContainer();
+            _container= new UnityContainer();
             //TODO: Add code here for choosing log type
-            container.RegisterInstance<ILogger>(new ConsoleLogger());
-            container.RegisterInstance<IAuthentication>(new DinkeyAuthentication());
+            _container.RegisterInstance<ILogger>(new ConsoleLogger());
+            _container.RegisterInstance<IAuthentication>(new DinkeyAuthentication());
 
-            _logger = container.Resolve<ILogger>();
+            _logger = _container.Resolve<ILogger>();
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
 
-            _authentication = container.Resolve<IAuthentication>();
+            _authentication = _container.Resolve<IAuthentication>();
 
             if (!CoreConsole)
                 CreateUi();
@@ -252,9 +259,9 @@ namespace Jpp.Ironstone.Core
                     foreach (string dll in Directory.GetFiles(path, "*.dll"))
                     {
                         //Load the additional libraries found
-                        ExtensionLoader.Load(dll);
+                        Assembly target = ExtensionLoader.Load(dll);
 
-                        //TODO: Pass container to do injection here
+                        //TODO: Pass _container to do injection here
                     }
                 }
                 else
@@ -274,5 +281,11 @@ namespace Jpp.Ironstone.Core
             AutoUpdater.Start(Constants.INSTALLER_URL);
         }
         #endregion
+
+        public static void RegisterExtension(IIronstoneExtensionApplication extension)
+        {
+            extension.InjectContainer(_current._container);
+            extension.CreateUI();
+        }
     }
 }

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Jpp.Ironstone.Core</RootNamespace>
-    <AssemblyName>Ironstone Core</AssemblyName>
+    <AssemblyName>IronstoneCore</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -183,6 +183,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.9.1\lib\net47\System.Drawing.Primitives.dll</HintPath>
     </Reference>
@@ -406,6 +407,7 @@
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.5.9.1\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -438,10 +440,12 @@
       <HintPath>..\packages\Unity.5.9.1\lib\net47\Unity.Container.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="CoreExtensionApplication.cs" />
+    <Compile Include="IIronstoneExtensionApplication.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -452,6 +456,9 @@
     <Compile Include="ServiceInterfaces\IAuthentication.cs" />
     <Compile Include="ServiceInterfaces\ILogger.cs" />
     <Compile Include="ServiceInterfaces\Loggers\ConsoleLogger.cs" />
+    <Compile Include="UI\HostedUserControl.cs" />
+    <Compile Include="UI\RibbonCommandHandler.cs" />
+    <Compile Include="UI\UIHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -463,5 +470,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
