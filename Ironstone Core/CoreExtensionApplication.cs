@@ -14,6 +14,7 @@ using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
 using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
 using Unity;
+using Unity.Lifetime;
 using RibbonControl = Autodesk.Windows.RibbonControl;
 using RibbonPanelSource = Autodesk.Windows.RibbonPanelSource;
 using RibbonRowPanel = Autodesk.Windows.RibbonRowPanel;
@@ -156,39 +157,29 @@ namespace Jpp.Ironstone.Core
             //Unity registration
             _container= new UnityContainer();
             //TODO: Add code here for choosing log type
-            _container.RegisterInstance<ILogger>(new ConsoleLogger());
-            _container.RegisterInstance<IAuthentication>(new DinkeyAuthentication());
+            _container.RegisterInstance<ILogger>(new ConsoleLogger(), new ContainerControlledLifetimeManager());
+            _container.RegisterInstance<IAuthentication>(new DinkeyAuthentication(), new ContainerControlledLifetimeManager());
 
             _logger = _container.Resolve<ILogger>();
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
+
+            _container.RegisterInstance<IDataService>(new DataService(_logger), new ContainerControlledLifetimeManager());
 
             _authentication = _container.Resolve<IAuthentication>();
 
             if (!CoreConsole)
                 CreateUi();
-
-            //Add the document hooks
-            Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.DocumentCreated += DocumentManagerOnDocumentCreated;
-            Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.DocumentDestroyed += DocumentManagerOnDocumentDestroyed;
-
+            
             //Load the additional DLL files, but only not if running in debug mode
 #if !DEBUG
             Update();
 #endif
             LoadModules();
+            
+            //Once all modules have been loaded inform data service
+            _container.Resolve<IDataService>().PopulateStoreTypes();
 
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
-        }
-
-        private void DocumentManagerOnDocumentDestroyed(object sender, DocumentDestroyedEventArgs e)
-        {
-            //TODO: Handle unloading of stores
-        }
-
-        private void DocumentManagerOnDocumentCreated(object sender, DocumentCollectionEventArgs e)
-        {
-            //TODO: Handle loading of stores
-            //DocumentStore.LoadStores(e.Document);
         }
 
         public void CreateUi()

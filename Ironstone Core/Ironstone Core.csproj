@@ -443,6 +443,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Autocad\DocumentStore.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="CoreExtensionApplication.cs" />
     <Compile Include="IIronstoneExtensionApplication.cs" />
@@ -453,7 +454,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="ServiceInterfaces\Authentication\DinkeyAuthentication.cs" />
+    <Compile Include="ServiceInterfaces\DataService.cs" />
     <Compile Include="ServiceInterfaces\IAuthentication.cs" />
+    <Compile Include="ServiceInterfaces\IDataService.cs" />
     <Compile Include="ServiceInterfaces\ILogger.cs" />
     <Compile Include="ServiceInterfaces\Loggers\ConsoleLogger.cs" />
     <Compile Include="UI\HostedUserControl.cs" />
