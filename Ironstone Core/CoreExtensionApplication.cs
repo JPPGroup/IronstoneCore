@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Controls;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
@@ -13,6 +14,8 @@ using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
 using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
+using Jpp.Ironstone.Core.UI;
+using Jpp.Ironstone.Core.UI.Views;
 using Unity;
 using Unity.Lifetime;
 using RibbonControl = Autodesk.Windows.RibbonControl;
@@ -203,8 +206,6 @@ namespace Jpp.Ironstone.Core
                 Id = Constants.IRONSTONE_TAB_ID
             };
 
-            //Pull names from constant file as used in all subsequent DLL's
-
             rc.Tabs.Add(ironstoneTab);
             return ironstoneTab;
         }
@@ -220,7 +221,11 @@ namespace Jpp.Ironstone.Core
             RibbonRowPanel stack = new RibbonRowPanel();
             
             //stack.Items.Add(_settingsButton);
+            RibbonToggleButton aboutButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_AboutWindow_Name, Resources.About,
+                RibbonItemSize.Standard, Orientation.Horizontal, new About(), "10992236-c8f6-4732-b5e0-2d9194f07068");
+            
             stack.Items.Add(new RibbonRowBreak());
+            stack.Items.Add(aboutButton);
 
             //Add the new tab section to the main tab
             source.Items.Add(stack);

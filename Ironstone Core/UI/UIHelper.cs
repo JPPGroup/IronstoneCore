@@ -68,6 +68,17 @@ namespace Jpp.Ironstone.Core.UI
         /// <returns></returns>
         public static RibbonToggleButton CreateWindowToggle(string buttonText, Bitmap icon, RibbonItemSize size, Orientation orientation, UIElement view, string WindowId)
         {
+            switch (size)
+            {
+                case RibbonItemSize.Large:
+                    icon = new Bitmap(icon, new System.Drawing.Size(32,32));
+                    break;
+
+                case RibbonItemSize.Standard:
+                    icon = new Bitmap(icon, new System.Drawing.Size(16, 16));
+                    break;
+            }
+
             RibbonToggleButton result = new RibbonToggleButton
             {
                 ShowText = true,

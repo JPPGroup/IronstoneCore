@@ -14,7 +14,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
         public void Entry(string message, Severity sev)
         {
             Editor ed = Application.DocumentManager.CurrentDocument.Editor;
-            ed.WriteMessage(message);
+            ed.WriteMessage(message + "\n");
         }
         #endregion
     }

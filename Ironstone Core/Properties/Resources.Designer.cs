@@ -61,7 +61,26 @@ namespace Jpp.Ironstone.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Core extension loading begun...\n.
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap About {
+            get {
+                object obj = ResourceManager.GetObject("About", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        internal static string ExtensionApplication_AboutWindow_Name {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_AboutWindow_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Core loaded successfully..
         /// </summary>
         internal static string ExtensionApplication_Inform_LoadedMain {
             get {
@@ -70,7 +89,7 @@ namespace Jpp.Ironstone.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Core loaded successfully.\n.
+        ///   Looks up a localized string similar to Core extension loading begun....
         /// </summary>
         internal static string ExtensionApplication_Inform_LoadingMain {
             get {
