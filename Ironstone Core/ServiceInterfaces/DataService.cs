@@ -33,7 +33,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             if (_stores.ContainsKey(e.Document.Name))
             {
-                SaveStores(e.Document.Name);
                 _stores.Remove(e.Document.Name);
             }
             else
@@ -67,7 +66,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 Dictionary<Type, DocumentStore> storeContainer = new Dictionary<Type, DocumentStore>();
                 foreach (Type t in _storesList)
                 {
-                    storeContainer.Add(t, (DocumentStore) GetDocumentStore(t, e.Document));
+                    storeContainer.Add(t, (DocumentStore) CreateDocumentStore(t, e.Document));
                 }
                 _stores.Add(e.Document.Name, storeContainer);
 
@@ -75,7 +74,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
         }
 
-        private object GetDocumentStore(Type T, Document doc)
+        private object CreateDocumentStore(Type T, Document doc)
         {
             DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc);
             ds.LoadWrapper();
