@@ -38,16 +38,22 @@
 		  <Component Id="dpwin64.dll" Guid="26452eb9-3b41-4083-9932-92620f4cd1bb" Win64="yes">
 		    <File Id="dpwin64.dll" Source="..\bin\x64\Release\dpwin64.dll" Checksum="yes"/>
 		  </Component>
+		  <Component Id="Unity.Container.dll" Guid="dfcceb0d-d444-4aa0-89c5-3dd7c581aba3" Win64="yes">
+		    <File Id="Unity.Container.dll" Source="..\bin\x64\Release\Unity.Container.dll" Checksum="yes"/>
+		  </Component>
+		  <Component Id="Unity.Abstractions.dll" Guid="0f4b43b3-fa66-495d-9e88-3694ac21bee0" Win64="yes">
+		    <File Id="Unity.Abstractions.dll" Source="..\bin\x64\Release\Unity.Abstractions.dll" Checksum="yes"/>
+		  </Component>
 		  <Component Id="RegistryEntries" Guid="DBD2BF14-98A3-42C1-867D-72FEFF681867">
 		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.0\ACAD-2000:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
 		      <RegistryValue Type="string" Name="DESCRIPTION" Value="Loader for JPP Ironstone"/>
-		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]\IronstoneCore.dll"/>
+		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]IronstoneCore.dll"/>
           <RegistryValue Type="integer" Name="LOADCTRLS" Value="2"/>
 		      <RegistryValue Type="integer" Name="MANAGED" Value="1"/>
 		    </RegistryKey>
 		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.0\ACAD-2001:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
 		      <RegistryValue Type="string" Name="DESCRIPTION" Value="Loader for JPP Ironstone"/>
-		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]\IronstoneCore.dll"/>
+		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]IronstoneCore.dll"/>
 		      <RegistryValue Type="integer" Name="LOADCTRLS" Value="2"/>
 		      <RegistryValue Type="integer" Name="MANAGED" Value="1"/>
 		    </RegistryKey>
