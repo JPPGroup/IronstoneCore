@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Ironstone Core</id>
+    <id>Jpp.Ironstone.Core</id>
     <version>0.0.0.0</version>
     <title>Ironstone Core</title>
     <authors>JPP Consulting</authors>
