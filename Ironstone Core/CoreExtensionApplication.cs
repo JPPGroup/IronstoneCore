@@ -243,7 +243,7 @@ namespace Jpp.Ironstone.Core
 #if DEBUG
             string path = Assembly.GetExecutingAssembly().Location;
 #else
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\JPP AutoCad Library";
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
 #endif
 
             //Check if authenticated, otherwise block the auto loading

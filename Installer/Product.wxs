@@ -29,6 +29,29 @@
 		  <Component Id="IronstoneCore.dll" Guid="9E579346-97B3-43A5-8AD7-786C8A5BB284" Win64="yes">
 		    <File Id="IronstoneCore.dll" Source="..\bin\x64\Release\IronstoneCore.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
 		  </Component>
+      <Component Id="AutoUpdate.NET.dll" Guid="1030798b-fa22-45a3-9b17-58b259fe77e9" Win64="yes">
+        <File Id="AutoUpdate.NET.dll" Source="..\bin\x64\Release\Autoupdater.NET.dll" Checksum="yes"/>
+      </Component>
+		  <Component Id="AutoUpdate.NET.xml" Guid="d7fa9392-6023-409e-8910-3c324033289e" Win64="yes">
+		    <File Id="AutoUpdate.NET.xml" Source="..\bin\x64\Release\Autoupdater.NET.xml" Checksum="yes"/>
+		  </Component>
+		  <Component Id="dpwin64.dll" Guid="26452eb9-3b41-4083-9932-92620f4cd1bb" Win64="yes">
+		    <File Id="dpwin64.dll" Source="..\bin\x64\Release\dpwin64.dll" Checksum="yes"/>
+		  </Component>
+		  <Component Id="RegistryEntries" Guid="DBD2BF14-98A3-42C1-867D-72FEFF681867">
+		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.0\ACAD-2000:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
+		      <RegistryValue Type="string" Name="DESCRIPTION" Value="Loader for JPP Ironstone"/>
+		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]\IronstoneCore.dll"/>
+          <RegistryValue Type="integer" Name="LOADCTRLS" Value="2"/>
+		      <RegistryValue Type="integer" Name="MANAGED" Value="1"/>
+		    </RegistryKey>
+		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.0\ACAD-2001:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
+		      <RegistryValue Type="string" Name="DESCRIPTION" Value="Loader for JPP Ironstone"/>
+		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]\IronstoneCore.dll"/>
+		      <RegistryValue Type="integer" Name="LOADCTRLS" Value="2"/>
+		      <RegistryValue Type="integer" Name="MANAGED" Value="1"/>
+		    </RegistryKey>
+		  </Component>
 			<!-- </Component> -->
 		</ComponentGroup>
 	</Fragment>
