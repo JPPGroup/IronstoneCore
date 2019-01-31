@@ -475,6 +475,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Ironstone Core.nuspec" />
     <None Include="packages.config" />
     <None Include="Resources\About.png" />
   </ItemGroup>

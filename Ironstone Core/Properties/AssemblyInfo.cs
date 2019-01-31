@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Ironstone Core")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("COmmon library for all ironstone projects")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("JPP Consulting")]
 [assembly: AssemblyProduct("Ironstone Core")]
