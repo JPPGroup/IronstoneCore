@@ -27,7 +27,7 @@
 		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
 			<!-- <Component Id="ProductComponent"> -->
 		  <Component Id="IronstoneCore.dll" Guid="9E579346-97B3-43A5-8AD7-786C8A5BB284" Win64="yes">
-		    <File Id="IronstoneCore.dll" Source="..\..\bin\x64\Release\IronstoneCore.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+		    <File Id="IronstoneCore.dll" Source="..\bin\x64\Release\IronstoneCore.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
 		  </Component>
 			<!-- </Component> -->
 		</ComponentGroup>
