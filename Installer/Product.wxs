@@ -11,6 +11,8 @@
 		<Feature Id="ProductFeature" Title="Installer" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
 		</Feature>
+
+	  <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
 	</Product>
 
 	<Fragment>

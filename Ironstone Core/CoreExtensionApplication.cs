@@ -172,7 +172,7 @@ namespace Jpp.Ironstone.Core
 
             if (!CoreConsole)
                 CreateUi();
-            
+
             //Load the additional DLL files, but only not if running in debug mode
 #if !DEBUG
             Update();
@@ -274,7 +274,9 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public static void Update()
         {
-            AutoUpdater.Start(Constants.INSTALLER_URL);
+            AutoUpdater.Start(Constants.INSTALLER_URL, Assembly.GetExecutingAssembly());
+            AutoUpdater.ApplicationExitEvent += () => Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                .MdiActiveDocument.SendStringToExecute("quit ", true, false, true);
         }
         #endregion
 
