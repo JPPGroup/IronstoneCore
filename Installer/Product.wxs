@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="JPP Ironstone" Language="1033" Version="!(bind.fileVersion.IronstoneCore.dll)" Manufacturer="JPP Consulting" UpgradeCode="a2ad53a9-cf9a-4d4d-88c7-6e6b2dc11075">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Platform="x64" />
+
+	  <UIRef Id="WixUI_Minimal" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes"/>
+
+		<Feature Id="ProductFeature" Title="Installer" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFiles64Folder">
+        <Directory Id="Company" Name="JPP Consulting">
+				  <Directory Id="INSTALLFOLDER" Name="Ironstone" />
+        </Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			<!-- <Component Id="ProductComponent"> -->
+		  <Component Id="IronstoneCore.dll" Guid="9E579346-97B3-43A5-8AD7-786C8A5BB284" Win64="yes">
+		    <File Id="IronstoneCore.dll" Source="..\..\bin\x64\Release\IronstoneCore.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+		  </Component>
+			<!-- </Component> -->
+		</ComponentGroup>
+	</Fragment>
+</Wix>

@@ -5,22 +5,21 @@ VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ironstone Core", "Ironstone Core\Ironstone Core.csproj", "{A3BFA507-A2C4-4C33-943B-6083133EE63C}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Installer", "Installer\Installer.wixproj", "{B7273690-BCCA-4A2A-BBE8-07D11D1D299E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
-		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A3BFA507-A2C4-4C33-943B-6083133EE63C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A3BFA507-A2C4-4C33-943B-6083133EE63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3BFA507-A2C4-4C33-943B-6083133EE63C}.Debug|x64.ActiveCfg = Debug|x64
 		{A3BFA507-A2C4-4C33-943B-6083133EE63C}.Debug|x64.Build.0 = Debug|x64
-		{A3BFA507-A2C4-4C33-943B-6083133EE63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A3BFA507-A2C4-4C33-943B-6083133EE63C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A3BFA507-A2C4-4C33-943B-6083133EE63C}.Release|x64.ActiveCfg = Release|x64
 		{A3BFA507-A2C4-4C33-943B-6083133EE63C}.Release|x64.Build.0 = Release|x64
+		{B7273690-BCCA-4A2A-BBE8-07D11D1D299E}.Debug|x64.ActiveCfg = Debug|x64
+		{B7273690-BCCA-4A2A-BBE8-07D11D1D299E}.Release|x64.ActiveCfg = Release|x64
+		{B7273690-BCCA-4A2A-BBE8-07D11D1D299E}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
