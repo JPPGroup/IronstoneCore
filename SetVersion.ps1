@@ -11,3 +11,5 @@ foreach ($file in $files){
     $text = $text -replace '(\[assembly\: AssemblyFileVersion\()\"(\d\.\d\.\d\.\d)\"(\)\])', $replace
 	Set-Content -Path $file -Value $text	
 }
+
+Write-Host "Version set to $version.$build"
