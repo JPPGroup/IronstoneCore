@@ -11,7 +11,7 @@ namespace Jpp.Ironstone.Core
     /// <summary>
     /// Extends Extension Application interface to provide methods for core to use
     /// </summary>
-    interface IIronstoneExtensionApplication : IExtensionApplication
+    public interface IIronstoneExtensionApplication : IExtensionApplication
     {
         void InjectContainer(IUnityContainer container);
 

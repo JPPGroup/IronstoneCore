@@ -31,7 +31,7 @@ namespace Jpp.Ironstone.Core
     /// Loader class, the main entry point for the full application suite. Implements IExtensionApplication is it
     /// automatically initialised and terminated by AutoCad.
     /// </summary>
-    class CoreExtensionApplication : IExtensionApplication
+    public class CoreExtensionApplication : IExtensionApplication
     {
         #region Public Variables
 
@@ -283,7 +283,10 @@ namespace Jpp.Ironstone.Core
         public static void RegisterExtension(IIronstoneExtensionApplication extension)
         {
             extension.InjectContainer(_current._container);
-            extension.CreateUI();
+            if (!CoreConsole)
+            {
+                extension.CreateUI();
+            }
         }
     }
 }

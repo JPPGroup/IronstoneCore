@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
+using Jpp.Common;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -18,12 +19,17 @@ namespace Jpp.Ironstone.Core.Autocad
         protected Document acDoc;
         protected Database acCurDb;
 
+        protected Jpp.Common.SerializibleDictionary<Type, IDrawingObjectManager> Managers;
+        private Type[] _managerTypes;
+
         /// <summary>
         /// Create a new document store
         /// </summary>
-        public DocumentStore(Document doc)
+        public DocumentStore(Document doc, Type[] ManagerTypes)
         {
-            
+            acDoc = doc;
+            acCurDb = doc.Database;
+            _managerTypes = ManagerTypes;
         }
         #endregion
 
@@ -56,6 +62,7 @@ namespace Jpp.Ironstone.Core.Autocad
                 {
                     using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
                     {
+                        SaveBinary("Managers", Managers);
                         Save();
                         tr.Commit();
                     }
@@ -78,6 +85,7 @@ namespace Jpp.Ironstone.Core.Autocad
                 {
                     using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
                     {
+                        LoadBinary<SerializibleDictionary<Type, IDrawingObjectManager>>("Managers", _managerTypes);
                         Load();
                         tr.Commit();
                     }
@@ -127,7 +135,7 @@ namespace Jpp.Ironstone.Core.Autocad
             tr.AddNewlyCreatedDBObject(plotXRecord, true);
         }
 
-        protected T LoadBinary<T>(string Key) where T : new()
+        protected T LoadBinary<T>(string Key, Type[] additionalTypes = null) where T : new()
         {
             //Database acCurDb = Application.DocumentManager.MdiActiveDocument.Database;
             Transaction tr = acCurDb.TransactionManager.TopTransaction;
@@ -149,7 +157,17 @@ namespace Jpp.Ironstone.Core.Autocad
                     ms.Write(data, 0, data.Length);
                 }
                 ms.Position = 0;
-                XmlSerializer xml = new XmlSerializer(typeof(T));
+
+                XmlSerializer xml;
+
+                if (additionalTypes == null)
+                {
+                    xml = new XmlSerializer(typeof(T));
+                }
+                else
+                {
+                    xml = new XmlSerializer(typeof(T), additionalTypes);
+                }
 
                 try
                 {
@@ -170,7 +188,37 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public void Dispose()
         {
-            Save();
+            SaveWrapper();
+        }
+
+        public void UpdateManagers()
+        {
+            foreach (IDrawingObjectManager drawingObjectManager in Managers.Values)
+            {
+                drawingObjectManager.UpdateDirty();
+            }
+        }
+
+        public void ReenerateManagers()
+        {
+            foreach (IDrawingObjectManager drawingObjectManager in Managers.Values)
+            {
+                drawingObjectManager.UpdateAll();
+            }
+        }
+
+        public T GetManager<T>() where T : IDrawingObjectManager
+        {
+            if (Managers.ContainsKey(typeof(T)))
+            {
+                return (T) Managers[typeof(T)];
+            }
+            else
+            {
+                T dom = (T)Activator.CreateInstance(typeof(T));
+                Managers.Add(typeof(T), dom);
+                return dom;
+            }
         }
         #endregion
 

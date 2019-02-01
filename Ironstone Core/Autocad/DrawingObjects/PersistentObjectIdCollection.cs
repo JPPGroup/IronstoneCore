@@ -10,7 +10,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 
 namespace Jpp.Ironstone.Core.Autocad.DrawingObjects
 {
-    class PersistentObjectIdCollection : IEnumerable
+    public class PersistentObjectIdCollection : IEnumerable
     {
         public List<long> Pointers { get; private set; }
 

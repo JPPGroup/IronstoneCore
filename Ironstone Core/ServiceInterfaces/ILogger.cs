@@ -9,7 +9,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
     /// <summary>
     /// Generic definition of a logging service
     /// </summary>
-    interface ILogger
+    public interface ILogger
     {
         /// <summary>
         /// Add message to log with default severity of Information

@@ -9,7 +9,7 @@ using Jpp.Ironstone.Core.Autocad;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
-    class DataService : IDataService
+    public class DataService : IDataService
     {
         /// <summary>
         /// Stores that are currently loaded into memory
@@ -18,6 +18,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private ILogger _logger;
         private List<Type> _storesList;
+        private List<Type> _managersList;
 
         public DataService(ILogger logger)
         {
@@ -71,12 +72,27 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 _stores.Add(e.Document.Name, storeContainer);
 
                 e.Document.Database.BeginSave += (o, args) => SaveStores(e.Document.Name);
+                e.Document.CommandEnded += (o, args) =>
+                {
+                    foreach (DocumentStore documentStore in _stores[e.Document.Name].Values)
+                    {
+                        //TODO: Check this works
+                        if (args.GlobalCommandName.Contains("regen"))
+                        {
+                            documentStore.ReenerateManagers();
+                        }
+                        else
+                        {
+                            documentStore.UpdateManagers();
+                        }
+                    }
+                };
             }
         }
 
         private object CreateDocumentStore(Type T, Document doc)
         {
-            DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc);
+            DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes());
             ds.LoadWrapper();
             return ds;
         }
@@ -90,6 +106,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 try
                 {
                     _storesList.AddRange(assembly.GetTypes().Where(t => typeof(DocumentStore).IsAssignableFrom(t)));
+                    _managersList.AddRange(assembly.GetTypes().Where(t => typeof(IDrawingObjectManager).IsAssignableFrom(t)));
                 }
                 catch (Exception e)
                 {
@@ -104,6 +121,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             {
                 documentStore.SaveWrapper();
             }
+        }
+
+        public Type[] GetManagerTypes()
+        {
+            return _managersList.ToArray();
         }
     }
 }

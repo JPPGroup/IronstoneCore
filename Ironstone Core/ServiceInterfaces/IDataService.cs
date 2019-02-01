@@ -7,9 +7,11 @@ using Jpp.Ironstone.Core.Autocad;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
-    interface IDataService
+    public interface IDataService
     {
         void PopulateStoreTypes();
+
+        Type[] GetManagerTypes();
 
         T GetStore<T>(string ID) where T : DocumentStore;
     }

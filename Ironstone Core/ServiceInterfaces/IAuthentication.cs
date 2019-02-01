@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
-    interface IAuthentication
+    public interface IAuthentication
     {
         bool Authenticated();
     }
