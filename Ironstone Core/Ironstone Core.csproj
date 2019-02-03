@@ -432,6 +432,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Autocad\DatabaseExtensions.cs" />
     <Compile Include="Autocad\DocumentStore.cs" />
     <Compile Include="Autocad\DrawingObjects\AbstractDrawingObjectManager.cs" />
     <Compile Include="Autocad\DrawingObjects\IDrawingObjectManager.cs" />
@@ -439,6 +440,8 @@
     <Compile Include="Autocad\DrawingObjects\Primitives\CircleDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\DrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\LineDrawingObject.cs" />
+    <Compile Include="Autocad\LayoutExtensions.cs" />
+    <Compile Include="Autocad\TransactionException.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="CoreExtensionApplication.cs" />
     <Compile Include="IIronstoneExtensionApplication.cs" />
