@@ -16,6 +16,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
             Editor ed = Application.DocumentManager.CurrentDocument.Editor;
             ed.WriteMessage(message + "\n");
         }
+
+        public void LogEvent(Event eventType, string eventParameters)
+        {
+            Editor ed = Application.DocumentManager.CurrentDocument.Editor;
+            ed.WriteMessage(eventType + " - " + eventParameters + "\n");
+        }
         #endregion
     }
 }

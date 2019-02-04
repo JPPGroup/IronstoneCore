@@ -23,6 +23,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         /// <param name="message">Message to be added</param>
         /// <param name="sev">Severity of message</param>
         void Entry(string message, Severity sev);
+
+        void LogEvent(Event eventType, string eventParameters);
     }
 
     /// <summary>
@@ -35,5 +37,10 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         Warning,
         Error,
         Crash
+    }
+
+    public enum Event
+    {
+        Command,
     }
 }
