@@ -16,12 +16,26 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         /// </summary>
         private Dictionary<string, Dictionary<Type, DocumentStore>> _stores;
 
+        public static DataService Current
+        {
+            get
+            {
+                if (_current == null)
+                    throw new NullReferenceException();
+
+                return _current;
+            }
+        }
+
+        private static DataService _current;
+
         private ILogger _logger;
         private List<Type> _storesList;
         private List<Type> _managersList;
 
         public DataService(ILogger logger)
         {
+            _current = this;
             _logger = logger;
             _stores = new Dictionary<string, Dictionary<Type, DocumentStore>>();
 
