@@ -1,6 +1,6 @@
 ﻿namespace Jpp.Ironstone.Core
 {
-    class Constants
+    public class Constants
     {
         public const string IRONSTONE_TAB_TITLE = "Ironstone";
         public const string IRONSTONE_TAB_ID = "IRONSTONE";

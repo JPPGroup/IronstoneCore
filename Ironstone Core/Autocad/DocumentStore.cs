@@ -19,7 +19,7 @@ namespace Jpp.Ironstone.Core.Autocad
         protected Document acDoc;
         protected Database acCurDb;
 
-        protected Jpp.Common.SerializibleDictionary<Type, IDrawingObjectManager> Managers;
+        protected Jpp.Common.SerializableDictionary<Type, IDrawingObjectManager> Managers;
         private Type[] _managerTypes;
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Jpp.Ironstone.Core.Autocad
                 {
                     using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
                     {
-                        LoadBinary<SerializibleDictionary<Type, IDrawingObjectManager>>("Managers", _managerTypes);
+                        LoadBinary<SerializableDictionary<Type, IDrawingObjectManager>>("Managers", _managerTypes);
                         Load();
                         tr.Commit();
                     }
