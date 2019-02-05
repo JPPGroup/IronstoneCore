@@ -114,6 +114,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         public void PopulateStoreTypes()
         {
             _storesList = new List<Type>();
+            _managersList = new List<Type>();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (Assembly assembly in assemblies)
             {
