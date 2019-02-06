@@ -1,0 +1,5 @@
+SECURELOAD 0
+netload "{dir}\Tools\CoreConsoleRunner.dll" RunTests
+SECURELOAD 1
+QUIT Y
+
