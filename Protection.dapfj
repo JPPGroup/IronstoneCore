@@ -40,8 +40,8 @@
 
    "Files": [
       {
-         "InputName": "C:\\Repos\\cad-library\\bin\\Release\\dpwin64.dll",
-         "OutputName": "C:\\Repos\\cad-library\\bin\\Release\\dpwin64.dll",
+         "InputName": "..\\bin\\x64\\Release\\dpwin64.dll",
+         "OutputName": "..\\bin\\x64\\Release\\dpwin64.dll",
          "CallingProgram": null,
          "Licence": "Core Perpetual",
          "Method": "API",
