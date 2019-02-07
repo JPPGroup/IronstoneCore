@@ -35,12 +35,12 @@ Global
 		{B7273690-BCCA-4A2A-BBE8-07D11D1D299E}.Release|x64.Build.0 = Release|x64
 		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Debug|x64.Build.0 = Debug|Any CPU
+		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Debug|x64.ActiveCfg = Debug|x64
+		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Debug|x64.Build.0 = Debug|x64
 		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Release|x64.ActiveCfg = Release|Any CPU
-		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Release|x64.Build.0 = Release|Any CPU
+		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Release|x64.ActiveCfg = Release|x64
+		{1F8281CB-B208-45D3-A8CA-CDED34C48636}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
