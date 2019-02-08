@@ -35,6 +35,7 @@
 	<StartAction>Program</StartAction>
     <StartProgram>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</StartProgram>
     <StartArguments>-command "&amp; %27..\..\..\Tools\Debug.ps1%27"</StartArguments>
+	<EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\bin\x64\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>

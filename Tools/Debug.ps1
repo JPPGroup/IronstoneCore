@@ -4,9 +4,9 @@ $replace = ($PSScriptRoot)
 $newtext = $text -replace '{dir}', $replace
 Set-Content -Path $scriptLocation -Value $newtext
 
-$testDir = ($PSScriptRoot + "\..\bin\x64\Release\")
+$testDir = ($PSScriptRoot + "\..\bin\x64\Debug\")
 
-& "C:\Program Files\Autodesk\AutoCAD 2019\accoreconsole.exe" /i ($PSScriptRoot + "\TestRunner\DummyDrawing.dwg") /s ($PSScriptRoot + "\TestRunner\AutoNetLoad.scr")  /tests:"$testDir" /debug
+& "C:\Program Files\Autodesk\AutoCAD 2019\accoreconsole.exe" /i ($PSScriptRoot + "\TestRunner\DummyDrawing.dwg") /s ($PSScriptRoot + "\TestRunner\AutoNetLoad.scr")  /tests:"$testDir" /isolate
 Set-Content -Path $scriptLocation -Value $text
 
 Write-Host -NoNewLine 'Press any key to continue...';
