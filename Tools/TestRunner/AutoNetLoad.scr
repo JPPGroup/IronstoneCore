@@ -1,5 +1,6 @@
 SECURELOAD 0
-netload "{dir}\Tools\TestRunner\CoreConsoleRunner.dll" RunTests
+netload "C:\Repos\Ironstone\ironstone-core\Tools\TestRunner\CoreConsoleRunner.dll" RunTests
 SECURELOAD 1
 QUIT Y
+
 
