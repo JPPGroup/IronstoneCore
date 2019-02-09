@@ -1,0 +1,3 @@
+_SECURELOAD 0
+_netload "{dir}\TestRunner\CoreConsoleRunner.dll" RunTests
+_SECURELOAD 1

@@ -32,10 +32,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-	<StartAction>Program</StartAction>
+    <StartAction>Program</StartAction>
     <StartProgram>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</StartProgram>
     <StartArguments>-command "&amp; %27..\..\..\Tools\Debug.ps1%27"</StartArguments>
-	<EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>..\bin\x64\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -45,7 +45,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-	<StartAction>Program</StartAction>
+    <StartAction>Program</StartAction>
     <StartProgram>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</StartProgram>
     <StartArguments>-command "&amp; %27..\..\..\Tools\Debug.ps1%27"</StartArguments>
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
@@ -114,12 +114,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="AecBaseMgd">
-      <HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2019\AecBaseMgd.dll</HintPath>
+      <HintPath>C:\Program Files\Autodesk\AutoCAD 2019\AecBaseMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AeccDbMgd">
-      <HintPath>..\..\..\..\Program Files\Autodesk\AutoCAD 2019\C3D\AeccDbMgd.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>C:\Program Files\Autodesk\AutoCAD 2019\C3D\AeccDbMgd.dll</HintPath>
     </Reference>
     <Reference Include="AutoUpdater.NET, Version=1.5.0.0, Culture=neutral, PublicKeyToken=501435c91b35f4bc, processorArchitecture=MSIL">
       <HintPath>..\packages\Autoupdater.NET.Official.1.5.0\lib\net40\AutoUpdater.NET.dll</HintPath>
@@ -489,7 +488,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Ironstone Core.nuspec" />
+    <None Include="Ironstone Core.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Resources\About.png" />
   </ItemGroup>

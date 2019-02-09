@@ -45,12 +45,16 @@ namespace Jpp.Ironstone.Core
             get
             {
                 if (_coreConsole != null) return _coreConsole.Value;
-                try
+                /*try
                 {
                     StatusBar unused = Application.StatusBar;
                     _coreConsole = false;
                 }
                 catch (System.Exception)
+                {
+                    _coreConsole = true;
+                }*/
+                if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.Contains("accoreconsole"))
                 {
                     _coreConsole = true;
                 }
