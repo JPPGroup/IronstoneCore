@@ -27,9 +27,10 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             Assert.Pass("Test needs to be re-worked");
         }
 
-        [Test]
-        public void GetCurrentDocumentStore()
+        [Test, Category("Integration")]
+        public void GetCurrentDocumentStoreOnEmptyDoc()
         {
+            //Gets the default document store, but on an empty document ensure creation works
             var result = DataService.Current.GetStore<DocumentStore>(Application.DocumentManager.CurrentDocument.Name);
             Assert.IsNotNull(result);
         }

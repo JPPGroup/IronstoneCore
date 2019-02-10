@@ -59,15 +59,21 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public T GetStore<T>(string ID) where T : DocumentStore
         {
-            if (_stores.ContainsKey(ID))
+            if (!_stores.ContainsKey(ID))
             {
-                return (T) _stores[ID][typeof(T)];
+                _logger.Entry("Store not found.\n", Severity.Warning);
+                Document doc = GetDocumentByName(ID);
+                if (doc != null)
+                {
+                    CreateStoresOnDocument(doc);
+                }
+                else
+                {
+                    _logger.Entry("Document not found for store creation.\n", Severity.Crash);
+                    throw new ArgumentException();
+                }
             }
-            else
-            {
-                _logger.Entry("Store not found.\n", Severity.Error);
-                throw new ArgumentException();
-            }
+            return (T)_stores[ID][typeof(T)];
         }
 
         private void DocumentManagerOnDocumentCreated(object sender, DocumentCollectionEventArgs e)
@@ -78,30 +84,36 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
             else
             {
-                Dictionary<Type, DocumentStore> storeContainer = new Dictionary<Type, DocumentStore>();
-                foreach (Type t in _storesList)
-                {
-                    storeContainer.Add(t, (DocumentStore) CreateDocumentStore(t, e.Document));
-                }
-                _stores.Add(e.Document.Name, storeContainer);
-
-                e.Document.Database.BeginSave += (o, args) => SaveStores(e.Document.Name);
-                e.Document.CommandEnded += (o, args) =>
-                {
-                    foreach (DocumentStore documentStore in _stores[e.Document.Name].Values)
-                    {
-                        //TODO: Check this works
-                        if (args.GlobalCommandName.Contains("regen"))
-                        {
-                            documentStore.ReenerateManagers();
-                        }
-                        else
-                        {
-                            documentStore.UpdateManagers();
-                        }
-                    }
-                };
+                CreateStoresOnDocument(e.Document);
             }
+        }
+
+        private void CreateStoresOnDocument(Document document)
+        {
+            Dictionary<Type, DocumentStore> storeContainer = new Dictionary<Type, DocumentStore>();
+            foreach (Type t in _storesList)
+            {
+                storeContainer.Add(t, (DocumentStore) CreateDocumentStore(t, document));
+            }
+
+            _stores.Add(document.Name, storeContainer);
+
+            document.Database.BeginSave += (o, args) => SaveStores(document.Name);
+            document.CommandEnded += (o, args) =>
+            {
+                foreach (DocumentStore documentStore in _stores[document.Name].Values)
+                {
+                    //TODO: Check this works
+                    if (args.GlobalCommandName.Contains("regen"))
+                    {
+                        documentStore.ReenerateManagers();
+                    }
+                    else
+                    {
+                        documentStore.UpdateManagers();
+                    }
+                }
+            };
         }
 
         private object CreateDocumentStore(Type T, Document doc)
@@ -142,5 +154,19 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             return _managersList.ToArray();
         }
+
+        private Document GetDocumentByName(string Name)
+        {
+            foreach (Document d in Application.DocumentManager)
+            {
+                if (d.Name == Name)
+                {
+                    return d;
+                }
+            }
+
+            return null;
+        }
+
     }
 }
