@@ -70,7 +70,8 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                Application.ShowAlertDialog("Error saving - " + e.Message);
+                //TODO: Add log
+                //Application.ShowAlertDialog("Error saving - " + e.Message);
             }
         }
 
@@ -93,7 +94,8 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                Application.ShowAlertDialog("Error saving - " + e.Message);
+                //TODO: Add log
+                //Application.ShowAlertDialog("Error saving - " + e.Message);
             }
         }
         #endregion

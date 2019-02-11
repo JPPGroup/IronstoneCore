@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using Jpp.Ironstone.Core.Autocad;
+using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
