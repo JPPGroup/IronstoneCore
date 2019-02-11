@@ -17,6 +17,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         /// </summary>
         private Dictionary<string, Dictionary<Type, DocumentStore>> _stores;
 
+        private bool _storeTypesInvalidated;
+
         public static DataService Current
         {
             get
@@ -91,6 +93,9 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private void CreateStoresOnDocument(Document document)
         {
+            if(_storeTypesInvalidated)
+                PopulateStoreTypes();
+
             Dictionary<Type, DocumentStore> storeContainer = new Dictionary<Type, DocumentStore>();
             foreach (Type t in _storesList)
             {
@@ -141,6 +146,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     Console.WriteLine(e);
                 }
             }
+        }
+
+        public void InvalidateStoreTypes()
+        {
+            _storeTypesInvalidated = true;
         }
 
         private void SaveStores(string ID)

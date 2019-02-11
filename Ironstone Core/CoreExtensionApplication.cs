@@ -166,7 +166,7 @@ namespace Jpp.Ironstone.Core
             LoadModules();
             
             //Once all modules have been loaded inform data service
-            _container.Resolve<IDataService>().PopulateStoreTypes();
+            DataService.Current.PopulateStoreTypes();
 
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
         }
@@ -220,6 +220,7 @@ namespace Jpp.Ironstone.Core
 
         public static void RegisterExtension(IIronstoneExtensionApplication extension)
         {
+            DataService.Current.InvalidateStoreTypes();
             extension.InjectContainer(_current._container);
             if (!CoreConsole)
             {
