@@ -245,7 +245,8 @@ class DinkeyPro
             }
             catch (DllNotFoundException)
             {
-                MessageBox.Show("Error! Cannot find dpwin64.dll. This should be in the same folder as DllTest.", "Sample", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show("Error! Cannot find dpwin64.dll. This should be in the same folder as DllTest.",
+                    "Sample", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
         return ret_code;

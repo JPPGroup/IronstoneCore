@@ -178,22 +178,37 @@ namespace Jpp.Ironstone.Core
         /// </summary>
         public void LoadModules()
         {
-#if DEBUG
-            string path = Assembly.GetExecutingAssembly().Location;
-#else
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
-#endif
+            string binPath = Assembly.GetExecutingAssembly().Location;
+            binPath = binPath.Substring(0, binPath.LastIndexOf('\\'));
+            string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
 
             //Check if authenticated, otherwise block the auto loading
             if (_authentication.Authenticated())
             {
                 //Iterate over every dll found in bin folder
-                if (Directory.Exists(path))
+                foreach (string dll in Directory.GetFiles(binPath, "*.dll"))
                 {
-                    foreach (string dll in Directory.GetFiles(path, "*.dll"))
+                    //Load the additional libraries found
+                    if (!ExtensionLoader.IsLoaded(dll))
+                    {
+                        //Skip protection dll, is this needed???
+                        if (!dll.Contains("dpwin"))
+                        {
+                            Assembly target = ExtensionLoader.Load(dll);
+                        }
+                    }
+
+                    //TODO: Pass _container to do injection here
+                }
+                if (Directory.Exists(dataPath))
+                {
+                    foreach (string dll in Directory.GetFiles(dataPath, "*.dll"))
                     {
                         //Load the additional libraries found
-                        Assembly target = ExtensionLoader.Load(dll);
+                        if (!ExtensionLoader.IsLoaded(dll))
+                        {
+                            Assembly target = ExtensionLoader.Load(dll);
+                        }
 
                         //TODO: Pass _container to do injection here
                     }

@@ -11,9 +11,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
     {
         public bool Authenticated()
         {
-#if DEBUG
-            return true;
-#endif
             int ret_code;
             DRIS dris = new DRIS(); // initialise the DRIS with random values & set the header
 

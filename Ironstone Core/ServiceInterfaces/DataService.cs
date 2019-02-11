@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,9 +16,9 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         /// <summary>
         /// Stores that are currently loaded into memory
         /// </summary>
-        private Dictionary<string, Dictionary<Type, DocumentStore>> _stores;
+        internal Dictionary<string, Dictionary<Type, DocumentStore>> _stores;
 
-        private bool _storeTypesInvalidated;
+        private bool _storeTypesInvalidated = true;
 
         public static DataService Current
         {
@@ -33,8 +34,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         private static DataService _current;
 
         private ILogger _logger;
-        private List<Type> _storesList;
-        private List<Type> _managersList;
+        internal List<Type> _storesList;
+        internal List<Type> _managersList;
 
         public DataService(ILogger logger)
         {
@@ -45,6 +46,13 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             //Add the document hooks
             Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.DocumentCreated += DocumentManagerOnDocumentCreated;
             Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.DocumentToBeDestroyed += DocumentManagerOnDocumentToBeDestroyed;
+
+            //Incase the document has been loaded before the application (should only happen with manual loads...)
+            foreach (Document d in Application.DocumentManager)
+            {
+                CreateStoresOnDocument(d);
+                _logger.Entry("Document existed before extension was loaded.\n", Severity.Warning);
+            }
         }
 
         private void DocumentManagerOnDocumentToBeDestroyed(object sender, DocumentCollectionEventArgs e)
@@ -132,20 +140,24 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         public void PopulateStoreTypes()
         {
             _storesList = new List<Type>();
+            _storesList.Add(typeof(DocumentStore));
             _managersList = new List<Type>();
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (Assembly assembly in assemblies)
             {
                 try
                 {
-                    _storesList.AddRange(assembly.GetTypes().Where(t => typeof(DocumentStore).IsAssignableFrom(t)));
+                    _storesList.AddRange(assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(DocumentStore))));
                     _managersList.AddRange(assembly.GetTypes().Where(t => typeof(IDrawingObjectManager).IsAssignableFrom(t)));
                 }
                 catch (Exception e)
                 {
+                    //TODO: Move to logger
                     Console.WriteLine(e);
                 }
             }
+
+            _storeTypesInvalidated = false;
         }
 
         public void InvalidateStoreTypes()

@@ -16,23 +16,38 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
     [TestFixture]
     class DataServiceTests
     {
-        //TODO: Figure out why this wont work
-        public void StoreCreation()
+        [Test]
+        public void VerifyStoreTypesLoaded()
         {
-            //Application.UserConfigurationManager.OpenCurrentProfile().
-            //Application.DocumentManager.AppContextNewDocument("C:\\Users\\Michael\\AppData\\Local\\Autodesk\\C3D 2019\\eng\\Template\\acad.dwt");
-            /*Application.DocumentManager.AppContextOpenDocument("C:\\Users\\Michael\\Documents\\Drawing1.dwg");
-            string doc = Application.DocumentManager.CurrentDocument.Name;*/
-            
-            Assert.Pass("Test needs to be re-worked");
+            DataService.Current.PopulateStoreTypes();
+            Assert.AreEqual(DataService.Current._storesList.Count, 2);
         }
 
-        [Test, Category("Integration")]
+        
+        /*[Test]
+        public void StoreCreationOnDocumentCreation()
+        {
+            //TODO: Why does this end with an excpetion??
+            Application.DocumentManager.AppContextNewDocument("acad.dwt");
+            string doc = Application.DocumentManager.CurrentDocument.Name;
+
+            Assert.Pass("Test needs to be re-worked");
+        }*/
+
+        /*[Test]
+        public void StoreRemovaleOnDocumentDestruction()
+        {
+            bool app = Application.DocumentManager.IsApplicationContext;
+            Application.DocumentManager.AppContextNewDocument("acad.dwt");
+            //Application.DocumentManager.CurrentDocument.CloseAndDiscard();
+        }*/
+
+        /*[Test, Category("Integration")]
         public void GetCurrentDocumentStoreOnEmptyDoc()
         {
             //Gets the default document store, but on an empty document ensure creation works
             var result = DataService.Current.GetStore<DocumentStore>(Application.DocumentManager.CurrentDocument.Name);
             Assert.IsNotNull(result);
+        }*/
         }
     }
-}

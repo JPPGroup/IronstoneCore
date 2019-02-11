@@ -117,8 +117,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CoreExtensionApplicationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceInterfaces\DataServiceTests.cs" />
+    <Compile Include="Startup.cs" />
+    <Compile Include="TestObjects\TestDocumentStore.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
