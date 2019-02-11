@@ -2,25 +2,18 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Controls;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using Autodesk.Civil.ApplicationServices;
-using Autodesk.Windows;
 using AutoUpdaterDotNET;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
 using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
-using Jpp.Ironstone.Core.UI;
-using Jpp.Ironstone.Core.UI.Views;
 using Unity;
 using Unity.Lifetime;
-using RibbonControl = Autodesk.Windows.RibbonControl;
-using RibbonPanelSource = Autodesk.Windows.RibbonPanelSource;
-using RibbonRowPanel = Autodesk.Windows.RibbonRowPanel;
 
 [assembly: ExtensionApplication(typeof(CoreExtensionApplication))]
 [assembly: CommandClass(typeof(CoreExtensionApplication))]
@@ -119,15 +112,7 @@ namespace Jpp.Ironstone.Core
                 InitExtension();
             else
             {
-                if (ComponentManager.Ribbon == null)
-                {
-                    Autodesk.AutoCAD.ApplicationServices.Core.Application.Idle += Application_Idle;
-                }
-                else
-                {
-                    //Ribbon existis, call the initialize method directly
-                    InitExtension();
-                }
+                Autodesk.AutoCAD.ApplicationServices.Core.Application.Idle += Application_Idle;
             }
         }
 
@@ -174,9 +159,6 @@ namespace Jpp.Ironstone.Core
 
             _authentication = _container.Resolve<IAuthentication>();
 
-            if (!CoreConsole)
-                CreateUi();
-
             //Load the additional DLL files, but only not if running in debug mode
 #if !DEBUG
             Update();
@@ -187,54 +169,6 @@ namespace Jpp.Ironstone.Core
             _container.Resolve<IDataService>().PopulateStoreTypes();
 
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
-        }
-
-        public void CreateUi()
-        {
-            //Create the main UI
-            RibbonTab ironstoneTab = CreateTab();
-            CreateCoreMenu(ironstoneTab);
-        }
-
-        /// <summary>
-        /// Creates the JPP tab and adds it to the ribbon
-        /// </summary>
-        /// <returns>The created tab</returns>
-        public RibbonTab CreateTab()
-        {
-            RibbonControl rc = ComponentManager.Ribbon;
-            RibbonTab ironstoneTab = new RibbonTab
-            {
-                Name = Constants.IRONSTONE_TAB_TITLE,
-                Title = Constants.IRONSTONE_TAB_TITLE,
-                Id = Constants.IRONSTONE_TAB_ID
-            };
-
-            rc.Tabs.Add(ironstoneTab);
-            return ironstoneTab;
-        }
-
-        /// <summary>
-        /// Add the core elements of the ui
-        /// </summary>
-        /// <param name="ironstoneTab">The tab to add the ui elements to</param>
-        public void CreateCoreMenu(RibbonTab ironstoneTab)
-        {
-            RibbonPanel panel = new RibbonPanel();
-            RibbonPanelSource source = new RibbonPanelSource { Title = "General" };
-            RibbonRowPanel stack = new RibbonRowPanel();
-            
-            //stack.Items.Add(_settingsButton);
-            RibbonToggleButton aboutButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_AboutWindow_Name, Resources.About,
-                RibbonItemSize.Standard, Orientation.Horizontal, new About(), "10992236-c8f6-4732-b5e0-2d9194f07068");
-            
-            stack.Items.Add(new RibbonRowBreak());
-            stack.Items.Add(aboutButton);
-
-            //Add the new tab section to the main tab
-            source.Items.Add(stack);
-            panel.Source = source;
-            ironstoneTab.Panels.Add(panel);
         }
         #endregion
 

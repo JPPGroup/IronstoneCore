@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Jpp.Ironstone.Core.Properties {
+namespace Jpp.Ironstone.Core.UI.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Jpp.Ironstone.Core.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Jpp.Ironstone.Core.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Jpp.Ironstone.Core.UI.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,21 @@ namespace Jpp.Ironstone.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Core loaded successfully..
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static string ExtensionApplication_Inform_LoadedMain {
+        internal static System.Drawing.Bitmap About {
             get {
-                return ResourceManager.GetString("ExtensionApplication_Inform_LoadedMain", resourceCulture);
+                object obj = ResourceManager.GetObject("About", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Core extension loading begun....
+        ///   Looks up a localized string similar to About.
         /// </summary>
-        internal static string ExtensionApplication_Inform_LoadingMain {
+        internal static string ExtensionApplication_AboutWindow_Name {
             get {
-                return ResourceManager.GetString("ExtensionApplication_Inform_LoadingMain", resourceCulture);
+                return ResourceManager.GetString("ExtensionApplication_AboutWindow_Name", resourceCulture);
             }
         }
     }
