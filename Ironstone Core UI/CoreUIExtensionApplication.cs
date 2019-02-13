@@ -21,7 +21,7 @@ namespace Jpp.Ironstone.Core.UI
 
         public void Initialize()
         {
-            CoreExtensionApplication.RegisterExtension(this);
+            CoreExtensionApplication._current.RegisterExtension(this);
         }
 
         public void InjectContainer(Unity.IUnityContainer container)
