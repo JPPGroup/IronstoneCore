@@ -8,6 +8,7 @@ EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Installer", "Installer\Installer.wixproj", "{B7273690-BCCA-4A2A-BBE8-07D11D1D299E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A3BFA507-A2C4-4C33-943B-6083133EE63C} = {A3BFA507-A2C4-4C33-943B-6083133EE63C}
+		{AC79C0AE-544A-4CB5-8FB7-665754BDEA9F} = {AC79C0AE-544A-4CB5-8FB7-665754BDEA9F}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ironstone Core Tests", "Ironstone Core Tests\Ironstone Core Tests.csproj", "{1F8281CB-B208-45D3-A8CA-CDED34C48636}"

@@ -243,8 +243,17 @@ namespace Jpp.Ironstone.Core
         public static void Update()
         {
             AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, Assembly.GetExecutingAssembly());
-            AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () => Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
-                .MdiActiveDocument.SendStringToExecute("quit ", true, false, true);
+            AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
+            {
+                if (Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                        .MdiActiveDocument == null)
+                {
+                    Autodesk.AutoCAD.ApplicationServices.Core.Application.Quit();
+                    return;
+                }
+                Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                    .MdiActiveDocument?.SendStringToExecute("quit ", true, false, true);
+            };
         }
         #endregion
 
