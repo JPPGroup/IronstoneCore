@@ -9,7 +9,8 @@
 		<MediaTemplate EmbedCab="yes"/>
 
 		<Feature Id="ProductFeature" Title="Installer" Level="1">
-			<ComponentGroupRef Id="ProductComponents" />
+			<ComponentGroupRef Id="CoreProductComponents" />
+		  <ComponentGroupRef Id="CoreUIProductComponents" />
 		</Feature>
 
 	  <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
@@ -26,17 +27,14 @@
 	</Fragment>
 
 	<Fragment>
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+		<ComponentGroup Id="CoreProductComponents" Directory="INSTALLFOLDER">
 			<!-- <Component Id="ProductComponent"> -->
 		  <Component Id="IronstoneCore.dll" Guid="9E579346-97B3-43A5-8AD7-786C8A5BB284" Win64="yes">
 		    <File Id="IronstoneCore.dll" Source="..\bin\x64\Release\IronstoneCore.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
 		  </Component>
-      <Component Id="AutoUpdate.NET.dll" Guid="1030798b-fa22-45a3-9b17-58b259fe77e9" Win64="yes">
-        <File Id="AutoUpdate.NET.dll" Source="..\bin\x64\Release\Autoupdater.NET.dll" Checksum="yes"/>
+      <Component Id="AutoUpdate.dll" Guid="1030798b-fa22-45a3-9b17-58b259fe77e9" Win64="yes">
+        <File Id="AutoUpdate.dll" Source="..\bin\x64\Release\AutoUpdate.dll" Checksum="yes"/>
       </Component>
-		  <Component Id="AutoUpdate.NET.xml" Guid="d7fa9392-6023-409e-8910-3c324033289e" Win64="yes">
-		    <File Id="AutoUpdate.NET.xml" Source="..\bin\x64\Release\Autoupdater.NET.xml" Checksum="yes"/>
-		  </Component>
 		  <Component Id="dpwin64.dll" Guid="26452eb9-3b41-4083-9932-92620f4cd1bb" Win64="yes">
 		    <File Id="dpwin64.dll" Source="..\bin\x64\Release\dpwin64.dll" Checksum="yes"/>
 		  </Component>
@@ -45,6 +43,15 @@
 		  </Component>
 		  <Component Id="Unity.Abstractions.dll" Guid="0f4b43b3-fa66-495d-9e88-3694ac21bee0" Win64="yes">
 		    <File Id="Unity.Abstractions.dll" Source="..\bin\x64\Release\Unity.Abstractions.dll" Checksum="yes"/>
+		  </Component>
+		  <Component Id="Common.dll" Guid="36e91aa6-4da3-4421-b72a-44e2bea52cc8" Win64="yes">
+		    <File Id="Common.dll" Source="..\bin\x64\Release\Common.dll" Checksum="yes"/>
+		  </Component>
+		  <Component Id="ZipExtract.dll" Guid="1b7d3402-29fd-47a6-8a68-759b2f357083" Win64="yes">
+		    <File Id="ZipExtract.dll" Source="..\bin\x64\Release\ZipExtract.dll" Checksum="yes"/>
+		  </Component>
+		  <Component Id="System.Runtime.CompilerServices.Unsafe.dll" Guid="f32738ed-378c-47bb-b12d-50735f991aff" Win64="yes">
+		    <File Id="System.Runtime.CompilerServices.Unsafe.dll" Source="..\bin\x64\Release\System.Runtime.CompilerServices.Unsafe.dll" Checksum="yes"/>
 		  </Component>
 		  <Component Id="RegistryEntries" Guid="DBD2BF14-98A3-42C1-867D-72FEFF681867">
 		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.0\ACAD-2000:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
@@ -60,7 +67,17 @@
 		      <RegistryValue Type="integer" Name="MANAGED" Value="1"/>
 		    </RegistryKey>
 		  </Component>
-			<!-- </Component> -->
 		</ComponentGroup>
 	</Fragment>
+
+  <Fragment>
+    <ComponentGroup Id="CoreUIProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="IronstoneCoreUI.dll" Guid="8c629359-b5e4-4624-b038-65377827c6bb" Win64="yes">
+        <File Id="IronstoneCoreUI.dll" Source="..\bin\x64\Release\IronstoneCoreUI.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="System.ValueTuple.dll" Guid="8b729539-679d-4abc-a7c6-50a1c464c238" Win64="yes">
+        <File Id="System.ValueTuple.dll" Source="..\bin\x64\Release\System.ValueTuple.dll" Checksum="yes"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
 </Wix>

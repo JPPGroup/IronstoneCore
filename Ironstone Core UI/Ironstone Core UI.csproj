@@ -151,6 +151,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call $(SolutionDir)\SignProtect.bat "$(ProjectDir)" $(Platform) $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>call $(SolutionDir)\SignProtectCoreUI.bat "$(ProjectDir)" $(Platform) $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

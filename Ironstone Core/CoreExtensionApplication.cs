@@ -7,7 +7,6 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using Autodesk.Civil.ApplicationServices;
-using AutoUpdaterDotNET;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
@@ -53,6 +52,10 @@ namespace Jpp.Ironstone.Core
                 if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.Contains("accoreconsole"))
                 {
                     _coreConsole = true;
+                }
+                else
+                {
+                    _coreConsole = false;
                 }
 
                 return _coreConsole.Value;
@@ -188,6 +191,11 @@ namespace Jpp.Ironstone.Core
             binPath = binPath.Substring(0, binPath.LastIndexOf('\\'));
             string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
 
+            if (!CoreConsole)
+            {
+                ExtensionLoader.Load(binPath + "\\IronstoneCoreUI.dll");
+            }
+
             //Check if authenticated, otherwise block the auto loading
             if (_authentication.Authenticated())
             {
@@ -233,9 +241,9 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public static void Update()
         {
-            AutoUpdater.Start(Constants.INSTALLER_URL, Assembly.GetExecutingAssembly());
+            /*AutoUpdater.Start(Constants.INSTALLER_URL, Assembly.GetExecutingAssembly());
             AutoUpdater.ApplicationExitEvent += () => Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
-                .MdiActiveDocument.SendStringToExecute("quit ", true, false, true);
+                .MdiActiveDocument.SendStringToExecute("quit ", true, false, true);*/
         }
         #endregion
 
