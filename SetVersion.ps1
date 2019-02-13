@@ -12,4 +12,13 @@ foreach ($file in $files){
 	Set-Content -Path $file -Value $text	
 }
 
+$updatefile = Get-ChildItem -Include *IronstoneCore.xml -Recurse 
+foreach ($file in $files){
+	$text = (Get-Content -Path $file -ReadCount 0) -join "`n"	
+    $replace = ($version + '.' + $build)
+    Write-Host $replace
+	$text = $text -replace '{version}', $replace	
+	Set-Content -Path $file -Value $text	
+}
+
 Write-Host "Version set to $version.$build"
