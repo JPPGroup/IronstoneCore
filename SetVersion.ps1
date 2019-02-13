@@ -13,7 +13,7 @@ foreach ($file in $files){
 }
 
 $updatefile = Get-ChildItem -Include *IronstoneCore.xml -Recurse 
-foreach ($file in $files){
+foreach ($file in $updatefile){
 	$text = (Get-Content -Path $file -ReadCount 0) -join "`n"	
     $replace = ($version + '.' + $build)
     Write-Host $replace
