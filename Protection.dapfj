@@ -40,7 +40,7 @@
 
    "Files": [
       {
-         "InputName": "..\\bin\\x64\\Release\\dpwin64.dll",
+         "InputName": "dpwin64.dll",
          "OutputName": "..\\bin\\x64\\Release\\dpwin64.dll",
          "CallingProgram": null,
          "Licence": "Core Perpetual",

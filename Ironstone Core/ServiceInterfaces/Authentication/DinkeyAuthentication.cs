@@ -9,6 +9,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 {
     public class DinkeyAuthentication : IAuthentication
     {
+        public int ErrorCode { get; set; }
+
         public bool Authenticated()
         {
             int ret_code;
@@ -18,9 +20,9 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             dris.function = DRIS.PROTECTION_CHECK; // standard protection check
             dris.flags = 0; // no extra flags, but you may want to specify some if you want to start a network user or decrement execs,...
 
-            ret_code = DinkeyPro.DDProtCheck(dris, null);
+            ErrorCode = DinkeyPro.DDProtCheck(dris, null);
 
-            if (ret_code != 0)
+            if (ErrorCode != 0)
             {
                 //DisplayError(ret_code, dris.ext_err);
                 return false;

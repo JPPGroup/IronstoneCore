@@ -130,9 +130,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dpwin64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="dpwin64.dll" />
     <Content Include="IronstoneCore.xml" />
     <Content Include="Resources\clock_go.png" />
     <Content Include="Resources\clock_go1.png" />
