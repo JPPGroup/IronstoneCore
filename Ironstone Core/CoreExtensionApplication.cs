@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Forms;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
@@ -29,6 +30,8 @@ namespace Jpp.Ironstone.Core
         #region Public Variables
 
         public static CoreExtensionApplication _current;
+
+        public Control SyncContext;
 
         /// <summary>
         /// Returns true if currently running under the Core Console
@@ -104,6 +107,9 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public void Initialize()
         {
+            SyncContext = new Control();
+            SyncContext.CreateControl();
+
             _current = this;
 
             //If not running in console only, detect if ribbon is currently loaded, and if not wait until the application is Idle.
@@ -233,7 +239,7 @@ namespace Jpp.Ironstone.Core
         }
         #endregion
 
-        public static void RegisterExtension(IIronstoneExtensionApplication extension)
+        public void RegisterExtension(IIronstoneExtensionApplication extension)
         {
             DataService.Current.InvalidateStoreTypes();
             extension.InjectContainer(_current._container);

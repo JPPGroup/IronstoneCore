@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
@@ -37,10 +38,30 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         /*[Test]
         public void StoreRemovaleOnDocumentDestruction()
         {
-            bool app = Application.DocumentManager.IsApplicationContext;
-            Application.DocumentManager.AppContextNewDocument("acad.dwt");
-            //Application.DocumentManager.CurrentDocument.CloseAndDiscard();
-        }*/
+            var result = CoreExtensionApplication._current.SyncContext.BeginInvoke(new TestDelegate(() =>
+                    {
+
+                        string doc = Application.DocumentManager.CurrentDocument.Name;
+                        string doc2 = Application.DocumentManager.MdiActiveDocument.Name;
+                        bool app = Application.DocumentManager.IsApplicationContext;
+                        //Application.DocumentManager.AppContextNewDocument("acad.dwt");
+                        Application.DocumentManager.AppContextOpenDocument(
+                            "C:\\Users\\michaell\\Documents\\Centreline.dwg");
+                        doc = Application.DocumentManager.CurrentDocument.Name;
+                        doc2 = Application.DocumentManager.MdiActiveDocument.Name;
+                        Application.DocumentManager.CurrentDocument.CloseAndDiscard();
+
+                        Application.DocumentManager.MdiActiveDocument.Editor.WriteMessage("Test");
+
+                        Assert.Fail("Designed to fail");
+                    }
+                ));
+
+            result.AsyncWaitHandle.WaitOne();
+
+            Console.WriteLine("Test");
+
+        }
 
         /*[Test, Category("Integration")]
         public void GetCurrentDocumentStoreOnEmptyDoc()
@@ -50,4 +71,6 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             Assert.IsNotNull(result);
         }*/
         }
-    }
+
+    delegate void TestDelegate();
+}
