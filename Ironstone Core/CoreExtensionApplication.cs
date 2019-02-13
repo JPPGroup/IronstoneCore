@@ -7,6 +7,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using Autodesk.Civil.ApplicationServices;
+using AutoUpdate;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
@@ -24,7 +25,7 @@ namespace Jpp.Ironstone.Core
     /// Loader class, the main entry point for the full application suite. Implements IExtensionApplication is it
     /// automatically initialised and terminated by AutoCad.
     /// </summary>
-    public class CoreExtensionApplication : IExtensionApplication
+    public class CoreExtensionApplication : IExtensionApplication, IUpdateable
     {
         #region Public Variables
 
@@ -241,9 +242,9 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public static void Update()
         {
-            /*AutoUpdater.Start(Constants.INSTALLER_URL, Assembly.GetExecutingAssembly());
-            AutoUpdater.ApplicationExitEvent += () => Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
-                .MdiActiveDocument.SendStringToExecute("quit ", true, false, true);*/
+            AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, Assembly.GetExecutingAssembly());
+            AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () => Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                .MdiActiveDocument.SendStringToExecute("quit ", true, false, true);
         }
         #endregion
 

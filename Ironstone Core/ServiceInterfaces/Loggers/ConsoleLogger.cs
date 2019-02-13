@@ -14,13 +14,13 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
         public void Entry(string message, Severity sev)
         {
             Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
-            ed.WriteMessage(message + "\n");
+            ed?.WriteMessage(message + "\n");
         }
 
         public void LogEvent(Event eventType, string eventParameters)
         {
             Editor ed = Application.DocumentManager.MdiActiveDocument.Editor;
-            ed.WriteMessage(eventType + " - " + eventParameters + "\n");
+            ed?.WriteMessage(eventType + " - " + eventParameters + "\n");
         }
         #endregion
     }
