@@ -1,24 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Jpp.Common;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
-    public interface IAuthentication
+    public interface IAuthentication : INotifyPropertyChanged
     {
+        AuthStatus Status { get; }
+
         bool Authenticated();
 
         bool AuthenticateModule(string Path);
-
-        AuthStatus GetAuthStatus();
     }
 
     public enum AuthStatus
     {
         OK,
-        NoDongle,
+        DongleError,
+        LicenseNotFound,
+        NetworkLicenseFailure,
         Unknown
     }
 }

@@ -84,6 +84,9 @@
       <HintPath>..\packages\AutoCAD.NET.23.0.0\lib\net47\AdWindows.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.0.1.4\lib\netstandard2.0\Common.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />

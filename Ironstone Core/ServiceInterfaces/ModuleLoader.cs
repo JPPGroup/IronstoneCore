@@ -64,20 +64,21 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private void LoadAssembly(string dll)
         {
-            if (dll.Contains("Ironstone"))
-            {
-                //Load the additional libraries found
-                if (!ExtensionLoader.IsLoaded(dll))
-                {
-                    //Skip protection dll, is this needed???
-                    if (!dll.Contains("dpwin"))
-                    {
-                        AssemblyName info = AssemblyName.GetAssemblyName(dll);
-                        Module m = new Module();
-                        m.Name = info.Name;
-                        m.Version = info.Version.ToString();
-                        m.UpdateAvailable = false;
 
+            //Load the additional libraries found
+            if (!ExtensionLoader.IsLoaded(dll))
+            {
+                //Skip protection dll, is this needed???
+                if (!dll.Contains("dpwin"))
+                {
+                    AssemblyName info = AssemblyName.GetAssemblyName(dll);
+                    Module m = new Module();
+                    m.Name = info.Name;
+                    m.Version = info.Version.ToString();
+                    m.UpdateAvailable = false;
+
+                    if (m.Name.Contains("Ironstone"))
+                    {
                         if (_authentication.AuthenticateModule(dll))
                         {
                             Assembly target = ExtensionLoader.Load(dll);
@@ -94,7 +95,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 }
             }
 
-            //TODO: Pass _container to do injection here
+        //TODO: Pass _container to do injection here
 
         }
     }
