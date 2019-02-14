@@ -128,21 +128,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             _stores.Add(document.Name, storeContainer);
 
             document.Database.BeginSave += (o, args) => SaveStores(document.Name);
-            document.CommandEnded += (o, args) =>
-            {
-                foreach (DocumentStore documentStore in _stores[document.Name].Values)
-                {
-                    //TODO: Check this works
-                    if (args.GlobalCommandName.Contains("regen"))
-                    {
-                        documentStore.ReenerateManagers();
-                    }
-                    else
-                    {
-                        documentStore.UpdateManagers();
-                    }
-                }
-            };
+            document.CommandEnded += (o, args) => CommandEnded(document.Name, args.GlobalCommandName);
         }
 
         private object CreateDocumentStore(Type T, Document doc)
@@ -185,6 +171,22 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             foreach (DocumentStore documentStore in _stores[ID].Values)
             {
                 documentStore.SaveWrapper();
+            }
+        }
+
+        private void CommandEnded(string DocName, string GlobalCommandName)
+        {
+            foreach (DocumentStore documentStore in _stores[DocName].Values)
+            {
+                //TODO: Check this works
+                if (GlobalCommandName.Contains("regen"))
+                {
+                    documentStore.ReenerateManagers();
+                }
+                else
+                {
+                    documentStore.UpdateManagers();
+                }
             }
         }
 

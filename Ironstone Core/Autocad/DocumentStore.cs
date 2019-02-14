@@ -30,6 +30,7 @@ namespace Jpp.Ironstone.Core.Autocad
             acDoc = doc;
             acCurDb = doc.Database;
             _managerTypes = ManagerTypes;
+            Managers = new SerializableDictionary<Type, IDrawingObjectManager>();
         }
         #endregion
 
@@ -217,7 +218,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             else
             {
-                T dom = (T)Activator.CreateInstance(typeof(T));
+                T dom = (T)Activator.CreateInstance(typeof(T), this.acDoc);
                 Managers.Add(typeof(T), dom);
                 return dom;
             }
