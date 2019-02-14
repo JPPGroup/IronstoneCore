@@ -70,10 +70,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public T GetStore<T>(string ID) where T : DocumentStore
         {
+            Document doc = GetDocumentByName(ID);
+
             if (!_stores.ContainsKey(ID))
             {
                 _logger.Entry("Store not found.\n", Severity.Warning);
-                Document doc = GetDocumentByName(ID);
                 if (doc != null)
                 {
                     CreateStoresOnDocument(doc);
@@ -84,6 +85,20 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     throw new ArgumentException();
                 }
             }
+
+            Dictionary<Type, DocumentStore> foundStores = _stores[ID];
+
+            if (!foundStores.ContainsKey(typeof(T)))
+            {
+                if (!_storesList.Contains(typeof(T)))
+                {
+                    _logger.Entry("Store type not recognised.\n", Severity.Crash);
+                    throw new ArgumentException();
+                }
+
+                foundStores.Add(typeof(T), (DocumentStore) CreateDocumentStore(typeof(T), doc));
+            }
+
             return (T)_stores[ID][typeof(T)];
         }
 

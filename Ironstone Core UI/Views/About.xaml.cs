@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Jpp.Ironstone.Core.UI.ViewModels;
 
 namespace Jpp.Ironstone.Core.UI.Views
 {
@@ -20,11 +21,11 @@ namespace Jpp.Ironstone.Core.UI.Views
     /// </summary>
     public partial class About : UserControl
     {
-        public About()
+        public About(AboutViewModel viewModel)
         {
             InitializeComponent();
 
-            this.Version.Content = Assembly.GetExecutingAssembly().GetName().Version;
+            this.DataContext = viewModel;
         }
     }
 }

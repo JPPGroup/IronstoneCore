@@ -6,12 +6,16 @@ using System.Windows.Controls;
 using Autodesk.Windows;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.UI.Properties;
+using Jpp.Ironstone.Core.UI.ViewModels;
 using Jpp.Ironstone.Core.UI.Views;
+using Unity;
 
 namespace Jpp.Ironstone.Core.UI
 {
     public class CoreUIExtensionApplication : IIronstoneExtensionApplication
     {
+        private IUnityContainer _container;
+
         public void CreateUI()
         {
             //Create the main UI
@@ -26,7 +30,9 @@ namespace Jpp.Ironstone.Core.UI
 
         public void InjectContainer(Unity.IUnityContainer container)
         {
-            
+            _container = container;
+            _container.RegisterType<About>();
+            _container.RegisterType<AboutViewModel>();
         }
 
         public void Terminate()
@@ -64,7 +70,7 @@ namespace Jpp.Ironstone.Core.UI
 
             //stack.Items.Add(_settingsButton);
             RibbonToggleButton aboutButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_AboutWindow_Name, Resources.About,
-                RibbonItemSize.Standard, Orientation.Horizontal, new About(), "10992236-c8f6-4732-b5e0-2d9194f07068");
+                RibbonItemSize.Standard, Orientation.Horizontal, _container.Resolve<About>(), "10992236-c8f6-4732-b5e0-2d9194f07068");
 
             stack.Items.Add(new RibbonRowBreak());
             stack.Items.Add(aboutButton);

@@ -86,6 +86,9 @@ namespace Jpp.Ironstone.Core
                 return _civil3D.Value;
             }
         }
+
+        public UnityContainer Container { get; set; }
+
         #endregion
 
         #region Private variables
@@ -99,7 +102,7 @@ namespace Jpp.Ironstone.Core
         /// </summary>
         private static bool? _civil3D;
 
-        private UnityContainer _container;
+        
         private ILogger _logger;
         private IAuthentication _authentication;
         #endregion
@@ -157,88 +160,33 @@ namespace Jpp.Ironstone.Core
         public void InitExtension()
         {
             //Unity registration
-            _container= new UnityContainer();
+            Container= new UnityContainer();
             //TODO: Add code here for choosing log type
-            _container.RegisterInstance<ILogger>(new ConsoleLogger(), new ContainerControlledLifetimeManager());
-            _container.RegisterInstance<IAuthentication>(new DinkeyAuthentication(), new ContainerControlledLifetimeManager());
+            Container.RegisterType<ILogger, ConsoleLogger>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IAuthentication, DinkeyAuthentication>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IModuleLoader, ModuleLoader>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
 
-            _logger = _container.Resolve<ILogger>();
+            _logger = Container.Resolve<ILogger>();
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
-
-            _container.RegisterInstance<IDataService>(new DataService(_logger), new ContainerControlledLifetimeManager());
-
-            _authentication = _container.Resolve<IAuthentication>();
+            _authentication = Container.Resolve<IAuthentication>();
 
             //Load the additional DLL files, but only not if running in debug mode
 #if !DEBUG
             Update();
 #endif
-            LoadModules();
-            
+            IDataService dataService = Container.Resolve<IDataService>();
+
+            Container.Resolve<IModuleLoader>().Load();
+
             //Once all modules have been loaded inform data service
-            DataService.Current.PopulateStoreTypes();
+            dataService.PopulateStoreTypes();
 
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
         }
         #endregion
 
         #region Updater
-        /// <summary>
-        /// Find all assemblies in the subdirectory, and load them into memory
-        /// </summary>
-        public void LoadModules()
-        {
-            string binPath = Assembly.GetExecutingAssembly().Location;
-            binPath = binPath.Substring(0, binPath.LastIndexOf('\\'));
-            string dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
-
-            if (!CoreConsole)
-            {
-                ExtensionLoader.Load(binPath + "\\IronstoneCoreUI.dll");
-            }
-
-            //Check if authenticated, otherwise block the auto loading
-            if (_authentication.Authenticated())
-            {
-                //Iterate over every dll found in bin folder
-                foreach (string dll in Directory.GetFiles(binPath, "*.dll"))
-                {
-                    //Load the additional libraries found
-                    if (!ExtensionLoader.IsLoaded(dll))
-                    {
-                        //Skip protection dll, is this needed???
-                        if (!dll.Contains("dpwin"))
-                        {
-                            Assembly target = ExtensionLoader.Load(dll);
-                        }
-                    }
-
-                    //TODO: Pass _container to do injection here
-                }
-                if (Directory.Exists(dataPath))
-                {
-                    foreach (string dll in Directory.GetFiles(dataPath, "*.dll"))
-                    {
-                        //Load the additional libraries found
-                        if (!ExtensionLoader.IsLoaded(dll))
-                        {
-                            Assembly target = ExtensionLoader.Load(dll);
-                        }
-
-                        //TODO: Pass _container to do injection here
-                    }
-                }
-                else
-                {
-                    //Log.Entry(Resources.Error_ModuleDirectoryMissing, Severity.Error);
-                }
-            }
-            else
-            {
-                //Log.Entry(Resources.Error_ModuleLoadFailedAuthentication, Severity.Error);
-            }
-        }
-        
         // ReSharper disable once UnusedMember.Global
         public static void Update()
         {
@@ -260,7 +208,7 @@ namespace Jpp.Ironstone.Core
         public void RegisterExtension(IIronstoneExtensionApplication extension)
         {
             DataService.Current.InvalidateStoreTypes();
-            extension.InjectContainer(_current._container);
+            extension.InjectContainer(_current.Container);
             if (!CoreConsole)
             {
                 extension.CreateUI();

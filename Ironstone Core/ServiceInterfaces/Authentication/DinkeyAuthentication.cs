@@ -9,10 +9,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 {
     public class DinkeyAuthentication : IAuthentication
     {
-        public int ErrorCode { get; set; }
+        public int ErrorCode { get; set; } = -1;
 
         public bool Authenticated()
         {
+            ErrorCode = -1;
+
             int ret_code;
             DRIS dris = new DRIS(); // initialise the DRIS with random values & set the header
 
@@ -29,6 +31,23 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             }
 
             return true;
+        }
+
+        public bool AuthenticateModule(string Path)
+        {
+            return true;
+        }
+
+        public AuthStatus GetAuthStatus()
+        {
+            switch (ErrorCode)
+            {
+                case 0:
+                    return AuthStatus.OK;
+
+                default:
+                    return AuthStatus.Unknown;
+            }
         }
     }
 }
