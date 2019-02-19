@@ -13,6 +13,8 @@
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <StartAction>Program</StartAction>
@@ -147,6 +149,16 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>call $(SolutionDir)\SignProtect.bat "$(ProjectDir)" $(Platform) $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\Jpp.Common.Tooling.Signing.0.2.0\build\Jpp.Common.Tooling.Signing.targets" Condition="Exists('..\packages\Jpp.Common.Tooling.Signing.0.2.0\build\Jpp.Common.Tooling.Signing.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Jpp.Common.Tooling.Signing.0.2.0\build\Jpp.Common.Tooling.Signing.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Jpp.Common.Tooling.Signing.0.2.0\build\Jpp.Common.Tooling.Signing.targets'))" />
+    <Error Condition="!Exists('..\packages\Jpp.Common.Tooling.Protection.0.3.0\build\Jpp.Common.Tooling.Protection.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Jpp.Common.Tooling.Protection.0.3.0\build\Jpp.Common.Tooling.Protection.targets'))" />
+  </Target>
+  <Import Project="..\packages\Jpp.Common.Tooling.Protection.0.3.0\build\Jpp.Common.Tooling.Protection.targets" Condition="Exists('..\packages\Jpp.Common.Tooling.Protection.0.3.0\build\Jpp.Common.Tooling.Protection.targets')" />
 </Project>
