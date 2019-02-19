@@ -24,11 +24,11 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         [Test]
         public void VerifyStoreTypesLoaded()
         {
-            int count = RunTest<int>("VerifyStoreTypesLoadedResident", null);
+            int count = RunTest<int>("VerifyStoreTypesLoadedResident");
             Assert.AreEqual(count, 2);
         }
 
-        public int VerifyStoreTypesLoadedResident(object data)
+        public int VerifyStoreTypesLoadedResident()
         {
             DataService.Current.PopulateStoreTypes();
             return DataService.Current._storesList.Count;
