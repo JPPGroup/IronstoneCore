@@ -24,11 +24,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         [Test]
         public void VerifyStoreTypesLoaded()
         {
-            TestResponse resp = RunTest("VerifyStoreTypesLoadedResident", null);
-            Assert.True(resp.Result);
-            int? count = resp.Data as int?;
-            Assert.NotNull(count);
-
+            int count = RunTest<int>("VerifyStoreTypesLoadedResident", null);
             Assert.AreEqual(count, 2);
         }
 
@@ -91,6 +87,4 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         public override string AssemblyPath { get; } = Assembly.GetExecutingAssembly().Location;
         public override string AssemblyType { get; } = typeof(DataServiceTests).FullName;
     }
-
-    delegate void TestDelegate();
 }
