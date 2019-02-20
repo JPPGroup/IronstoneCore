@@ -195,7 +195,6 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public void Update()
         {
-            Debugger.Launch();
             AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, this);
             AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
             {
