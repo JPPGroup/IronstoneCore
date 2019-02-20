@@ -51,7 +51,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 
             dris.size = Marshal.SizeOf(dris);
             dris.function = DRIS.PROTECTION_CHECK; // standard protection check
-            dris.flags = 0; // no extra flags, but you may want to specify some if you want to start a network user or decrement execs,...
+            dris.flags = 4; // no extra flags, but you may want to specify some if you want to start a network user or decrement execs,...
 
             ErrorCode = DinkeyPro.DDProtCheck(dris, null);
 

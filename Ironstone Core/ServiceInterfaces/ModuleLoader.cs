@@ -52,7 +52,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             //Check if authenticated, otherwise block the auto loading
             if (_authentication.Authenticated())
             {
-                Debugger.Launch();
                 foreach (Module m in LoadedModules.Values)
                 {
                     if (m.Authenticated)
