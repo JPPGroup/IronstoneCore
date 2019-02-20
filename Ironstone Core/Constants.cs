@@ -6,5 +6,6 @@
         public const string IRONSTONE_TAB_ID = "IRONSTONE";
 
         public const string INSTALLER_URL = "https://ironstone.blob.core.windows.net/ironstone/IronstoneCore.xml";
+        public const string OBJECTMODEL_URL = "https://ironstone.blob.core.windows.net/ironstone/IronstoneObjectmodel.xml";
     }
 }

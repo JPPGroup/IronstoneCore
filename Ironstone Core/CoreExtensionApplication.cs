@@ -105,6 +105,7 @@ namespace Jpp.Ironstone.Core
         
         private ILogger _logger;
         private IAuthentication _authentication;
+        private Objectmodel _objectmodel;
         #endregion
 
         #region Autocad Extension Lifecycle
@@ -166,10 +167,13 @@ namespace Jpp.Ironstone.Core
             Container.RegisterType<IAuthentication, DinkeyAuthentication>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IModuleLoader, ModuleLoader>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<Objectmodel, Objectmodel>(new ContainerControlledLifetimeManager());
 
             _logger = Container.Resolve<ILogger>();
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
             _authentication = Container.Resolve<IAuthentication>();
+
+            Container.Resolve<IModuleLoader>().Scan();
 
             //Load the additional DLL files, but only not if running in debug mode
 #if !DEBUG
@@ -188,7 +192,7 @@ namespace Jpp.Ironstone.Core
 
         #region Updater
         // ReSharper disable once UnusedMember.Global
-        public static void Update()
+        public void Update()
         {
             AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, Assembly.GetExecutingAssembly());
             AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
@@ -202,6 +206,8 @@ namespace Jpp.Ironstone.Core
                 Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
                     .MdiActiveDocument?.SendStringToExecute("quit ", true, false, true);
             };
+
+            //_objectmodel = Container.Resolve<Objectmodel>();
         }
         #endregion
 

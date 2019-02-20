@@ -64,8 +64,11 @@
       <HintPath>..\packages\AutoCAD.NET.Model.23.0.0\lib\net47\acdbmgdbrep.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="BaseTestLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\BaseTestLibrary.1.0.8\lib\net472\BaseTestLibrary.dll</HintPath>
+    <Reference Include="AcTestFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\AcTestFramework.1.0.12\lib\net472\AcTestFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.0.1.4\lib\netstandard2.0\Common.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
@@ -83,7 +86,9 @@
   <ItemGroup>
     <Compile Include="CoreExtensionApplicationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceInterfaces\Authentication\DinkeyAuthenticationTests.cs" />
     <Compile Include="ServiceInterfaces\DataServiceTests.cs" />
+    <Compile Include="ServiceInterfaces\ModuleLoaderTests.cs" />
     <Compile Include="TestObjects\TestDocumentStore.cs" />
   </ItemGroup>
   <ItemGroup>

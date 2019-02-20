@@ -29,9 +29,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
         }
 
         private AuthStatus _status;
+        private ILogger _logger;
 
-        public DinkeyAuthentication()
+        public DinkeyAuthentication(ILogger logger)
         {
+            _logger = logger;
             ErrorCode = -1;
         }
 
@@ -55,6 +57,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             if (ErrorCode != 0)
             {
                 //DisplayError(ret_code, dris.ext_err);
+                _logger.Entry("Authentication failed - " + ErrorCode, Severity.Warning);
                 return false;
             }
 
@@ -63,7 +66,45 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 
         public bool AuthenticateModule(string Path)
         {
+            int LocalErrorCode = -1;
+
+            int ret_code;
+            DRIS dris = new DRIS(); // initialise the DRIS with random values & set the header
+
+            dris.size = Marshal.SizeOf(dris);
+            dris.function = DRIS.PROTECTION_CHECK; // standard protection check
+            dris.flags = 0; // no extra flags, but you may want to specify some if you want to start a network user or decrement execs,...
+            dris.alt_licence_name = GetModuleNameFromPath(Path);
+
+            LocalErrorCode = DinkeyPro.DDProtCheck(dris, null);
+
+            if (ErrorCode != 0)
+            {
+                //DisplayError(ret_code, dris.ext_err);
+                _logger.Entry("Module authentication failed - " + ErrorCode, Severity.Warning);
+                return false;
+            }
+
             return true;
+        }
+
+        internal string GetModuleNameFromPath(string Path)
+        {
+            //Get module name
+            string name;
+
+            if (Path.Contains(" Objectmodel.dll"))
+            {
+                int IndexOfSlash = Path.LastIndexOf("\\") + 1;
+                int IndexOfSpace = Path.LastIndexOf(" Objectmodel.dll");
+                name = Path.Substring(IndexOfSlash, IndexOfSpace - IndexOfSlash);
+            }
+            else
+            {
+                return null;
+            }
+
+            return name;
         }
 
         private AuthStatus TranslateCode(int Code)

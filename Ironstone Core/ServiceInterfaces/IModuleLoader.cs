@@ -8,16 +8,19 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     public interface IModuleLoader
     {
+        void Scan();
         void Load();
 
         IEnumerable<Module> GetModules();
     }
 
-    public struct Module
+    public class Module
     {
         public string Name { get; set; }
+        public string Path { get; set; }
         public string Version { get; set; }
         public bool UpdateAvailable { get; set; }
         public bool Authenticated { get; set; }
+        public bool Loaded { get; set; }
     }
 }

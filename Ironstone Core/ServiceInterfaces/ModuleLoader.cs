@@ -6,7 +6,7 @@ using Autodesk.AutoCAD.Runtime;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
-    class ModuleLoader : IModuleLoader
+    internal class ModuleLoader : IModuleLoader
     {
         private Dictionary<string, Module> LoadedModules;
 
@@ -24,6 +24,22 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             LoadedModules = new Dictionary<string, Module>();
         }
 
+        public void Scan()
+        {
+            //Iterate over every dll found in bin folder
+            foreach (string dll in Directory.GetFiles(binPath, "*.dll"))
+            {
+                GetAssemblyInfo(dll);
+            }
+            if (Directory.Exists(dataPath))
+            {
+                foreach (string dll in Directory.GetFiles(dataPath, "*.dll"))
+                {
+                    GetAssemblyInfo(dll);
+                }
+            }
+        }
+
         public void Load()
         {
             if (!CoreExtensionApplication.CoreConsole)
@@ -34,26 +50,13 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             //Check if authenticated, otherwise block the auto loading
             if (_authentication.Authenticated())
             {
-                //Iterate over every dll found in bin folder
-                foreach (string dll in Directory.GetFiles(binPath, "*.dll"))
+                foreach (Module m in LoadedModules.Values)
                 {
-                    LoadAssembly(dll);
-                }
-                if (Directory.Exists(dataPath))
-                {
-                    foreach (string dll in Directory.GetFiles(dataPath, "*.dll"))
+                    if (m.Authenticated)
                     {
-                        LoadAssembly(dll);
+                        LoadAssembly(m.Path);
                     }
                 }
-                else
-                {
-                    //Log.Entry(Resources.Error_ModuleDirectoryMissing, Severity.Error);
-                }
-            }
-            else
-            {
-                //Log.Entry(Resources.Error_ModuleLoadFailedAuthentication, Severity.Error);
             }
         }
 
@@ -64,39 +67,46 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private void LoadAssembly(string dll)
         {
-
             //Load the additional libraries found
             if (!ExtensionLoader.IsLoaded(dll))
             {
-                //Skip protection dll, is this needed???
-                if (!dll.Contains("dpwin"))
-                {
-                    AssemblyName info = AssemblyName.GetAssemblyName(dll);
-                    Module m = new Module();
-                    m.Name = info.Name;
-                    m.Version = info.Version.ToString();
-                    m.UpdateAvailable = false;
+                Assembly target = ExtensionLoader.Load(dll);
+                //TODO: Verify actually loaded
 
-                    if (m.Name.Contains("Ironstone"))
-                    {
-                        if (_authentication.AuthenticateModule(dll))
-                        {
-                            Assembly target = ExtensionLoader.Load(dll);
-                            m.Authenticated = true;
-                        }
-                        else
-                        {
-                            m.Authenticated = false;
-                        }
-
-                        //TODO: Verify actually loaded
-                        LoadedModules.Add(dll, m);
-                    }
-                }
+                LoadedModules[dll].Loaded = true;
             }
 
-        //TODO: Pass _container to do injection here
-
+            //TODO: Pass _container to do injection here
         }
+
+        private void GetAssemblyInfo(string dll)
+        {
+            if (!dll.Contains("dpwin"))
+            {
+                AssemblyName info = AssemblyName.GetAssemblyName(dll);
+                Module m = new Module();
+                m.Name = info.Name;
+                m.Version = info.Version.ToString();
+                m.UpdateAvailable = false;
+                m.Loaded = false;
+                m.Path = dll;
+
+                if (m.Name.Contains("Ironstone"))
+                {
+                    if (_authentication.AuthenticateModule(dll))
+                    {
+                        m.Authenticated = true;
+                    }
+                    else
+                    {
+                        m.Authenticated = false;
+                    }
+
+                    //TODO: Verify actually loaded
+                    LoadedModules.Add(dll, m);
+                }
+            }
+        }
+    
     }
 }

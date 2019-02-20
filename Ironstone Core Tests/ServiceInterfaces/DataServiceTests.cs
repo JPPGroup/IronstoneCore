@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -9,8 +10,7 @@ using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
-using BaseTestLibrary;
-using BaseTestLibrary.Serialization;
+using Jpp.AcTestFramework;
 using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using NUnit.Framework;
@@ -19,18 +19,21 @@ using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 {
     [TestFixture]
-    class DataServiceTests : BaseTest
+    class DataServiceTests : BaseNUnitTestFixture
     {
+        public DataServiceTests() : base(Assembly.GetExecutingAssembly(), typeof(DataServiceTests)) { }
+
         [Test]
         public void VerifyStoreTypesLoaded()
         {
             int count = RunTest<int>("VerifyStoreTypesLoadedResident");
-            Assert.AreEqual(count, 2);
+            Assert.AreEqual(2, count);
         }
 
         public int VerifyStoreTypesLoadedResident()
         {
-            DataService.Current.PopulateStoreTypes();
+            DataService ds = DataService.Current;
+            ds.PopulateStoreTypes();
             return DataService.Current._storesList.Count;
         }
 
@@ -80,11 +83,5 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             var result = DataService.Current.GetStore<DocumentStore>(Application.DocumentManager.CurrentDocument.Name);
             Assert.IsNotNull(result);
         }*/
-        public override Guid FixtureGuid { get; } = new Guid();
-
-        public override string DrawingFile { get; } =
-            @"C:\Repos\Ironstone\ironstone-core\Ironstone Core Tests\Blank.dwg";
-        public override string AssemblyPath { get; } = Assembly.GetExecutingAssembly().Location;
-        public override string AssemblyType { get; } = typeof(DataServiceTests).FullName;
     }
 }

@@ -3,7 +3,7 @@ using Autodesk.AutoCAD.EditorInput;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
-    class ConsoleLogger : ILogger
+    public class ConsoleLogger : ILogger
     {
         #region Interfaces
         public void Entry(string message)
