@@ -17,7 +17,7 @@
 
    "Licences": [
       {
-         "Name": "Structures Perpetual",
+         "Name": "IronstoneStructures",
          "Executions": "no limit",
          "ExecutionWarning": null,
          "ExpiryDate": "no limit",
@@ -27,7 +27,7 @@
          "LicenceMaxNetUsers": "no limit"
       },
       {
-         "Name": "Core Perpetual",
+         "Name": "IronstoneCore",
          "Executions": "no limit",
          "ExecutionWarning": null,
          "ExpiryDate": "no limit",
@@ -43,7 +43,7 @@
          "InputName": "dpwin64.dll",
          "OutputName": "..\\bin\\x64\\Release\\dpwin64.dll",
          "CallingProgram": null,
-         "Licence": "Core Perpetual",
+         "Licence": "IronstoneCore",
          "Method": "API",
          "ShellOptions": {
             "DecrementExecution": true,

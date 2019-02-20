@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -66,6 +67,10 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 
         public bool AuthenticateModule(string Path)
         {
+            string moduleName = GetModuleNameFromPath(Path);
+            if (moduleName.Contains("Objectmodel"))
+                return true;
+
             int LocalErrorCode = -1;
 
             int ret_code;
@@ -73,15 +78,15 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 
             dris.size = Marshal.SizeOf(dris);
             dris.function = DRIS.PROTECTION_CHECK; // standard protection check
-            dris.flags = 0; // no extra flags, but you may want to specify some if you want to start a network user or decrement execs,...
-            dris.alt_licence_name = GetModuleNameFromPath(Path);
+            dris.flags = 128; // no extra flags, but you may want to specify some if you want to start a network user or decrement execs,...
+            dris.alt_licence_name = moduleName;
 
             LocalErrorCode = DinkeyPro.DDProtCheck(dris, null);
-
-            if (ErrorCode != 0)
+            
+            if (LocalErrorCode != 0)
             {
                 //DisplayError(ret_code, dris.ext_err);
-                _logger.Entry("Module authentication failed - " + ErrorCode, Severity.Warning);
+                _logger.Entry("Module authentication failed - " + LocalErrorCode, Severity.Warning);
                 return false;
             }
 
@@ -93,7 +98,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             //Get module name
             string name;
 
-            if (Path.Contains(" Objectmodel.dll"))
+            /*if (Path.Contains(" Objectmodel.dll"))
             {
                 int IndexOfSlash = Path.LastIndexOf("\\") + 1;
                 int IndexOfSpace = Path.LastIndexOf(" Objectmodel.dll");
@@ -102,7 +107,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             else
             {
                 return null;
-            }
+            }*/
+
+            int IndexOfSlash = Path.LastIndexOf("\\") + 1;
+            int IndexOfSpace = Path.LastIndexOf(".dll");
+            name = Path.Substring(IndexOfSlash, IndexOfSpace - IndexOfSlash);
 
             return name;
         }

@@ -62,8 +62,8 @@
       <HintPath>C:\Program Files\Autodesk\AutoCAD 2019\C3D\AeccDbMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AutoUpdate, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoUpdate.1.0.6\lib\net47\AutoUpdate.dll</HintPath>
+    <Reference Include="AutoUpdate, Version=1.0.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoUpdate.1.0.8\lib\net47\AutoUpdate.dll</HintPath>
     </Reference>
     <Reference Include="Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.0.1.4\lib\netstandard2.0\Common.dll</HintPath>
@@ -84,8 +84,8 @@
       <HintPath>..\packages\Unity.5.9.4\lib\net47\Unity.Container.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
-    <Reference Include="ZipExtract, Version=1.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoUpdate.1.0.6\lib\net47\ZipExtract.dll</HintPath>
+    <Reference Include="ZipExtract, Version=1.0.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoUpdate.1.0.8\lib\net47\ZipExtract.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -137,15 +137,6 @@
   <ItemGroup>
     <None Include="dpwin64.dll" />
     <None Include="IronstoneCore.xml" />
-    <Content Include="Resources\clock_go.png" />
-    <Content Include="Resources\clock_go1.png" />
-    <Content Include="Resources\clock_go_32.png" />
-    <Content Include="Resources\clock_play.png" />
-    <Content Include="Resources\download.png" />
-    <Content Include="Resources\download1.png" />
-    <Content Include="Resources\download_32.png" />
-    <Content Include="Resources\hand_point.png" />
-    <Content Include="Resources\update.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

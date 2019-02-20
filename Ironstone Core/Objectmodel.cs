@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using AutoUpdate;
+using Jpp.AutoUpdate;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core
@@ -27,5 +27,9 @@ namespace Jpp.Ironstone.Core
         {
 
         }
+
+        public string CompanyAttribute { get; } = "JPP Consulting";
+        public string AppTitle { get; } = "JPP Ironstone";
+        public Version InstalledVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version;
     }
 }

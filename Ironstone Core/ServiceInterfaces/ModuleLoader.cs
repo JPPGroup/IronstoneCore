@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Autodesk.AutoCAD.Runtime;
@@ -44,12 +45,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             if (!CoreExtensionApplication.CoreConsole)
             {
-                LoadAssembly(binPath + "\\IronstoneCoreUI.dll");
+                //LoadAssembly(binPath + "\\IronstoneCoreUI.dll");
+                ExtensionLoader.Load(binPath + "\\IronstoneCoreUI.dll");
             }
 
             //Check if authenticated, otherwise block the auto loading
             if (_authentication.Authenticated())
             {
+                Debugger.Launch();
                 foreach (Module m in LoadedModules.Values)
                 {
                     if (m.Authenticated)
@@ -81,7 +84,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private void GetAssemblyInfo(string dll)
         {
-            if (!dll.Contains("dpwin"))
+            if (!dll.Contains("dpwin") && !dll.Contains("IronstoneCore"))
             {
                 AssemblyName info = AssemblyName.GetAssemblyName(dll);
                 Module m = new Module();

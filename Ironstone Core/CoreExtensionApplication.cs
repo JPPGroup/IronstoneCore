@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +8,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using Autodesk.Civil.ApplicationServices;
-using AutoUpdate;
+using Jpp.AutoUpdate;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
@@ -194,7 +195,8 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public void Update()
         {
-            AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, Assembly.GetExecutingAssembly());
+            Debugger.Launch();
+            AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, this);
             AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
             {
                 if (Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
@@ -220,5 +222,9 @@ namespace Jpp.Ironstone.Core
                 extension.CreateUI();
             }
         }
+
+        public string CompanyAttribute { get; } = "JPP Consulting";
+        public string AppTitle { get; } = "JPP Ironstone";
+        public Version InstalledVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version;
     }
 }
