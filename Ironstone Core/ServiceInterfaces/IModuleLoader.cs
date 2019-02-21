@@ -9,6 +9,9 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     public interface IModuleLoader
     {
+        string BinPath { get; set; }
+        string DataPath { get; set; }
+
         void Scan();
         void Load();
 
@@ -19,7 +22,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
     {
         public string Name { get; set; }
         public string Path { get; set; }
-        public string Version { get; set; }
+        public Version Version { get; set; }
         public bool UpdateAvailable { get; set; }
         public bool Objectmodel { get; set; }
 

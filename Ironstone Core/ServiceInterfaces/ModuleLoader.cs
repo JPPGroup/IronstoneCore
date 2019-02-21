@@ -11,17 +11,18 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
     internal class ModuleLoader : IModuleLoader
     {
         private Dictionary<string, Module> LoadedModules;
-
         private IAuthentication _authentication;
-        private string binPath, dataPath;
+
+        public string BinPath { get; set; }
+        public string DataPath { get; set; }
 
         public ModuleLoader(IAuthentication authentication)
         {
             _authentication = authentication;
 
-            binPath = Assembly.GetExecutingAssembly().Location;
-            binPath = binPath.Substring(0, binPath.LastIndexOf('\\'));
-            dataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
+            BinPath = Assembly.GetExecutingAssembly().Location;
+            BinPath = BinPath.Substring(0, BinPath.LastIndexOf('\\'));
+            DataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
 
             LoadedModules = new Dictionary<string, Module>();
         }
@@ -29,13 +30,13 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         public void Scan()
         {
             //Iterate over every dll found in bin folder
-            foreach (string dll in Directory.GetFiles(binPath, "*.dll"))
+            foreach (string dll in Directory.GetFiles(BinPath, "*.dll"))
             {
                 GetAssemblyInfo(dll);
             }
-            if (Directory.Exists(dataPath))
+            if (Directory.Exists(DataPath))
             {
-                foreach (string dll in Directory.GetFiles(dataPath, "*.dll"))
+                foreach (string dll in Directory.GetFiles(DataPath, "*.dll"))
                 {
                     GetAssemblyInfo(dll);
                 }
@@ -46,8 +47,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             if (!CoreExtensionApplication.CoreConsole)
             {
-                //LoadAssembly(binPath + "\\IronstoneCoreUI.dll");
-                ExtensionLoader.Load(binPath + "\\IronstoneCoreUI.dll");
+                //LoadAssembly(BinPath + "\\IronstoneCoreUI.dll");
+                ExtensionLoader.Load(BinPath + "\\IronstoneCoreUI.dll");
             }
 
             foreach (Module m in LoadedModules.Values.Where(m => m.Objectmodel))
@@ -97,7 +98,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 AssemblyName info = AssemblyName.GetAssemblyName(dll);
                 Module m = new Module();
                 m.Name = info.Name;
-                m.Version = info.Version.ToString();
+                m.Version = info.Version;
                 m.UpdateAvailable = false;
                 m.Loaded = false;
                 m.Path = dll;

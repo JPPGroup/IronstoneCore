@@ -182,7 +182,7 @@ namespace Jpp.Ironstone.Core
 #endif
             IDataService dataService = Container.Resolve<IDataService>();
 
-            Container.Resolve<IModuleLoader>().Load();
+            //Container.Resolve<IModuleLoader>().Load();
 
             //Once all modules have been loaded inform data service
             dataService.PopulateStoreTypes();
@@ -208,7 +208,7 @@ namespace Jpp.Ironstone.Core
                     .MdiActiveDocument?.SendStringToExecute("quit ", true, false, true);
             };
 
-            //_objectmodel = Container.Resolve<Objectmodel>();
+            _objectmodel = Container.Resolve<Objectmodel>();
         }
         #endregion
 
