@@ -41,8 +41,10 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
         public bool Authenticated()
         {
 #if DEBUG
+            _logger.Entry("Debug authentication enabled");
             return true;
 #endif
+#if !DEBUG
 
             ErrorCode = -1;
 
@@ -63,10 +65,16 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             }
 
             return true;
+#endif
         }
 
         public bool AuthenticateModule(string Path)
         {
+#if DEBUG
+            _logger.Entry("Module debug authentication enabled");
+            return true;
+#endif
+#if !DEBUG
             string moduleName = GetModuleNameFromPath(Path);
             if (moduleName.Contains("Objectmodel"))
                 return true;
@@ -86,11 +94,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             if (LocalErrorCode != 0)
             {
                 //DisplayError(ret_code, dris.ext_err);
-                _logger.Entry("Module authentication failed - " + LocalErrorCode, Severity.Warning);
+                _logger.Entry("Module " + moduleName + "authentication failed - " + LocalErrorCode, Severity.Warning);
                 return false;
             }
 
             return true;
+#endif
         }
 
         internal string GetModuleNameFromPath(string Path)
