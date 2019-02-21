@@ -32,7 +32,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
         #endregion
 
         private const string INSTRUMENTATION_KEY = "59426689-6bc0-4f42-a449-58eec75d8ba3";
-        private readonly TelemetryClient _client;
+        private TelemetryClient _client;
        
         public TelemetryLogger()
         {
@@ -51,9 +51,10 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
             //_client.Context.GlobalProperties.Add("Modules", modules);
         }
 
-        public TelemetryLogger(TelemetryClient client)
+        public TelemetryClient Client
         {
-            _client = client;
+            get => _client;
+            set => _client = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         private static SeverityLevel MapSeverity(Severity sev)

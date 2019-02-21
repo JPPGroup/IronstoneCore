@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
+using Jpp.AcTestFramework;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
 using Microsoft.ApplicationInsights;
@@ -9,12 +11,48 @@ using NUnit.Framework;
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
 {
     [TestFixture]
-    class TelemetryLoggerTests
+    class TelemetryLoggerTests : BaseNUnitTestFixture
     {
+        public TelemetryLoggerTests() : base(Assembly.GetExecutingAssembly(), typeof(TelemetryLoggerTests)) { }
+
         [Test]
-        public void LogEntry()
+        public void VerifyDefaultConstructor()
         {
-            // Arrange
+            var expectedUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            var expectedOs = Environment.OSVersion.VersionString;
+
+            var result = RunTest<TelemetryClientTestData>("VerifyDefaultConstructorResident");
+
+            Assert.False(string.IsNullOrEmpty(result.SessionId),"Invalid session id.");
+            Assert.AreEqual(expectedUser, result.UserId, "Unexpected user id.");
+            Assert.AreEqual(expectedOs, result.OperatingSystem, "Unexpected operating system.");
+            Assert.False(string.IsNullOrEmpty(result.AcVersion), "Invalid ac version.");
+            Assert.False(string.IsNullOrEmpty(result.CoreVersion), "Invalid core version.");
+        }
+
+        public TelemetryClientTestData VerifyDefaultConstructorResident()
+        {
+            var logger = new TelemetryLogger();
+
+            return new TelemetryClientTestData
+            {
+                SessionId = logger.Client.Context.Session.Id,
+                UserId = logger.Client.Context.User.Id,
+                OperatingSystem = logger.Client.Context.Device.OperatingSystem,
+                AcVersion = logger.Client.Context.GlobalProperties["AcVersion"],
+                CoreVersion = logger.Client.Context.GlobalProperties["CoreVersion"]
+            };
+        }
+
+        [Test]
+        public void VerifyLogEntry()
+        {
+            var result = RunTest<int>("VerifyLogEntryResident");
+            Assert.AreEqual(1, result, "Incorrect number of traces sent.");
+        }
+
+        public int VerifyLogEntryResident()
+        {
             var mockChannel = new MockTelemetryChannel();
             var config = new TelemetryConfiguration
             {
@@ -22,23 +60,22 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
                 InstrumentationKey = Guid.NewGuid().ToString(),
             };
             var client = new TelemetryClient(config);
-            var logger = new TelemetryLogger(client);
-            
-            // Act
+            var logger = new TelemetryLogger {Client = client};
+
             logger.Entry("message");
-            
-            // Assert
-            var telemetryCount = mockChannel.SentTelemetries.Count;
-            var traceCount = mockChannel.SentTraces.Count();
 
-            Assert.AreEqual(1, telemetryCount, "Incorrect number of telemetries sent.");
-            Assert.AreEqual(1, traceCount, "Incorrect number of traces sent.");
+            return mockChannel.SentTraces.Count();
         }
 
         [Test]
-        public void LogEntryWithSeverityInformation()
+        public void VerifyLogEntryWithSeverityInformation()
         {
-            // Arrange
+            var result = RunTest<int>("VerifyLogEntryWithSeverityInformationResident");
+            Assert.AreEqual(1, result, "Incorrect number of traces sent.");
+        }
+
+        public int VerifyLogEntryWithSeverityInformationResident()
+        {
             var mockChannel = new MockTelemetryChannel();
             var config = new TelemetryConfiguration
             {
@@ -46,23 +83,22 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
                 InstrumentationKey = Guid.NewGuid().ToString(),
             };
             var client = new TelemetryClient(config);
-            var logger = new TelemetryLogger(client);
+            var logger = new TelemetryLogger { Client = client };
 
-            // Act
             logger.Entry("message", Severity.Information);
-            
-            // Assert
-            var telemetryCount = mockChannel.SentTelemetries.Count;
-            var traceCount = mockChannel.SentTraces.Count();
 
-            Assert.AreEqual(1, telemetryCount, "Incorrect number of telemetries sent.");
-            Assert.AreEqual(1, traceCount, "Incorrect number of traces sent.");
+            return mockChannel.SentTraces.Count();
         }
 
         [Test]
-        public void LogEntryWithSeverityDebug()
+        public void VerifyLogEntryWithSeverityDebug()
         {
-            // Arrange
+            var result = RunTest<int>("VerifyLogEntryWithSeverityDebugResident");
+            Assert.AreEqual(1, result, "Incorrect number of traces sent.");
+        }
+
+        public int VerifyLogEntryWithSeverityDebugResident()
+        {
             var mockChannel = new MockTelemetryChannel();
             var config = new TelemetryConfiguration
             {
@@ -70,23 +106,22 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
                 InstrumentationKey = Guid.NewGuid().ToString(),
             };
             var client = new TelemetryClient(config);
-            var logger = new TelemetryLogger(client);
+            var logger = new TelemetryLogger { Client = client };
 
-            // Act
             logger.Entry("message", Severity.Debug);
-            
-            // Assert
-            var telemetryCount = mockChannel.SentTelemetries.Count;
-            var traceCount = mockChannel.SentTraces.Count();
 
-            Assert.AreEqual(1, telemetryCount, "Incorrect number of telemetries sent.");
-            Assert.AreEqual(1, traceCount, "Incorrect number of traces sent.");
+            return mockChannel.SentTraces.Count();
         }
 
         [Test]
-        public void LogEntryWithSeverityWarning()
+        public void VerifyLogEntryWithSeverityWarning()
         {
-            // Arrange
+            var result = RunTest<int>("VerifyLogEntryWithSeverityWarningResident");
+            Assert.AreEqual(1, result, "Incorrect number of traces sent.");
+        }
+
+        public int VerifyLogEntryWithSeverityWarningResident()
+        {
             var mockChannel = new MockTelemetryChannel();
             var config = new TelemetryConfiguration
             {
@@ -94,23 +129,22 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
                 InstrumentationKey = Guid.NewGuid().ToString(),
             };
             var client = new TelemetryClient(config);
-            var logger = new TelemetryLogger(client);
+            var logger = new TelemetryLogger { Client = client };
 
-            // Act
             logger.Entry("message", Severity.Warning);
-            
-            // Assert
-            var telemetryCount = mockChannel.SentTelemetries.Count;
-            var traceCount = mockChannel.SentTraces.Count();
 
-            Assert.AreEqual(1, telemetryCount, "Incorrect number of telemetries sent.");
-            Assert.AreEqual(1, traceCount, "Incorrect number of traces sent.");
+            return mockChannel.SentTraces.Count();
         }
 
         [Test]
-        public void LogEntryWithSeverityError()
+        public void VerifyLogEntryWithSeverityError()
         {
-            // Arrange
+            var result = RunTest<int>("VerifyLogEntryWithSeverityErrorResident");
+            Assert.AreEqual(1, result, "Incorrect number of traces sent.");
+        }
+
+        public int VerifyLogEntryWithSeverityErrorResident()
+        {
             var mockChannel = new MockTelemetryChannel();
             var config = new TelemetryConfiguration
             {
@@ -118,23 +152,22 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
                 InstrumentationKey = Guid.NewGuid().ToString(),
             };
             var client = new TelemetryClient(config);
-            var logger = new TelemetryLogger(client);
+            var logger = new TelemetryLogger { Client = client };
 
-            // Act
             logger.Entry("message", Severity.Error);
-            
-            // Assert
-            var telemetryCount = mockChannel.SentTelemetries.Count;
-            var traceCount = mockChannel.SentTraces.Count();
 
-            Assert.AreEqual(1, telemetryCount, "Incorrect number of telemetries sent.");
-            Assert.AreEqual(1, traceCount, "Incorrect number of traces sent.");
+            return mockChannel.SentTraces.Count();
         }
 
         [Test]
-        public void LogEntryWithSeverityCrash()
+        public void VerifyLogEntryWithSeverityCrash()
         {
-            // Arrange
+            var result = RunTest<int>("VerifyLogEntryWithSeverityCrashResident");
+            Assert.AreEqual(1, result, "Incorrect number of traces sent.");
+        }
+
+        public int VerifyLogEntryWithSeverityCrashResident()
+        {
             var mockChannel = new MockTelemetryChannel();
             var config = new TelemetryConfiguration
             {
@@ -142,23 +175,22 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
                 InstrumentationKey = Guid.NewGuid().ToString(),
             };
             var client = new TelemetryClient(config);
-            var logger = new TelemetryLogger(client);
+            var logger = new TelemetryLogger { Client = client };
 
-            // Act
             logger.Entry("message", Severity.Crash);
-            
-            // Assert
-            var telemetryCount = mockChannel.SentTelemetries.Count;
-            var traceCount = mockChannel.SentTraces.Count();
 
-            Assert.AreEqual(1, telemetryCount, "Incorrect number of telemetries sent.");
-            Assert.AreEqual(1, traceCount, "Incorrect number of traces sent.");
+            return mockChannel.SentTraces.Count();
         }
 
         [Test]
-        public void LogEvent()
+        public void VerifyLogEvent()
         {
-            // Arrange
+            var result = RunTest<int>("VerifyLogEventResident");
+            Assert.AreEqual(1, result, "Incorrect number of events sent.");
+        }
+
+        public int VerifyLogEventResident()
+        {
             var mockChannel = new MockTelemetryChannel();
             var config = new TelemetryConfiguration
             {
@@ -166,23 +198,22 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
                 InstrumentationKey = Guid.NewGuid().ToString(),
             };
             var client = new TelemetryClient(config);
-            var logger = new TelemetryLogger(client);
+            var logger = new TelemetryLogger { Client = client };
 
-            // Act
             logger.LogEvent(Event.Command, "parameters");
-            
-            // Assert
-            var telemetryCount = mockChannel.SentTelemetries.Count;
-            var eventCount = mockChannel.SentEvents.Count();
 
-            Assert.AreEqual(1, telemetryCount, "Incorrect number of telemetries sent.");
-            Assert.AreEqual(1, eventCount, "Incorrect number of events sent.");
+            return mockChannel.SentEvents.Count();
         }
 
         [Test]
-        public void LogException()
+        public void VerifyLogException()
         {
-            // Arrange
+            var result = RunTest<int>("VerifyLogExceptionResident");
+            Assert.AreEqual(1, result, "Incorrect number of exceptions sent.");
+        }
+
+        public int VerifyLogExceptionResident()
+        {
             var mockChannel = new MockTelemetryChannel();
             var config = new TelemetryConfiguration
             {
@@ -190,17 +221,11 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
                 InstrumentationKey = Guid.NewGuid().ToString(),
             };
             var client = new TelemetryClient(config);
-            var logger = new TelemetryLogger(client);
+            var logger = new TelemetryLogger { Client = client };
 
-            // Act
             logger.LogException(new Exception("exception"));
-            
-            // Assert
-            var telemetryCount = mockChannel.SentTelemetries.Count;
-            var exceptionCount = mockChannel.SentExceptions.Count();
 
-            Assert.AreEqual(1, telemetryCount, "Incorrect number of telemetries sent.");
-            Assert.AreEqual(1, exceptionCount, "Incorrect number of exceptions sent.");
+            return mockChannel.SentExceptions.Count();
         }
     }
 }
