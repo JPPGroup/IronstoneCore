@@ -18,14 +18,11 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void VerifyDefaultConstructor()
         {
-            var expectedUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-            var expectedOs = Environment.OSVersion.VersionString;
-
             var result = RunTest<TelemetryClientTestData>("VerifyDefaultConstructorResident");
 
             Assert.False(string.IsNullOrEmpty(result.SessionId),"Invalid session id.");
-            Assert.AreEqual(expectedUser, result.UserId, "Unexpected user id.");
-            Assert.AreEqual(expectedOs, result.OperatingSystem, "Unexpected operating system.");
+            Assert.False(string.IsNullOrEmpty(result.UserId), "Invalid user id.");
+            Assert.False(string.IsNullOrEmpty(result.OperatingSystem), "Invalid operating system.");
             Assert.False(string.IsNullOrEmpty(result.AcVersion), "Invalid ac version.");
             Assert.False(string.IsNullOrEmpty(result.CoreVersion), "Invalid core version.");
         }
