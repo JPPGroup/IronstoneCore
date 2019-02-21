@@ -34,7 +34,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
         private const string INSTRUMENTATION_KEY = "59426689-6bc0-4f42-a449-58eec75d8ba3";
         private readonly TelemetryClient _client;
        
-        public TelemetryLogger(IModuleLoader loadedModules)
+        public TelemetryLogger()
         {
             _client = new TelemetryClient { InstrumentationKey = INSTRUMENTATION_KEY };
 
@@ -44,11 +44,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
             var acVersion = Application.Version.ToString();
             var coreVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            var modules = loadedModules.GetModules().Select(a => $"{a.Name}, {a.Version}").Aggregate((current, next) => $"{current}; {next}");
+            //var modules = loadedModules.GetModules().Select(a => $"{a.Name}, {a.Version}").Aggregate((current, next) => $"{current}; {next}");
 
             _client.Context.GlobalProperties.Add("AcVersion", acVersion);
             _client.Context.GlobalProperties.Add("CoreVersion", coreVersion);
-            _client.Context.GlobalProperties.Add("Modules", modules);
+            //_client.Context.GlobalProperties.Add("Modules", modules);
         }
 
         public TelemetryLogger(TelemetryClient client)

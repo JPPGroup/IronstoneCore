@@ -7,16 +7,15 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
     {
         private readonly ICollection<ILogger> _loggers = new List<ILogger>();
 
-        public CollectionLogger(IModuleLoader loader)
+        public CollectionLogger()
         {
 #if DEBUG
             _loggers.Add(new ConsoleLogger());
 #else
-            _loggers.Add(new TelemetryLogger(loader));
+            _loggers.Add(new TelemetryLogger());
             _loggers.Add(new ConsoleLogger());
 #endif
         }
-
 
         public void Entry(string message)
         {
