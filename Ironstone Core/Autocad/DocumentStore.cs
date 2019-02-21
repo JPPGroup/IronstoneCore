@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
@@ -19,7 +20,7 @@ namespace Jpp.Ironstone.Core.Autocad
         protected Document acDoc;
         protected Database acCurDb;
 
-        protected Jpp.Common.SerializableDictionary<Type, IDrawingObjectManager> Managers;
+        protected List<AbstractDrawingObjectManager> Managers;
         private Type[] _managerTypes;
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace Jpp.Ironstone.Core.Autocad
             acDoc = doc;
             acCurDb = doc.Database;
             _managerTypes = ManagerTypes;
-            Managers = new SerializableDictionary<Type, IDrawingObjectManager>();
+            Managers = new List<AbstractDrawingObjectManager>();
         }
         #endregion
 
@@ -63,7 +64,7 @@ namespace Jpp.Ironstone.Core.Autocad
                 {
                     using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
                     {
-                        SaveBinary("Managers", Managers);
+                        SaveBinary("Managers", Managers, _managerTypes);
                         Save();
                         tr.Commit();
                     }
@@ -87,7 +88,12 @@ namespace Jpp.Ironstone.Core.Autocad
                 {
                     using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
                     {
-                        LoadBinary<SerializableDictionary<Type, IDrawingObjectManager>>("Managers", _managerTypes);
+                        Managers = LoadBinary<List<AbstractDrawingObjectManager>>("Managers", _managerTypes);
+                        foreach (AbstractDrawingObjectManager abstractDrawingObjectManager in Managers)
+                        {
+                            abstractDrawingObjectManager.HostDocument = acDoc;
+                            abstractDrawingObjectManager.ActivateObjects();
+                        }
                         Load();
                         tr.Commit();
                     }
@@ -102,7 +108,7 @@ namespace Jpp.Ironstone.Core.Autocad
         #endregion
 
         #region Binary Methods
-        protected void SaveBinary(string key, object binaryObject)
+        protected void SaveBinary(string key, object binaryObject, Type[] additionalTypes = null)
         {
             //Database acCurDb = Application.DocumentManager.MdiActiveDocument.Database;
             Transaction tr = acCurDb.TransactionManager.TopTransaction;
@@ -113,7 +119,17 @@ namespace Jpp.Ironstone.Core.Autocad
             // We use Xrecord class to store data in Dictionaries
             Xrecord plotXRecord = new Xrecord();
 
-            XmlSerializer xml = new XmlSerializer(binaryObject.GetType());
+            XmlSerializer xml;
+
+            if (additionalTypes == null)
+            {
+                xml = new XmlSerializer(binaryObject.GetType());
+            }
+            else
+            {
+                xml = new XmlSerializer(binaryObject.GetType(), additionalTypes);
+            }
+
             MemoryStream ms = new MemoryStream();
             xml.Serialize(ms, binaryObject);
             string s = Encoding.ASCII.GetString(ms.ToArray());
@@ -134,7 +150,8 @@ namespace Jpp.Ironstone.Core.Autocad
             plotXRecord.Data = rb;
 
             // Create the entry in the Named Object Dictionary
-            nod.SetAt(key, plotXRecord);
+            string id = this.GetType().FullName + key;
+            nod.SetAt(id, plotXRecord);
             tr.AddNewlyCreatedDBObject(plotXRecord, true);
         }
 
@@ -146,9 +163,11 @@ namespace Jpp.Ironstone.Core.Autocad
             // Find the NOD in the database
             DBDictionary nod = (DBDictionary)tr.GetObject(acCurDb.NamedObjectsDictionaryId, OpenMode.ForWrite);
 
-            if (nod.Contains(Key))
+            string id = this.GetType().FullName + Key;
+
+            if (nod.Contains(id))
             {
-                ObjectId plotId = nod.GetAt(Key);
+                ObjectId plotId = nod.GetAt(id);
                 Xrecord plotXRecord = (Xrecord)tr.GetObject(plotId, OpenMode.ForRead);
                 MemoryStream ms = new MemoryStream();
                 foreach (TypedValue value in plotXRecord.Data)
@@ -196,7 +215,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public void UpdateManagers()
         {
-            foreach (IDrawingObjectManager drawingObjectManager in Managers.Values)
+            foreach (IDrawingObjectManager drawingObjectManager in Managers)
             {
                 drawingObjectManager.UpdateDirty();
             }
@@ -204,15 +223,15 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public void ReenerateManagers()
         {
-            foreach (IDrawingObjectManager drawingObjectManager in Managers.Values)
+            foreach (IDrawingObjectManager drawingObjectManager in Managers)
             {
                 drawingObjectManager.UpdateAll();
             }
         }
 
-        public T GetManager<T>() where T : IDrawingObjectManager
+        public T GetManager<T>() where T : AbstractDrawingObjectManager
         {
-            if (Managers.ContainsKey(typeof(T)))
+            /*if (Managers.ContainsKey(typeof(T)))
             {
                 return (T) Managers[typeof(T)];
             }
@@ -221,7 +240,24 @@ namespace Jpp.Ironstone.Core.Autocad
                 T dom = (T)Activator.CreateInstance(typeof(T), this.acDoc);
                 Managers.Add(typeof(T), dom);
                 return dom;
+            }*/
+            T foundmanager = null;
+            foreach (var manager in Managers)
+            {
+                if (manager is T)
+                {
+                    foundmanager = manager as T;
+                }
             }
+
+            if (foundmanager == null)
+            {
+                foundmanager = (T)Activator.CreateInstance(typeof(T), this.acDoc);
+                Managers.Add(foundmanager);
+            }
+
+            return foundmanager;
+
         }
         #endregion
 

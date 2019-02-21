@@ -147,7 +147,6 @@
     <None Include="dpwin64.dll" />
     <None Include="IronstoneCore.xml" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

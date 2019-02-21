@@ -21,6 +21,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         public string Path { get; set; }
         public string Version { get; set; }
         public bool UpdateAvailable { get; set; }
+        public bool Objectmodel { get; set; }
 
         public bool Authenticated
         {
