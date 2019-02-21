@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using Microsoft.ApplicationInsights;
 using Autodesk.AutoCAD.ApplicationServices.Core;
