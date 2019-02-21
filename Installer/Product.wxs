@@ -50,9 +50,6 @@
 		  <Component Id="ZipExtract.dll" Guid="1b7d3402-29fd-47a6-8a68-759b2f357083" Win64="yes">
 		    <File Id="ZipExtract.dll" Source="..\bin\x64\Release\ZipExtract.dll" Checksum="yes"/>
 		  </Component>
-		  <Component Id="ZipExtract.dll" Guid="1b7d3402-29fd-47a6-8a68-759b2f357083" Win64="yes">
-		    <File Id="ZipExtract.dll" Source="..\bin\x64\Release\ZipExtract.dll" Checksum="yes"/>
-		  </Component>
 		  <Component Id="Microsoft.ApplicationInsights.dll" Guid="868c371c-b7e4-4653-b86b-83fb0cf4f743" Win64="yes">
 		    <File Id="Microsoft.ApplicationInsights.dll" Source="..\bin\x64\Release\Microsoft.ApplicationInsights.dll" Checksum="yes"/>
 		  </Component>
