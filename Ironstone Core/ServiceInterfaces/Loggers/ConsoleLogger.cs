@@ -1,4 +1,5 @@
-﻿using Autodesk.AutoCAD.ApplicationServices.Core;
+﻿using System;
+using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.EditorInput;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
@@ -13,15 +14,24 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public void Entry(string message, Severity sev)
         {
-            Editor ed = Application.DocumentManager.MdiActiveDocument?.Editor;
-            ed?.WriteMessage(message + "\n");
+            WriteMessage(message);            
         }
 
         public void LogEvent(Event eventType, string eventParameters)
         {
-            Editor ed = Application.DocumentManager.MdiActiveDocument?.Editor;
-            ed?.WriteMessage(eventType + " - " + eventParameters + "\n");
+            WriteMessage($"{eventType} - {eventParameters}");
+        }
+
+        public void LogException(Exception exception)
+        {
+            WriteMessage(exception.ToString());
         }
         #endregion
+
+        private static void WriteMessage(string message)
+        {
+            Editor ed = Application.DocumentManager.MdiActiveDocument?.Editor;
+            ed?.WriteMessage($"{message}\n");
+        }
     }
 }

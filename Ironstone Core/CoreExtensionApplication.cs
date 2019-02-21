@@ -164,7 +164,7 @@ namespace Jpp.Ironstone.Core
             //Unity registration
             Container= new UnityContainer();
             //TODO: Add code here for choosing log type
-            Container.RegisterType<ILogger, ConsoleLogger>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ILogger, CollectionLogger>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAuthentication, DinkeyAuthentication>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IModuleLoader, ModuleLoader>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());

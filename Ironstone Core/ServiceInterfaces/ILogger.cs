@@ -25,6 +25,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         void Entry(string message, Severity sev);
 
         void LogEvent(Event eventType, string eventParameters);
+        void LogException(Exception exception);
     }
 
     /// <summary>
@@ -32,11 +33,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
     /// </summary>
     public enum Severity
     {
-        Debug,
-        Information,
-        Warning,
-        Error,
-        Crash
+        Debug = 0,
+        Information = 100,
+        Warning = 200,
+        Error = 300,
+        Crash = 999
     }
 
     public enum Event
