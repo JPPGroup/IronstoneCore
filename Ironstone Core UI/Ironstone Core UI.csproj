@@ -113,6 +113,7 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands.cs" />
     <Compile Include="CoreUIExtensionApplication.cs" />
     <Compile Include="EnumBindingSource.cs" />
     <Compile Include="HostedUserControl.cs" />
