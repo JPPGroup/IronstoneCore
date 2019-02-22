@@ -175,7 +175,6 @@ namespace Jpp.Ironstone.Core
             _authentication = Container.Resolve<IAuthentication>();
 
             Container.Resolve<IModuleLoader>().Scan();
-
             //Load the additional DLL files, but only not if running in debug mode
 #if !DEBUG
             Update();
