@@ -13,7 +13,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
     {
         public Objectmodel(IModuleLoader modules)
         {
-            var module = modules.GetModules().First(m => m.Objectmodel);
+            var module = modules.GetModules().FirstOrDefault(m => m.Objectmodel);
             if(module != null)
                 this.InstalledVersion = module.Version;
 
