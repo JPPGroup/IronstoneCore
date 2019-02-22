@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Jpp.AutoUpdate;
+using Jpp.AutoUpdate.Classes;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
@@ -18,9 +19,28 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 this.InstalledVersion = module.Version;
 
             AutoUpdate.Updater<Objectmodel>.Mandatory = true;
-            AutoUpdate.Updater<Objectmodel>.UpdateMode = Mode.Forced;
+            AutoUpdate.Updater<Objectmodel>.UpdateMode = Mode.ForcedDownload;
             AutoUpdate.Updater<Objectmodel>.DownloadPath = modules.DataPath;
-            AutoUpdate.Updater<Objectmodel>.ApplicationExitEvent += () => { modules.Load(); };
+            AutoUpdate.Updater<Objectmodel>.CheckForUpdateEvent += (UpdateInfoEventArgs args) =>
+            {
+                if (args == null)
+                    return;
+                if (args.IsUpdateAvailable)
+                {
+                    AutoUpdate.Updater<Objectmodel>.DownloadUpdate();
+                    AutoUpdate.Updater<Objectmodel>.Exit();
+                    modules.Scan();
+                    modules.Load();
+                }
+                else
+                {
+                    modules.Load();
+                }
+            };
+            AutoUpdate.Updater<Objectmodel>.ApplicationExitEvent += () =>
+            {
+                int i = 0;
+            };
             AutoUpdate.Updater<Objectmodel>.Start(Constants.OBJECTMODEL_URL, this);
         }
 
@@ -30,7 +50,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         }
 
         public string CompanyAttribute { get; } = "JPP Consulting";
-        public string AppTitle { get; } = "JPP Ironstone";
+        public string AppTitle { get; } = "JPP Ironstone Datamodel";
         public Version InstalledVersion { get; } = new Version(0,0,0,0);
     }
 }

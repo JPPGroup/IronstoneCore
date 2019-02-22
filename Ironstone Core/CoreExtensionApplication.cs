@@ -9,6 +9,7 @@ using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using Autodesk.Civil.ApplicationServices;
 using Jpp.AutoUpdate;
+using Jpp.AutoUpdate.Classes;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
@@ -175,11 +176,9 @@ namespace Jpp.Ironstone.Core
             _authentication = Container.Resolve<IAuthentication>();
 
             Container.Resolve<IModuleLoader>().Scan();
-            //Load the additional DLL files, but only not if running in debug mode
-#if !DEBUG
-            Update();
-#endif
             IDataService dataService = Container.Resolve<IDataService>();
+            //Load the additional DLL files, but only not if running in debug mode
+            Update();
 
             //Container.Resolve<IModuleLoader>().Load();
 
@@ -194,7 +193,24 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public void Update()
         {
+#if DEBUG
+            Container.Resolve<IModuleLoader>().Load();
+#endif
+#if !DEBUG
             AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, this);
+            AutoUpdate.Updater<CoreExtensionApplication>.CheckForUpdateEvent += (UpdateInfoEventArgs args) =>
+            {
+                if (args == null)
+                    return;
+                if (args.IsUpdateAvailable)
+                {
+                    AutoUpdate.Updater<CoreExtensionApplication>.ShowUpdateForm();
+                }
+                else
+                {
+                    _objectmodel = Container.Resolve<Objectmodel>();
+                }
+            };
             AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
             {
                 if (Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
@@ -206,8 +222,7 @@ namespace Jpp.Ironstone.Core
                 Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
                     .MdiActiveDocument?.SendStringToExecute("quit ", true, false, true);
             };
-
-            _objectmodel = Container.Resolve<Objectmodel>();
+#endif
         }
         #endregion
 
