@@ -1,1 +1,1 @@
-Common	../../../common-code/Common.Code/Common.csproj	../packages/Common.0.1.4/lib/netstandard2.0/Common.dll
+Ironstone Core	../Ironstone%20Core/Ironstone%20Core.csproj	../packages/Jpp.Ironstone.Core.0.1.65/lib/net472/IronstoneCore.dll
