@@ -15,6 +15,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         bool Authenticated();
 
         bool AuthenticateModule(string Path);
+
+        bool VerifyLicense(string LicenseName);
     }
 
     public enum AuthStatus

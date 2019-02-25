@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using Autodesk.AutoCAD.Runtime;
 
@@ -12,19 +13,23 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
     {
         private Dictionary<string, Module> LoadedModules;
         private IAuthentication _authentication;
+        private ILogger _logger;
 
         public string BinPath { get; set; }
         public string DataPath { get; set; }
 
-        public ModuleLoader(IAuthentication authentication)
+        public ModuleLoader(IAuthentication authentication, ILogger logger)
         {
             _authentication = authentication;
+            _logger = logger;
 
             BinPath = Assembly.GetExecutingAssembly().Location;
             BinPath = BinPath.Substring(0, BinPath.LastIndexOf('\\'));
             DataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
 
             LoadedModules = new Dictionary<string, Module>();
+
+            ProcessManifest();
         }
 
         public void Scan()
@@ -67,6 +72,62 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     if (m.Authenticated)
                     {
                         LoadAssembly(m.Path);
+                    }
+                }
+            }
+        }
+
+        public void ProcessManifest()
+        {
+            if (File.Exists(BinPath + "\\ModuleManifest.txt"))
+            {
+                File.Delete(BinPath + "\\ModuleManifest.txt");
+            }
+
+            using (var client = new WebClient())
+            {
+                client.DownloadFile(Constants.BASE_URL + "ModuleManifest.txt", DataPath + "\\ModuleManifest.txt");
+            }
+
+            List<string> manifest = new List<string>();
+            using (TextReader reader = File.OpenText(DataPath + "\\ModuleManifest.txt"))
+            {
+                while (reader.Peek() != -1)
+                {
+                    string m = reader.ReadLine();
+                    manifest.Add(m);
+                }
+            }
+
+            string[] existingModules = Directory.GetFiles(DataPath);
+
+            foreach (string s in manifest)
+            {
+                bool found = false;
+                string fileName = s + ".dll";
+                foreach (string existingModule in existingModules)
+                {
+                    if (existingModule == (DataPath + "\\" + fileName))
+                    {
+                        found = true;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (_authentication.VerifyLicense(s))
+                    {
+                        using (var client = new WebClient())
+                        {
+                            try
+                            {
+                                client.DownloadFile(Constants.BASE_URL + fileName, DataPath + "\\" + fileName);
+                            }
+                            catch (System.Exception e)
+                            {
+                                _logger.Entry($"Module {s} not found", Severity.Warning);
+                            }
+                        }
                     }
                 }
             }

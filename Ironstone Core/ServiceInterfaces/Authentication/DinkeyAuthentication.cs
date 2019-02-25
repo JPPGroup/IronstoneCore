@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -95,6 +96,36 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             {
                 //DisplayError(ret_code, dris.ext_err);
                 _logger.Entry("Module " + moduleName + "authentication failed - " + LocalErrorCode, Severity.Warning);
+                return false;
+            }
+
+            return true;
+#endif
+        }
+
+        public bool VerifyLicense(string LicenseName)
+        {
+#if DEBUG
+            _logger.Entry("Module debug authentication enabled");
+            return true;
+#endif
+#if !DEBUG
+            int LocalErrorCode = -1;
+
+            int ret_code;
+            DRIS dris = new DRIS(); // initialise the DRIS with random values & set the header
+
+            dris.size = Marshal.SizeOf(dris);
+            dris.function = DRIS.PROTECTION_CHECK; // standard protection check
+            dris.flags = 128; // no extra flags, but you may want to specify some if you want to start a network user or decrement execs,...
+            dris.alt_licence_name = LicenseName;
+
+            LocalErrorCode = DinkeyPro.DDProtCheck(dris, null);
+
+            if (LocalErrorCode != 0)
+            {
+                //DisplayError(ret_code, dris.ext_err);
+                _logger.Entry("Module " + LicenseName + " license not found - " + LocalErrorCode, Severity.Debug);
                 return false;
             }
 
