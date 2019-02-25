@@ -93,10 +93,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Common.0.1.4\lib\netstandard2.0\Common.dll</HintPath>
     </Reference>
-    <Reference Include="IronstoneCore, Version=0.1.65.91, Culture=neutral, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Jpp.Ironstone.Core.0.1.65\lib\net472\IronstoneCore.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.ApplicationInsights, Version=2.9.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.9.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
     </Reference>
@@ -182,6 +178,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\About.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ironstone Core\Ironstone Core.csproj">
+      <Project>{a3bfa507-a2c4-4c33-943b-6083133ee63c}</Project>
+      <Name>Ironstone Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
