@@ -8,6 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <ui:HostedUserControl.Resources>
+        <!--<ResourceDictionary Source="pack://application:,,,IronstoneCoreUI;component/AutocadStyleResourceDictionary.xaml"/>-->
         <ResourceDictionary Source="../AutocadStyleResourceDictionary.xaml"/>
     </ui:HostedUserControl.Resources>
     <StackPanel>
