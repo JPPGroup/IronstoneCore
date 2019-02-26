@@ -150,14 +150,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="AutocadStyleResourceDictionary.xaml">
+    <Content Include="AutocadStyleResourceDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="AutocadWindowStyleResourceDictionary.xaml">
+    </Content>
+    <Content Include="AutocadWindowStyleResourceDictionary.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
+    </Content>
     <Page Include="Views\About.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

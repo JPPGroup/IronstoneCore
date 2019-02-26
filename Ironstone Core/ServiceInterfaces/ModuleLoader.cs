@@ -34,6 +34,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public void Scan()
         {
+            LoadedModules.Clear();
             //Iterate over every dll found in bin folder
             foreach (string dll in Directory.GetFiles(BinPath, "*.dll"))
             {
@@ -184,6 +185,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     }
 
                     //TODO: Verify actually loaded
+                    if (ExtensionLoader.IsLoaded(dll))
+                    {
+                        m.Loaded = true;
+                    }
+
                     LoadedModules.Add(dll, m);
                 }
             }
