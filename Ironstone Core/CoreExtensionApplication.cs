@@ -173,19 +173,21 @@ namespace Jpp.Ironstone.Core
             Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<Objectmodel, Objectmodel>(new ContainerControlledLifetimeManager());
 
-            _logger = Container.Resolve<ILogger>();
-            _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
-            _authentication = Container.Resolve<IAuthentication>();
+            try
+            {
+                _logger = Container.Resolve<ILogger>();
+                _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
 
-            Container.Resolve<IModuleLoader>().Scan();
-            IDataService dataService = Container.Resolve<IDataService>();
-            //Load the additional DLL files, but only not if running in debug mode
-            Update();
-
-            //Container.Resolve<IModuleLoader>().Load();
-
-            //Once all modules have been loaded inform data service
-            dataService.PopulateStoreTypes();
+                _authentication = Container.Resolve<IAuthentication>();
+                IDataService dataService = Container.Resolve<IDataService>();
+                Update();
+                //Once all modules have been loaded inform data service
+                dataService.PopulateStoreTypes();
+            }
+            catch (System.Exception e)
+            {
+                _logger.Entry($"Exception thrown in core main resolver block - {e.Message}", Severity.Crash);
+            }
 
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
         }
@@ -195,6 +197,7 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public void Update()
         {
+            Container.Resolve<IModuleLoader>().Scan();
 #if DEBUG
             Container.Resolve<IModuleLoader>().Load();
 #endif
@@ -230,11 +233,22 @@ namespace Jpp.Ironstone.Core
 
         public void RegisterExtension(IIronstoneExtensionApplication extension)
         {
+            _logger.Entry($"{extension.GetType().ToString()} registration started", Severity.Debug);
             DataService.Current.InvalidateStoreTypes();
-            extension.InjectContainer(_current.Container);
-            if (!CoreConsole)
+            try
             {
-                extension.CreateUI();
+                extension.InjectContainer(_current.Container);
+                if (!CoreConsole)
+                {
+                    extension.CreateUI();
+                }
+
+                _logger.Entry($"{extension.GetType().ToString()} registration completed", Severity.Debug);
+            }
+            catch (System.Exception e)
+            {
+                _logger.Entry($"{extension.GetType().ToString()} registration failed", Severity.Error);
+                _logger.LogException(e);
             }
         }
 

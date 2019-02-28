@@ -14,7 +14,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public FileLogger()
         {
-            filePath = Assembly.GetExecutingAssembly().Location + "\\IronstoneLog.txt";
+            filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\IronstoneLog.txt";
+            AppendText("==================================================");
         }
 
         public void Entry(string message)
@@ -24,7 +25,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public void Entry(string message, Severity sev)
         {
-            AppendText($"{Severity.Information} - {message}");
+            AppendText($"{sev} - {message}");
         }
 
         public void LogEvent(Event eventType, string eventParameters)

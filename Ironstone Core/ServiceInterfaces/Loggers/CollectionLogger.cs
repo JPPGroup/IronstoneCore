@@ -9,20 +9,17 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public CollectionLogger()
         {
+
 #if DEBUG
-            _loggers.Add(new ConsoleLogger());
+            _loggers.Add(cl);
+            _loggers.Add(new FileLogger());
 #else
             _loggers.Add(new TelemetryLogger());
-            _loggers.Add(new CollectionLogger(new ConsoleLogger(), new FileLogger()));
+            _loggers.Add(new ConsoleLogger());
+            _loggers.Add(new FileLogger());
 #endif
         }
-
-        public CollectionLogger(ILogger logger1, ILogger logger2)
-        {
-            _loggers.Add(logger1);
-            _loggers.Add(logger2);
-        }
-
+        
         public void Entry(string message)
         {
             foreach (var logger in _loggers) logger.Entry(message);            
