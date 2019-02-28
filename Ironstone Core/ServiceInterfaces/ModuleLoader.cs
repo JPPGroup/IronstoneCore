@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using Autodesk.AutoCAD.Runtime;
+using Exception = Autodesk.AutoCAD.Runtime.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     internal class ModuleLoader : IModuleLoader
     {
-        private Dictionary<string, Module> LoadedModules;
-        private IAuthentication _authentication;
-        private ILogger _logger;
+        private readonly Dictionary<string, Module> _loadedModules;
+        private readonly IAuthentication _authentication;
+        private readonly ILogger _logger;
 
         public string BinPath { get; set; }
         public string DataPath { get; set; }
@@ -22,19 +22,20 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             _authentication = authentication;
             _logger = logger;
-
+            
             BinPath = Assembly.GetExecutingAssembly().Location;
             BinPath = BinPath.Substring(0, BinPath.LastIndexOf('\\'));
             DataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
 
-            LoadedModules = new Dictionary<string, Module>();
+            _loadedModules = new Dictionary<string, Module>();
 
+            _logger.Entry($"Loading modules from {BinPath} and {DataPath}.", Severity.Debug);
             ProcessManifest();
         }
 
         public void Scan()
         {
-            LoadedModules.Clear();
+            _loadedModules.Clear();
             //Iterate over every dll found in bin folder
             foreach (string dll in Directory.GetFiles(BinPath, "*.dll"))
             {
@@ -53,11 +54,20 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             if (!CoreExtensionApplication.CoreConsole)
             {
-                //LoadAssembly(BinPath + "\\IronstoneCoreUI.dll");
-                ExtensionLoader.Load(BinPath + "\\IronstoneCoreUI.dll");
+                try
+                {
+                    ExtensionLoader.Load(BinPath + "\\IronstoneCoreUI.dll");
+                    _logger.Entry("Core UI library loaded.", Severity.Debug);
+                }
+                catch (System.Exception e)
+                {
+                    _logger.Entry($"Unable to load Core UI library", Severity.Crash);
+                    _logger.LogException(e);
+                    throw;
+                }
             }
 
-            foreach (Module m in LoadedModules.Values.Where(m => m.Objectmodel))
+            foreach (Module m in _loadedModules.Values.Where(m => m.Objectmodel))
             {
                 if (m.Authenticated)
                 {
@@ -68,7 +78,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             //Check if authenticated, otherwise block the auto loading
             if (_authentication.Authenticated())
             {
-                foreach (Module m in LoadedModules.Values.Where(m => !m.Objectmodel))
+                foreach (Module m in _loadedModules.Values.Where(m => !m.Objectmodel))
                 {
                     if (m.Authenticated)
                     {
@@ -80,63 +90,101 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public void ProcessManifest()
         {
-            if (File.Exists(BinPath + "\\ModuleManifest.txt"))
+            string moduleFile = DataPath + "\\ModuleManifest.txt";
+            UpdateManifest(moduleFile);
+
+            //Verify the file actually existis
+            if (File.Exists(moduleFile))
             {
-                File.Delete(BinPath + "\\ModuleManifest.txt");
+                try
+                {
+                    List<string> manifest = new List<string>();
+                    using (TextReader reader = File.OpenText(moduleFile))
+                    {
+                        while (reader.Peek() != -1)
+                        {
+                            string m = reader.ReadLine();
+                            manifest.Add(m);
+                        }
+                    }
+
+                    string[] existingModules = Directory.GetFiles(DataPath);
+
+                    foreach (string s in manifest)
+                    {
+                        bool found = false;
+                        string fileName = s + ".dll";
+                        string filePath = DataPath + "\\" + fileName;
+                        foreach (string existingModule in existingModules)
+                        {
+                            if (existingModule == (filePath))
+                            {
+                                found = true;
+                            }
+                        }
+
+                        if (!found)
+                        {
+                            if (_authentication.VerifyLicense(s))
+                            {
+                                using (var client = new WebClient())
+                                {
+                                    string downloadPath = Constants.BASE_URL + fileName;
+                                    try
+                                    {
+                                        client.DownloadFile(downloadPath, filePath);
+                                    }
+                                    catch (System.Exception e)
+                                    {
+                                        _logger.Entry($"Unable to download module {s} from {downloadPath}", Severity.Error);
+                                        _logger.LogException(e);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    _logger.Entry($"Unable to process latest manifest file {moduleFile}", Severity.Error);
+                    _logger.LogException(e);
+                }
+            }
+        }
+
+        private void UpdateManifest(string moduleFile)
+        {
+            if (File.Exists(moduleFile))
+            {
+                try
+                {
+                    File.Delete(moduleFile);
+                }
+                catch (System.Exception e)
+                {
+                    _logger.Entry($"Unable to delete existing module manifest file at {moduleFile}", Severity.Error);
+                    _logger.LogException(e);
+                }
             }
 
             using (var client = new WebClient())
             {
-                client.DownloadFile(Constants.BASE_URL + "ModuleManifest.txt", DataPath + "\\ModuleManifest.txt");
-            }
-
-            List<string> manifest = new List<string>();
-            using (TextReader reader = File.OpenText(DataPath + "\\ModuleManifest.txt"))
-            {
-                while (reader.Peek() != -1)
+                string ModuleUrl = Constants.BASE_URL + "ModuleManifest.txt";
+                try
                 {
-                    string m = reader.ReadLine();
-                    manifest.Add(m);
+                    client.DownloadFile(ModuleUrl, moduleFile);
                 }
-            }
-
-            string[] existingModules = Directory.GetFiles(DataPath);
-
-            foreach (string s in manifest)
-            {
-                bool found = false;
-                string fileName = s + ".dll";
-                foreach (string existingModule in existingModules)
+                catch (System.Exception e)
                 {
-                    if (existingModule == (DataPath + "\\" + fileName))
-                    {
-                        found = true;
-                    }
-                }
-
-                if (!found)
-                {
-                    if (_authentication.VerifyLicense(s))
-                    {
-                        using (var client = new WebClient())
-                        {
-                            try
-                            {
-                                client.DownloadFile(Constants.BASE_URL + fileName, DataPath + "\\" + fileName);
-                            }
-                            catch (System.Exception e)
-                            {
-                                _logger.Entry($"Module {s} not found", Severity.Warning);
-                            }
-                        }
-                    }
+                    _logger.Entry($"Unable to donwload current module manifest file to {moduleFile} from {ModuleUrl}", Severity.Error);
+                    _logger.LogException(e);
                 }
             }
         }
 
         public IEnumerable<Module> GetModules()
         {
-            return LoadedModules.Values;
+            return _loadedModules.Values;
         }
 
         private void LoadAssembly(string dll)
@@ -147,10 +195,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 Assembly target = ExtensionLoader.Load(dll);
                 //TODO: Verify actually loaded
 
-                LoadedModules[dll].Loaded = true;
+                _loadedModules[dll].Loaded = true;
             }
-
-            //TODO: Pass _container to do injection here
         }
 
         private void GetAssemblyInfo(string dll)
@@ -190,7 +236,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                         m.Loaded = true;
                     }
 
-                    LoadedModules.Add(dll, m);
+                    _loadedModules.Add(dll, m);
                 }
             }
         }

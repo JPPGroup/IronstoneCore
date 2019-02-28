@@ -13,8 +13,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
             _loggers.Add(new ConsoleLogger());
 #else
             _loggers.Add(new TelemetryLogger());
-            _loggers.Add(new ConsoleLogger());
+            _loggers.Add(new CollectionLogger(new ConsoleLogger(), new FileLogger()));
 #endif
+        }
+
+        public CollectionLogger(ILogger logger1, ILogger logger2)
+        {
+            _loggers.Add(logger1);
+            _loggers.Add(logger2);
         }
 
         public void Entry(string message)
