@@ -34,6 +34,6 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("9.9.9.9")]
-[assembly: AssemblyFileVersion("0.0.0.0")]
+[assembly: AssemblyFileVersion("9.9.9.9")]
 [assembly: CLSCompliant(true)]
 [assembly: InternalsVisibleTo("IronstoneCoreTests")]

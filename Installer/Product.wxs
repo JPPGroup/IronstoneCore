@@ -23,6 +23,11 @@
 				  <Directory Id="INSTALLFOLDER" Name="Ironstone" />
         </Directory>
 			</Directory>
+		  <Directory Id="AppDataFolder" Name="AppDir">
+		    <Directory Id="CompanyAdf" Name="JPP Consulting">
+		      <Directory Id="APPDATAINSTALLFOLDER" Name="Ironstone" />
+		    </Directory>
+		  </Directory>
 		</Directory>
 	</Fragment>
 
@@ -77,11 +82,14 @@
 	</Fragment>
 
   <Fragment>
-    <ComponentGroup Id="CoreUIProductComponents" Directory="INSTALLFOLDER">
+    <ComponentGroup Id="CoreUIProductComponents" Directory="APPDATAINSTALLFOLDER">
       <Component Id="IronstoneCoreUI.dll" Guid="8c629359-b5e4-4624-b038-65377827c6bb" Win64="yes">
-        <File Id="IronstoneCoreUI.dll" Source="..\bin\x64\Release\IronstoneCoreUI.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
-      </Component>
-      <Component Id="System.ValueTuple.dll" Guid="8b729539-679d-4abc-a7c6-50a1c464c238" Win64="yes">
+        <RemoveFolder Id="RemoveCompanyAdf" On="uninstall" Directory="CompanyAdf"/>
+        <RemoveFolder Id="RemoveAPPDATAINSTALLFOLDER" On="uninstall" Directory="APPDATAINSTALLFOLDER"/>
+        <File Id="IronstoneCoreUI.dll" Source="..\bin\x64\Release\IronstoneCoreUI.dll" Checksum="yes" ProcessorArchitecture="x64"/>
+        <RegistryKey Root="HKCU" Key="Software\JPPConsulting\Ironstone" Action="createAndRemoveOnUninstall">
+          <RegistryValue Type="integer" Name="INSTALLED" Value="1" KeyPath="yes"/>
+        </RegistryKey>
         <File Id="System.ValueTuple.dll" Source="..\bin\x64\Release\System.ValueTuple.dll" Checksum="yes"/>
       </Component>
     </ComponentGroup>
