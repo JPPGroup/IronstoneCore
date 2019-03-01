@@ -107,6 +107,7 @@
     <Compile Include="Autocad\LayerInfo.cs" />
     <Compile Include="Autocad\LayoutExtensions.cs" />
     <Compile Include="Autocad\TransactionException.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="CoreExtensionApplication.cs" />
     <Compile Include="IIronstoneExtensionApplication.cs" />
@@ -149,6 +150,11 @@
   <ItemGroup>
     <None Include="dpwin64.dll" />
     <None Include="IronstoneCore.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="IronstoneConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

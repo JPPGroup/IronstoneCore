@@ -56,7 +56,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             {
                 try
                 {
-                    ExtensionLoader.Load(DataPath + "\\IronstoneCoreUI.dll");
+                    if (File.Exists(DataPath + "\\IronstoneCoreUI.dll"))
+                    {
+                        ExtensionLoader.Load(DataPath + "\\IronstoneCoreUI.dll");
+                    }
+                    else
+                    {
+                        ExtensionLoader.Load(BinPath + "\\IronstoneCoreUI.dll");
+                    }
                     _logger.Entry("Core UI library loaded.", Severity.Debug);
                 }
                 catch (System.Exception e)

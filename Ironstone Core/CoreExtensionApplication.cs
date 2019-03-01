@@ -1,9 +1,11 @@
 ﻿using System;
+using System.CodeDom;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
@@ -34,8 +36,8 @@ namespace Jpp.Ironstone.Core
 
         public static CoreExtensionApplication _current;
 
-        public Control SyncContext;
-
+        public Configuration Configuration { get; set; }
+            
         /// <summary>
         /// Returns true if currently running under the Core Console
         /// </summary>
@@ -118,9 +120,6 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public void Initialize()
         {
-            SyncContext = new Control();
-            SyncContext.CreateControl();
-
             _current = this;
 
             //If not running in console only, detect if ribbon is currently loaded, and if not wait until the application is Idle.
@@ -167,11 +166,13 @@ namespace Jpp.Ironstone.Core
             Container= new UnityContainer();
             //TODO: Add code here for choosing log type
             Container.RegisterType<ILogger, CollectionLogger>(new ContainerControlledLifetimeManager());
-            //Container.RegisterType<IAuthentication, DinkeyAuthentication>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IAuthentication, PassDummyAuth>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IAuthentication, DinkeyAuthentication>(new ContainerControlledLifetimeManager());
+            //Container.RegisterType<IAuthentication, PassDummyAuth>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IModuleLoader, ModuleLoader>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<Objectmodel, Objectmodel>(new ContainerControlledLifetimeManager());
+
+            LoadConfiguration();
 
             try
             {
@@ -191,43 +192,74 @@ namespace Jpp.Ironstone.Core
 
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
         }
+
+        private void LoadConfiguration()
+        {
+            Configuration config = new Configuration();
+            config.ContainerResolvers.Add(typeof(ILogger).FullName, typeof(CollectionLogger).FullName);
+            XmlSerializer xml = new XmlSerializer(typeof(Configuration));
+            if (File.Exists("IronstoneConfig.xml"))
+            {
+                using (Stream s = File.Open("IronstoneConfig.xml", FileMode.Open))
+                {
+                    Configuration = xml.Deserialize(s) as Configuration;
+                }
+            }
+            else
+            {
+                Configuration = new Configuration();
+            }
+
+            //TODO: Remove once implemented iterator on serial dict
+            for (int i = 0; i < Configuration.ContainerResolvers.Values.Count; i++)
+            {
+                Type from = Type.GetType(Configuration.ContainerResolvers.Keys.ElementAt(i));
+                Type to = Type.GetType(Configuration.ContainerResolvers.Values.ElementAt(i));
+                Container.RegisterType(from, to, new ContainerControlledLifetimeManager());
+            }
+        }
+
         #endregion
 
         #region Updater
         // ReSharper disable once UnusedMember.Global
         public void Update()
         {
-            Container.Resolve<IModuleLoader>().Scan();
-#if DEBUG
-            Container.Resolve<IModuleLoader>().Load();
-#endif
-#if !DEBUG
-            AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, this);
-            AutoUpdate.Updater<CoreExtensionApplication>.CheckForUpdateEvent += (UpdateInfoEventArgs args) =>
+            if (Configuration.EnableInstallerUpdate)
             {
-                if (args == null)
-                    return;
-                if (args.IsUpdateAvailable)
+                AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, this);
+                AutoUpdate.Updater<CoreExtensionApplication>.CheckForUpdateEvent += (UpdateInfoEventArgs args) =>
                 {
-                    AutoUpdate.Updater<CoreExtensionApplication>.ShowUpdateForm();
-                }
-                else
+                    if (args == null)
+                        return;
+                    if (args.IsUpdateAvailable)
+                    {
+                        AutoUpdate.Updater<CoreExtensionApplication>.ShowUpdateForm();
+                    }
+                    else
+                    {
+                        _objectmodel = Container.Resolve<Objectmodel>();
+                    }
+                };
+                AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
                 {
-                    _objectmodel = Container.Resolve<Objectmodel>();
-                }
-            };
-            AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
+                    if (Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                            .MdiActiveDocument == null)
+                    {
+                        Autodesk.AutoCAD.ApplicationServices.Core.Application.Quit();
+                        return;
+                    }
+
+                    Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                        .MdiActiveDocument?.SendStringToExecute("quit ", true, false, true);
+                };
+            }
+            else
             {
-                if (Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
-                        .MdiActiveDocument == null)
-                {
-                    Autodesk.AutoCAD.ApplicationServices.Core.Application.Quit();
-                    return;
-                }
-                Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
-                    .MdiActiveDocument?.SendStringToExecute("quit ", true, false, true);
-            };
-#endif
+                _objectmodel = Container.Resolve<Objectmodel>();
+                /*Container.Resolve<IModuleLoader>().Scan();
+                Container.Resolve<IModuleLoader>().Load();*/
+            }
         }
         #endregion
 
