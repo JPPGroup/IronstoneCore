@@ -30,7 +30,10 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             _loadedModules = new Dictionary<string, Module>();
 
             _logger.Entry($"Loading modules from {BinPath} and {DataPath}.", Severity.Debug);
-            ProcessManifest();
+            if (CoreExtensionApplication._current.Configuration.EnableModuleUpdate)
+            {
+                ProcessManifest();
+            }
         }
 
         public void Scan()

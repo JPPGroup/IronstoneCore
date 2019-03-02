@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Jpp.Common;
+using Jpp.Ironstone.Core.Mocking;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core
 {
@@ -21,6 +23,14 @@ namespace Jpp.Ironstone.Core
             EnableInstallerUpdate = true;
             EnableObjectmodelUpdate = true;
             EnableModuleUpdate = true;
+        }
+
+        public void TestSettings()
+        {
+            EnableInstallerUpdate = false;
+            EnableModuleUpdate = false;
+            EnableObjectmodelUpdate = false;
+            ContainerResolvers.Add(typeof(IAuthentication).FullName, typeof(PassDummyAuth).FullName);
         }
     }
 }

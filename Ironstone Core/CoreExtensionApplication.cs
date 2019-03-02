@@ -195,8 +195,6 @@ namespace Jpp.Ironstone.Core
 
         private void LoadConfiguration()
         {
-            Configuration config = new Configuration();
-            config.ContainerResolvers.Add(typeof(ILogger).FullName, typeof(CollectionLogger).FullName);
             XmlSerializer xml = new XmlSerializer(typeof(Configuration));
             if (File.Exists("IronstoneConfig.xml"))
             {

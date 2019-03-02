@@ -41,7 +41,15 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             {
                 int i = 0;
             };
-            AutoUpdate.Updater<Objectmodel>.Start(Constants.OBJECTMODEL_URL, this);
+
+            if (CoreExtensionApplication._current.Configuration.EnableObjectmodelUpdate)
+            {
+                AutoUpdate.Updater<Objectmodel>.Start(Constants.OBJECTMODEL_URL, this);
+            }
+            else
+            {
+                modules.Load();
+            }
         }
 
         public void Update()

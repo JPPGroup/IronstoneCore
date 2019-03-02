@@ -12,6 +12,7 @@ using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.AcTestFramework;
 using Jpp.Ironstone.Core.Autocad;
+using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using NUnit.Framework;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
@@ -22,6 +23,13 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
     class DataServiceTests : BaseNUnitTestFixture
     {
         public DataServiceTests() : base(Assembly.GetExecutingAssembly(), typeof(DataServiceTests)) { }
+
+        public override void Setup()
+        {
+            Configuration config = new Configuration();
+            config.TestSettings();
+            ConfigurationHelper.CreateConfiguration(config);
+        }
 
         [Test]
         public void VerifyStoreTypesLoaded()
