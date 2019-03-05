@@ -85,10 +85,10 @@
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="Unity.Abstractions, Version=4.1.0.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\ironstone-object-model\packages\Unity.5.9.6\lib\net47\Unity.Abstractions.dll</HintPath>
+      <HintPath>..\packages\Unity.5.9.7\lib\net47\Unity.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Container, Version=5.9.6.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
-      <HintPath>..\..\ironstone-object-model\packages\Unity.5.9.6\lib\net47\Unity.Container.dll</HintPath>
+    <Reference Include="Unity.Container, Version=5.9.7.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.5.9.7\lib\net47\Unity.Container.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="ZipExtract, Version=1.0.12.0, Culture=neutral, processorArchitecture=MSIL">
