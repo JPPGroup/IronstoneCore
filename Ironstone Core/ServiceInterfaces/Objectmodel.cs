@@ -10,25 +10,25 @@ using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
-    class Objectmodel : IUpdateable
+    class ObjectModel : IUpdateable
     {
-        public Objectmodel(IModuleLoader modules)
+        public ObjectModel(IModuleLoader modules)
         {
-            var module = modules.GetModules().FirstOrDefault(m => m.Objectmodel);
+            var module = modules.GetModules().FirstOrDefault(m => m.ObjectModel);
             if(module != null)
                 this.InstalledVersion = module.Version;
 
-            AutoUpdate.Updater<Objectmodel>.Mandatory = true;
-            AutoUpdate.Updater<Objectmodel>.UpdateMode = Mode.ForcedDownload;
-            AutoUpdate.Updater<Objectmodel>.DownloadPath = modules.DataPath;
-            AutoUpdate.Updater<Objectmodel>.CheckForUpdateEvent += (UpdateInfoEventArgs args) =>
+            AutoUpdate.Updater<ObjectModel>.Mandatory = true;
+            AutoUpdate.Updater<ObjectModel>.UpdateMode = Mode.ForcedDownload;
+            AutoUpdate.Updater<ObjectModel>.DownloadPath = modules.DataPath;
+            AutoUpdate.Updater<ObjectModel>.CheckForUpdateEvent += (UpdateInfoEventArgs args) =>
             {
                 if (args == null)
                     return;
                 if (args.IsUpdateAvailable)
                 {
-                    AutoUpdate.Updater<Objectmodel>.DownloadUpdate();
-                    AutoUpdate.Updater<Objectmodel>.Exit();
+                    AutoUpdate.Updater<ObjectModel>.DownloadUpdate();
+                    AutoUpdate.Updater<ObjectModel>.Exit();
                     modules.Scan();
                     modules.Load();
                 }
@@ -37,14 +37,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     modules.Load();
                 }
             };
-            AutoUpdate.Updater<Objectmodel>.ApplicationExitEvent += () =>
+            AutoUpdate.Updater<ObjectModel>.ApplicationExitEvent += () =>
             {
                 int i = 0;
             };
 
-            if (CoreExtensionApplication._current.Configuration.EnableObjectmodelUpdate)
+            if (CoreExtensionApplication._current.Configuration.EnableObjectModelUpdate)
             {
-                AutoUpdate.Updater<Objectmodel>.Start(Constants.OBJECTMODEL_URL, this);
+                AutoUpdate.Updater<ObjectModel>.Start(Constants.OBJECT_MODEL_URL, this);
             }
             else
             {

@@ -110,7 +110,7 @@ namespace Jpp.Ironstone.Core
         
         private ILogger _logger;
         private IAuthentication _authentication;
-        private Objectmodel _objectmodel;
+        private ObjectModel _objectModel;
         #endregion
 
         #region Autocad Extension Lifecycle
@@ -170,7 +170,7 @@ namespace Jpp.Ironstone.Core
             //Container.RegisterType<IAuthentication, PassDummyAuth>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IModuleLoader, ModuleLoader>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<Objectmodel, Objectmodel>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<ObjectModel, ObjectModel>(new ContainerControlledLifetimeManager());
 
             LoadConfiguration();
 
@@ -236,7 +236,7 @@ namespace Jpp.Ironstone.Core
                     }
                     else
                     {
-                        _objectmodel = Container.Resolve<Objectmodel>();
+                        _objectModel = Container.Resolve<ObjectModel>();
                     }
                 };
                 AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
@@ -254,7 +254,7 @@ namespace Jpp.Ironstone.Core
             }
             else
             {
-                _objectmodel = Container.Resolve<Objectmodel>();
+                _objectModel = Container.Resolve<ObjectModel>();
                 /*Container.Resolve<IModuleLoader>().Scan();
                 Container.Resolve<IModuleLoader>().Load();*/
             }

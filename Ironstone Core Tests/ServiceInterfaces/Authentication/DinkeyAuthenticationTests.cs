@@ -26,9 +26,9 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Authentication
         {
             get
             {
-                yield return new TestCaseData("C:\\test\\path\\Name Objectmodel.dll").Returns("Name Objectmodel");
+                yield return new TestCaseData("C:\\test\\path\\NameObjectModel.dll").Returns("NameObjectModel");
                 yield return new TestCaseData("C:\\test\\path\\Name.dll").Returns("Name");
-                yield return new TestCaseData("C:\\test\\path\\Long Name Objectmodel.dll").Returns("Long Name Objectmodel");
+                yield return new TestCaseData("C:\\test\\path\\Long NameObjectModel.dll").Returns("Long NameObjectModel");
             }
         }
     }

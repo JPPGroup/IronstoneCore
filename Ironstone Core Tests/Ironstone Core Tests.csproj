@@ -110,7 +110,7 @@
     <Compile Include="ServiceInterfaces\Loggers\TelemetryClientTestData.cs" />
     <Compile Include="ServiceInterfaces\Loggers\TelemetryLoggerTests.cs" />
     <Compile Include="ServiceInterfaces\ModuleLoaderTests.cs" />
-    <Compile Include="ServiceInterfaces\ObjectmodelTests.cs" />
+    <Compile Include="ServiceInterfaces\ObjectModelTests.cs" />
     <Compile Include="TestObjects\TestDocumentStore.cs" />
   </ItemGroup>
   <ItemGroup>

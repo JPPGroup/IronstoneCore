@@ -14,14 +14,14 @@ namespace Jpp.Ironstone.Core
         public SerializableDictionary<string, string> ContainerResolvers { get; set; }
 
         public bool EnableInstallerUpdate;
-        public bool EnableObjectmodelUpdate;
+        public bool EnableObjectModelUpdate;
         public bool EnableModuleUpdate;
 
         public Configuration()
         {
             ContainerResolvers = new SerializableDictionary<string, string>();
             EnableInstallerUpdate = true;
-            EnableObjectmodelUpdate = true;
+            EnableObjectModelUpdate = true;
             EnableModuleUpdate = true;
         }
 
@@ -29,7 +29,7 @@ namespace Jpp.Ironstone.Core
         {
             EnableInstallerUpdate = false;
             EnableModuleUpdate = false;
-            EnableObjectmodelUpdate = false;
+            EnableObjectModelUpdate = false;
             ContainerResolvers.Add(typeof(IAuthentication).FullName, typeof(PassDummyAuth).FullName);
         }
     }

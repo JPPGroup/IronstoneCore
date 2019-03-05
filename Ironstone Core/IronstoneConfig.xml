@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Configuration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <EnableInstallerUpdate>false</EnableInstallerUpdate>
-  <EnableObjectmodelUpdate>false</EnableObjectmodelUpdate>
+  <EnableObjectModelUpdate>false</EnableObjectModelUpdate>
   <EnableModuleUpdate>false</EnableModuleUpdate>
   <ContainerResolvers>
     <item>

@@ -77,7 +77,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 }
             }
 
-            foreach (Module m in _loadedModules.Values.Where(m => m.Objectmodel))
+            foreach (Module m in _loadedModules.Values.Where(m => m.ObjectModel))
             {
                 if (m.Authenticated)
                 {
@@ -88,7 +88,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             //Check if authenticated, otherwise block the auto loading
             if (_authentication.Authenticated())
             {
-                foreach (Module m in _loadedModules.Values.Where(m => !m.Objectmodel))
+                foreach (Module m in _loadedModules.Values.Where(m => !m.ObjectModel))
                 {
                     if (m.Authenticated)
                     {
@@ -220,13 +220,13 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 m.UpdateAvailable = false;
                 m.Loaded = false;
                 m.Path = dll;
-                if (dll.Contains("Objectmodel"))
+                if (dll.Contains("ObjectModel"))
                 {
-                    m.Objectmodel = true;
+                    m.ObjectModel = true;
                 }
                 else
                 {
-                    m.Objectmodel = false;
+                    m.ObjectModel = false;
                 }
 
                 if (m.Name.Contains("Ironstone"))

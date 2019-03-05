@@ -7,6 +7,6 @@
 
         public const string INSTALLER_URL = "https://ironstone.blob.core.windows.net/ironstone/IronstoneCore.xml";
         public const string BASE_URL = "https://ironstone.blob.core.windows.net/ironstone/";
-        public const string OBJECTMODEL_URL = "https://ironstone.blob.core.windows.net/ironstone/IronstoneObjectmodel.xml";
+        public const string OBJECT_MODEL_URL = "https://ironstone.blob.core.windows.net/ironstone/IronstoneObjectModel.xml";
     }
 }

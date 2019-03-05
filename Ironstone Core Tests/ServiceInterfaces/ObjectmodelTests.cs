@@ -9,7 +9,7 @@ using NUnit.Framework.Internal;
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 {
     [TestFixture()]
-    class ObjectmodelTests
+    class ObjectModelTests
     {
         public void NoExistingDownload()
         {

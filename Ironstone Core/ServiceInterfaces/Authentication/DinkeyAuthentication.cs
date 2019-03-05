@@ -77,7 +77,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 #endif
 #if !DEBUG
             string moduleName = GetModuleNameFromPath(Path);
-            if (moduleName.Contains("Objectmodel"))
+            if (moduleName.Contains("ObjectModel"))
                 return true;
 
             int LocalErrorCode = -1;
@@ -138,10 +138,10 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             //Get module name
             string name;
 
-            /*if (Path.Contains(" Objectmodel.dll"))
+            /*if (Path.Contains("ObjectModel.dll"))
             {
                 int IndexOfSlash = Path.LastIndexOf("\\") + 1;
-                int IndexOfSpace = Path.LastIndexOf(" Objectmodel.dll");
+                int IndexOfSpace = Path.LastIndexOf("ObjectModel.dll");
                 name = Path.Substring(IndexOfSlash, IndexOfSpace - IndexOfSlash);
             }
             else
