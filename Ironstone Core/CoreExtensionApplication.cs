@@ -180,10 +180,10 @@ namespace Jpp.Ironstone.Core
                 _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
 
                 _authentication = Container.Resolve<IAuthentication>();
-                IDataService dataService = Container.Resolve<IDataService>();
+                //IDataService dataService = Container.Resolve<IDataService>();
                 Update();
                 //Once all modules have been loaded inform data service
-                dataService.PopulateStoreTypes();
+                //dataService.PopulateStoreTypes();
             }
             catch (System.Exception e)
             {
@@ -256,6 +256,7 @@ namespace Jpp.Ironstone.Core
             {
                 _objectModel = Container.Resolve<ObjectModel>();
                 Container.Resolve<IModuleLoader>().Scan();
+                Container.Resolve<IDataService>().PopulateStoreTypes();
             }
         }
         #endregion
