@@ -69,8 +69,7 @@ namespace Jpp.Ironstone.Core.UI
             RibbonRowPanel stack = new RibbonRowPanel();
 
             //stack.Items.Add(_settingsButton);
-            RibbonToggleButton aboutButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_AboutWindow_Name, Resources.About,
-                RibbonItemSize.Standard, Orientation.Horizontal, _container.Resolve<About>(), "10992236-c8f6-4732-b5e0-2d9194f07068");
+            RibbonToggleButton aboutButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_AboutWindow_Name, Resources.About, RibbonItemSize.Standard, _container.Resolve<About>(), "10992236-c8f6-4732-b5e0-2d9194f07068");
 
             stack.Items.Add(new RibbonRowBreak());
             stack.Items.Add(aboutButton);

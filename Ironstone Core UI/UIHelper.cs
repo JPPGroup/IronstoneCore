@@ -48,14 +48,28 @@ namespace Jpp.Ironstone.Core.UI
             newButton.ShowText = true;
             newButton.ShowImage = true;
             newButton.Text = buttonText;
-            newButton.Name = buttonText;
-            newButton.Image = LoadImage(icon);
+            newButton.Name = buttonText;            
             newButton.Size = size;
             newButton.CommandHandler = new RibbonCommandHandler();
             newButton.CommandParameter = "._" + command + " ";
 
+            switch (size)
+            {
+                case RibbonItemSize.Standard:
+                    newButton.Orientation = Orientation.Horizontal;
+                    newButton.Image = LoadImage(icon);
+                    break;
+                case RibbonItemSize.Large:
+                    newButton.Orientation = Orientation.Vertical;
+                    newButton.LargeImage = LoadImage(icon);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(size), size, null);
+            }
+
             return newButton;
         }
+
 
         /// <summary>
         /// Helper for creating a toggle button an binding a panel to it
@@ -64,21 +78,10 @@ namespace Jpp.Ironstone.Core.UI
         /// <param name="icon">Icon to display</param>
         /// <param name="size">Small or Large</param>
         /// <param name="view">UI element to embed in pallete</param>
-        /// <param name="WindowId">GUID of window</param>
+        /// <param name="windowId">GUID of window</param>
         /// <returns></returns>
-        public static RibbonToggleButton CreateWindowToggle(string buttonText, Bitmap icon, RibbonItemSize size, Orientation orientation, UIElement view, string WindowId)
+        public static RibbonToggleButton CreateWindowToggle(string buttonText, Bitmap icon, RibbonItemSize size, UIElement view, string windowId)
         {
-            switch (size)
-            {
-                case RibbonItemSize.Large:
-                    icon = new Bitmap(icon, new System.Drawing.Size(32,32));
-                    break;
-
-                case RibbonItemSize.Standard:
-                    icon = new Bitmap(icon, new System.Drawing.Size(16, 16));
-                    break;
-            }
-
             RibbonToggleButton result = new RibbonToggleButton
             {
                 ShowText = true,
@@ -86,12 +89,24 @@ namespace Jpp.Ironstone.Core.UI
                 Text = buttonText,
                 Name = buttonText,
                 Size = size,
-                Orientation = orientation,
-                Image = LoadImage(icon)
             };
 
+            switch (size)
+            {
+                case RibbonItemSize.Large:
+                    result.LargeImage = LoadImage(new Bitmap(icon, new System.Drawing.Size(32,32)));
+                    result.Orientation = Orientation.Vertical;
+                    break;
+                case RibbonItemSize.Standard:
+                    result.Image = LoadImage(new Bitmap(icon, new System.Drawing.Size(16, 16)));
+                    result.Orientation = Orientation.Horizontal;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(size), size, null);
+            }
+
             //TODO: Confirm this wont get accidentally garbage collected
-            PaletteSet paletteSet = new PaletteSet("JPP", new Guid(WindowId))
+            PaletteSet paletteSet = new PaletteSet("JPP", new Guid(windowId))
             {
                 Size = new System.Drawing.Size(600, 800),
                 Style = (PaletteSetStyles)((int)PaletteSetStyles.ShowAutoHideButton +

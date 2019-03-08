@@ -48,6 +48,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
             else
             {
+                modules.Scan();
                 modules.Load();
             }
         }

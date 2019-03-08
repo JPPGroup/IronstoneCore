@@ -255,8 +255,7 @@ namespace Jpp.Ironstone.Core
             else
             {
                 _objectModel = Container.Resolve<ObjectModel>();
-                /*Container.Resolve<IModuleLoader>().Scan();
-                Container.Resolve<IModuleLoader>().Load();*/
+                Container.Resolve<IModuleLoader>().Scan();
             }
         }
         #endregion
