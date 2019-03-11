@@ -31,7 +31,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             ConfigurationHelper.CreateConfiguration(config);
         }
 
-        [Test]
+       /* [Test]
         public void VerifyStoreTypesLoaded()
         {
             int count = RunTest<int>("VerifyStoreTypesLoadedResident");
@@ -43,7 +43,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             DataService ds = DataService.Current;
             ds.PopulateStoreTypes();
             return DataService.Current._storesList.Count;
-        }
+        }*/
 
         
         /*[Test]
