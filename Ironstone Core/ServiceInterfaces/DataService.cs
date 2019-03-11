@@ -153,8 +153,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 }
                 catch (Exception e)
                 {
-                    //TODO: Move to logger
-                    Console.WriteLine(e);
+                    _logger.LogException(e);
                 }
             }
 
