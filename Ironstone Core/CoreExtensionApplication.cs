@@ -256,7 +256,6 @@ namespace Jpp.Ironstone.Core
             {
                 _objectModel = Container.Resolve<ObjectModel>();
                 Container.Resolve<IModuleLoader>().Scan();
-                Container.Resolve<IDataService>().PopulateStoreTypes();
             }
         }
         #endregion

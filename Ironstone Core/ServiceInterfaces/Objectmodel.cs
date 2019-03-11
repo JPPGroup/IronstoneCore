@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Jpp.AutoUpdate;
 using Jpp.AutoUpdate.Classes;
-using Jpp.Ironstone.Core.ServiceInterfaces;
-using Unity;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
@@ -34,7 +32,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 }
 
                 modules.Load();
-                CoreExtensionApplication._current.Container.Resolve<IDataService>().PopulateStoreTypes();
             };
             AutoUpdate.Updater<ObjectModel>.ApplicationExitEvent += () =>
             {
@@ -48,8 +45,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             else
             {
                 modules.Scan();
-                modules.Load();
-                CoreExtensionApplication._current.Container.Resolve<IDataService>().PopulateStoreTypes();
+                modules.Load();                
             }
         }
 

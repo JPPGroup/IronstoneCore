@@ -65,7 +65,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="AcTestFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\AcTestFramework.1.0.18\lib\net472\AcTestFramework.dll</HintPath>
+      <HintPath>..\packages\AcTestFramework.1.0.19\lib\net472\AcTestFramework.dll</HintPath>
     </Reference>
     <Reference Include="Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.0.1.4\lib\netstandard2.0\Common.dll</HintPath>
