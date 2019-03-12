@@ -16,6 +16,7 @@ namespace Jpp.Ironstone.Core
         public bool EnableInstallerUpdate;
         public bool EnableObjectModelUpdate;
         public bool EnableModuleUpdate;
+        public bool LoadAppDirectory;
 
         public Configuration()
         {
@@ -23,6 +24,7 @@ namespace Jpp.Ironstone.Core
             EnableInstallerUpdate = true;
             EnableObjectModelUpdate = true;
             EnableModuleUpdate = true;
+            LoadAppDirectory = true;
         }
 
         public void TestSettings()
@@ -30,6 +32,7 @@ namespace Jpp.Ironstone.Core
             EnableInstallerUpdate = false;
             EnableModuleUpdate = false;
             EnableObjectModelUpdate = false;
+            LoadAppDirectory = false;
             ContainerResolvers.Add(typeof(IAuthentication).FullName, typeof(PassDummyAuth).FullName);
         }
     }

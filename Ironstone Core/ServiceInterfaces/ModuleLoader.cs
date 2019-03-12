@@ -44,7 +44,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             {
                 GetAssemblyInfo(dll);
             }
-            if (Directory.Exists(DataPath))
+            if (Directory.Exists(DataPath) && CoreExtensionApplication._current.Configuration.LoadAppDirectory)
             {
                 foreach (string dll in Directory.GetFiles(DataPath, "*.dll"))
                 {
