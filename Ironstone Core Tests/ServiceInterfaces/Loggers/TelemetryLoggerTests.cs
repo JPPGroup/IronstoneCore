@@ -13,12 +13,12 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
     [TestFixture]
     class TelemetryLoggerTests : BaseNUnitTestFixture
     {
-        public TelemetryLoggerTests() : base(Assembly.GetExecutingAssembly(), typeof(TelemetryLoggerTests)) { }
+        public TelemetryLoggerTests() : base(Assembly.GetExecutingAssembly(), typeof(TelemetryLoggerTests), "IronstoneCore.dll") { }
 
         [Test]
         public void VerifyDefaultConstructor()
         {
-            var result = RunTest<TelemetryClientTestData>("VerifyDefaultConstructorResident");
+            var result = RunTest<TelemetryClientTestData>(nameof(VerifyDefaultConstructorResident));
 
             Assert.False(string.IsNullOrEmpty(result.SessionId),"Invalid session id.");
             Assert.False(string.IsNullOrEmpty(result.UserId), "Invalid user id.");
@@ -44,7 +44,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void VerifyLogEntry()
         {
-            var result = RunTest<int>("VerifyLogEntryResident");
+            var result = RunTest<int>(nameof(VerifyLogEntryResident));
             Assert.AreEqual(1, result, "Incorrect number of traces sent.");
         }
 
@@ -67,7 +67,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void VerifyLogEntryWithSeverityInformation()
         {
-            var result = RunTest<int>("VerifyLogEntryWithSeverityInformationResident");
+            var result = RunTest<int>(nameof(VerifyLogEntryWithSeverityInformationResident));
             Assert.AreEqual(1, result, "Incorrect number of traces sent.");
         }
 
@@ -90,7 +90,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void VerifyLogEntryWithSeverityDebug()
         {
-            var result = RunTest<int>("VerifyLogEntryWithSeverityDebugResident");
+            var result = RunTest<int>(nameof(VerifyLogEntryWithSeverityDebugResident));
             Assert.AreEqual(1, result, "Incorrect number of traces sent.");
         }
 
@@ -113,7 +113,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void VerifyLogEntryWithSeverityWarning()
         {
-            var result = RunTest<int>("VerifyLogEntryWithSeverityWarningResident");
+            var result = RunTest<int>(nameof(VerifyLogEntryWithSeverityWarningResident));
             Assert.AreEqual(1, result, "Incorrect number of traces sent.");
         }
 
@@ -136,7 +136,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void VerifyLogEntryWithSeverityError()
         {
-            var result = RunTest<int>("VerifyLogEntryWithSeverityErrorResident");
+            var result = RunTest<int>(nameof(VerifyLogEntryWithSeverityErrorResident));
             Assert.AreEqual(1, result, "Incorrect number of traces sent.");
         }
 
@@ -159,7 +159,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void VerifyLogEntryWithSeverityCrash()
         {
-            var result = RunTest<int>("VerifyLogEntryWithSeverityCrashResident");
+            var result = RunTest<int>(nameof(VerifyLogEntryWithSeverityCrashResident));
             Assert.AreEqual(1, result, "Incorrect number of traces sent.");
         }
 
@@ -182,7 +182,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void VerifyLogEvent()
         {
-            var result = RunTest<int>("VerifyLogEventResident");
+            var result = RunTest<int>(nameof(VerifyLogEventResident));
             Assert.AreEqual(1, result, "Incorrect number of events sent.");
         }
 
@@ -205,7 +205,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void VerifyLogException()
         {
-            var result = RunTest<int>("VerifyLogExceptionResident");
+            var result = RunTest<int>(nameof(VerifyLogExceptionResident));
             Assert.AreEqual(1, result, "Incorrect number of exceptions sent.");
         }
 

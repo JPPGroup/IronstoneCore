@@ -18,7 +18,7 @@ namespace Jpp.Ironstone.Core.Tests
     [TestFixture]
     class CoreExtensionApplicationTests : BaseNUnitTestFixture
     {
-        public CoreExtensionApplicationTests() : base(Assembly.GetExecutingAssembly(), typeof(CoreExtensionApplicationTests)) { }
+        public CoreExtensionApplicationTests() : base(Assembly.GetExecutingAssembly(), typeof(CoreExtensionApplicationTests), "IronstoneCore.dll") { }
 
         public override void Setup()
         {

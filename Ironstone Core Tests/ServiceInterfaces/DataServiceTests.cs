@@ -22,7 +22,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
     [TestFixture]
     class DataServiceTests : BaseNUnitTestFixture
     {
-        public DataServiceTests() : base(Assembly.GetExecutingAssembly(), typeof(DataServiceTests)) { }
+        public DataServiceTests() : base(Assembly.GetExecutingAssembly(), typeof(DataServiceTests), "IronstoneCore.dll") { }
 
         public override void Setup()
         {
