@@ -154,9 +154,9 @@
     <None Include="IronstoneCore.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="IronstoneConfig.xml">
+    <Content Include="IronstoneConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

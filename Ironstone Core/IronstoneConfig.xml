@@ -3,6 +3,7 @@
   <EnableInstallerUpdate>false</EnableInstallerUpdate>
   <EnableObjectModelUpdate>false</EnableObjectModelUpdate>
   <EnableModuleUpdate>false</EnableModuleUpdate>
+  <LoadAppDirectory>false</LoadAppDirectory>
   <ContainerResolvers>
     <item>
       <key>
