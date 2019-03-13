@@ -14,7 +14,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public FileLogger()
         {
-            filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\IronstoneLog.txt";
+            filePath = Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt";
             AppendText("==================================================");
         }
 

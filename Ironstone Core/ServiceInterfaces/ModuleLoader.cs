@@ -25,7 +25,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             
             BinPath = Assembly.GetExecutingAssembly().Location;
             BinPath = BinPath.Substring(0, BinPath.LastIndexOf('\\'));
-            DataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JPP Consulting\\Ironstone";
+            DataPath = Jpp.Ironstone.Core.Constants.APPDATA;
 
             _loadedModules = new Dictionary<string, Module>();
 
