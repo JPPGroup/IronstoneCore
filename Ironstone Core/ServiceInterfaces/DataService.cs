@@ -90,12 +90,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             if (!foundStores.ContainsKey(typeof(T)))
             {
-                if (!_storesList.Contains(typeof(T)))
-                {
-                    _logger.Entry("Store type not recognised.\n", Severity.Crash);
-                    throw new ArgumentException();
-                }
-
                 foundStores.Add(typeof(T), (DocumentStore) CreateDocumentStore(typeof(T), doc));
             }
 
@@ -133,6 +127,15 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private object CreateDocumentStore(Type T, Document doc)
         {
+            if (_storeTypesInvalidated)
+                PopulateStoreTypes();
+
+            if (!_storesList.Contains(T))
+            {
+                _logger.Entry("Store type not recognised.\n", Severity.Crash);
+                throw new ArgumentException();
+            }
+
             DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes());
             ds.LoadWrapper();
             return ds;
