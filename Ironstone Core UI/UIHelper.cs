@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -157,5 +158,96 @@ namespace Jpp.Ironstone.Core.UI
 
             return result;
         }
+
+        public static RibbonToggleButton CreateWindowToggle(string buttonText, Bitmap icon, RibbonItemSize size, Dictionary<string, UIElement> views, string windowId)
+        {
+            RibbonToggleButton result = new RibbonToggleButton
+            {
+                ShowText = true,
+                ShowImage = true,
+                Text = buttonText,
+                Name = buttonText,
+                Size = size,
+            };
+
+            switch (size)
+            {
+                case RibbonItemSize.Large:
+                    result.LargeImage = LoadImage(new Bitmap(icon, new System.Drawing.Size(32, 32)));
+                    result.Orientation = Orientation.Vertical;
+                    break;
+                case RibbonItemSize.Standard:
+                    result.Image = LoadImage(new Bitmap(icon, new System.Drawing.Size(16, 16)));
+                    result.Orientation = Orientation.Horizontal;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(size), size, null);
+            }
+
+            //TODO: Confirm this wont get accidentally garbage collected
+            PaletteSet paletteSet = new PaletteSet("JPP", new Guid(windowId))
+            {
+                Size = new System.Drawing.Size(600, 800),
+                Style = (PaletteSetStyles)((int)PaletteSetStyles.ShowAutoHideButton +
+                                           (int)PaletteSetStyles.ShowCloseButton),
+                DockEnabled = (DockSides)((int)DockSides.Left + (int)DockSides.Right)
+            };
+
+
+            foreach (var view in views)
+            {
+                var viewHost = new ElementHost
+                {
+                    AutoSize = true,
+                    Dock = DockStyle.Fill,
+                    Child = view.Value
+                };
+
+                paletteSet.Add(view.Key, viewHost);
+            }
+
+
+            paletteSet.KeepFocus = false;
+
+            bool pendingChange = false;
+            bool ignoreChange = false;
+
+            result.CheckStateChanged += (sender, args) =>
+            {
+                if (!ignoreChange)
+                {
+                    pendingChange = true;
+                    paletteSet.Visible = result.CheckState == true;
+
+                    foreach (var view in views)
+                    {
+                        if (!(view.Value is HostedUserControl hostedView)) continue;
+
+                        if (paletteSet.Visible)
+                        {
+                            hostedView.Show();
+                        }
+                        else
+                        {
+                            hostedView.Hide();
+                        }
+                    }
+                    pendingChange = false;
+                }
+            };
+
+            paletteSet.StateChanged += (sender, args) =>
+            {
+                if (!pendingChange)
+                {
+                    ignoreChange = true;
+                    result.CheckState = !paletteSet.Visible;
+                    ignoreChange = false;
+                }
+            };
+
+            return result;
+        }
+
     }
 }
