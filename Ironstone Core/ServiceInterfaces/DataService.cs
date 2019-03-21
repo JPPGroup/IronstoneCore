@@ -123,6 +123,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             document.Database.BeginSave += (o, args) => SaveStores(document.Name);
             document.CommandEnded += (o, args) => CommandEnded(document.Name, args.GlobalCommandName);
+            document.CommandCancelled += (o, args) => CommandEnded(document.Name, args.GlobalCommandName);
         }
 
         private object CreateDocumentStore(Type T, Document doc)
