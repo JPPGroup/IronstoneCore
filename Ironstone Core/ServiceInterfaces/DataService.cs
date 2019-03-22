@@ -178,7 +178,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             foreach (DocumentStore documentStore in _stores[DocName].Values)
             {
                 //TODO: Check this works
-                if (GlobalCommandName.Contains("regen"))
+                if (GlobalCommandName.ToLower().Contains("regen"))
                 {
                     documentStore.ReenerateManagers();
                 }
