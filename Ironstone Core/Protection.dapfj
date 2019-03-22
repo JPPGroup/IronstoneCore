@@ -35,6 +35,26 @@
          "ExpiryWarning": null,
          "Features": 0,
          "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneHighways",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": 0
+      },
+      {
+         "Name": "IronstoneDocumentManagement",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": 0
       }
    ],
 

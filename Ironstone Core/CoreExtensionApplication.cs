@@ -182,8 +182,6 @@ namespace Jpp.Ironstone.Core
                 _authentication = Container.Resolve<IAuthentication>();
                 IDataService dataService = Container.Resolve<IDataService>();
                 Update();
-                //Once all modules have been loaded inform data service
-                dataService.PopulateStoreTypes();
             }
             catch (System.Exception e)
             {
