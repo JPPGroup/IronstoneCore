@@ -54,7 +54,6 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 
         public bool VerifyTestStoreLoadedResident()
         {
-            Debugger.Launch();
             try
             {
                 DataService ds = DataService.Current;
