@@ -14,6 +14,7 @@ using Jpp.AcTestFramework;
 using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Jpp.Ironstone.Core.Tests.TestObjects;
 using NUnit.Framework;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -45,7 +46,37 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             return DataService.Current._storesList.Count;
         }
 
-        
+        [Test]
+        public void VerifyTestStoreLoaded()
+        {
+            Assert.True(RunTest<bool>("VerifyTestStoreLoadedResident"));
+        }
+
+        public bool VerifyTestStoreLoadedResident()
+        {
+            Debugger.Launch();
+            try
+            {
+                DataService ds = DataService.Current;
+                ds.InvalidateStoreTypes();
+                var store = ds.GetStore<TestDocumentStore>(Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                    .MdiActiveDocument.Name);
+                if (store != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+
         /*[Test]
         public void StoreCreationOnDocumentCreation()
         {
