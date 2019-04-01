@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -26,6 +27,10 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 
         public override void Setup()
         {
+            //Clear existing log before loading
+            if(File.Exists(Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt"))
+                File.Delete(Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt");
+
             Configuration config = new Configuration();
             config.TestSettings();
             ConfigurationHelper.CreateConfiguration(config);
@@ -45,6 +50,20 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             return DataService.Current._storesList.Count;
         }
 
+        [Test(Description = "Test to confirm that non Ironstone dlls have been skipped by checking if log file contains any load exceptions. #IR-24")]
+        public void CheckLogForLoadException()
+        {
+            using (TextReader tr = File.OpenText(Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt"))
+            {
+                string contents = tr.ReadToEnd();
+                if (contents.Contains(
+                    "Unable to load one or more of the requested types. Retrieve the LoaderExceptions property for more information.")
+                )
+                {
+                    Assert.Fail("Loader exception found.");
+                }
+            }
+        }
         
         /*[Test]
         public void StoreCreationOnDocumentCreation()
