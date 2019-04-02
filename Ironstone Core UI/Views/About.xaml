@@ -21,7 +21,7 @@
             <Label Content="Authentication: "/>
             <Label HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Content="{Binding AuthStatus}"/>
         </StackPanel>
-        <DataGrid AutoGenerateColumns="True" ItemsSource="{Binding Modules}"></DataGrid>
+        <DataGrid AutoGenerateColumns="True" ItemsSource="{Binding Modules}" IsReadOnly="True"></DataGrid>
     </StackPanel>
 </ui:HostedUserControl>
 
