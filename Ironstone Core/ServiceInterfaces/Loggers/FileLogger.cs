@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,15 +12,16 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
     class FileLogger : ILogger, IDisposable
     {
+        private Process Process => Process.GetCurrentProcess();
         private string filePath;
         private Logger _logger;
 
         public FileLogger()
         {
-            filePath = Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt";
+            filePath = Jpp.Ironstone.Core.Constants.LOG_FILE;
 
             var config = new NLog.Config.LoggingConfiguration();
-            var logfile = new NLog.Targets.FileTarget("logfile") { FileName = filePath, KeepFileOpen = true, ArchiveAboveSize = 1000000, MaxArchiveFiles = 10};
+            var logfile = new NLog.Targets.FileTarget("logfile") { FileName = filePath, KeepFileOpen = false, ArchiveAboveSize = 1000000, MaxArchiveFiles = 10};
             config.AddRule(LogLevel.Trace, LogLevel.Fatal, logfile);
             NLog.LogManager.Configuration = config;
             _logger = NLog.LogManager.GetCurrentClassLogger();
@@ -27,11 +29,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public void Entry(string message)
         {
-            _logger.Info(message);
+            _logger.Info($"{Process.Id} : {message}");
         }
 
         public void Entry(string message, Severity sev)
         {
+            message = $"{Process.Id} : {message}";
             switch (sev)
             {
                     case Severity.Debug:
@@ -58,12 +61,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public void LogEvent(Event eventType, string eventParameters)
         {
-            _logger.Trace($"{eventType} - {eventParameters}");
+            _logger.Trace($"{Process.Id} : {eventType} - {eventParameters}");
         }
 
         public void LogException(Exception exception)
         {
-            _logger.Error(exception);
+            _logger.Error(exception, Process.Id.ToString);
         }
 
         public void Dispose()

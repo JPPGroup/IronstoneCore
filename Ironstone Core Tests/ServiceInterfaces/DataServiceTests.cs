@@ -29,8 +29,8 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         public override void Setup()
         {
             //Clear existing log before loading
-            if(File.Exists(Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt"))
-                File.Delete(Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt");
+            if(File.Exists(Jpp.Ironstone.Core.Constants.LOG_FILE))
+                File.Delete(Jpp.Ironstone.Core.Constants.LOG_FILE);
 
             Configuration config = new Configuration();
             config.TestSettings();
@@ -84,7 +84,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         [Test(Description = "Test to confirm that non Ironstone dlls have been skipped by checking if log file contains any load exceptions. #IR-24")]
         public void CheckLogForLoadException()
         {
-            using (TextReader tr = File.OpenText(Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt"))
+            using (TextReader tr = File.OpenText(Jpp.Ironstone.Core.Constants.LOG_FILE))
             {
                 string contents = tr.ReadToEnd();
                 if (contents.Contains(
