@@ -1,27 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
 {
     [TestFixture]
-    class FileLoggerTests
+    internal class FileLoggerTests
     {
         [Test]
         public void LogFilePresent()
         {
-            string logPath = Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt";
+            var logPath = Constants.LOG_FILE;
 
-            if (File.Exists(logPath))
-                File.Delete(logPath);
+            if (File.Exists(logPath)) File.Delete(logPath);
 
-            using (FileLogger fl = new FileLogger())
+            using (var fl = new FileLogger())
             {
                 fl.Entry("Test message");
             }
@@ -29,11 +23,35 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
             if (File.Exists(logPath))
             {
                 Assert.Pass("Log file found");
-                File.Delete(Jpp.Ironstone.Core.Constants.APPDATA + "\\IronstoneLog.txt");
+                File.Delete(Constants.LOG_FILE);
             }
             else
             {
                 Assert.Fail("Log file not found");
+            }
+        }
+
+        [Test]
+        public void LogFileCanRead()
+        {
+            using (var log = new FileLogger())
+            {
+                log.Entry("Test message");
+
+                string contents;
+                try
+                {
+                    using (TextReader tr = File.OpenText(Constants.LOG_FILE))
+                    {
+                        contents = tr.ReadToEnd();
+                    }
+                }
+                catch (Exception)
+                {
+                    contents = "";
+                }
+
+                Assert.False(string.IsNullOrEmpty(contents), "Should be able to read file contents.");
             }
         }
     }
