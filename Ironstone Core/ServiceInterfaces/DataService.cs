@@ -150,14 +150,18 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (Assembly assembly in assemblies)
             {
-                try
+                if (assembly.FullName.Contains("Ironstone"))
                 {
-                    _storesList.AddRange(assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(DocumentStore))));
-                    _managersList.AddRange(assembly.GetTypes().Where(t => typeof(AbstractDrawingObjectManager).IsAssignableFrom(t)));
-                }
-                catch (Exception e)
-                {
-                    _logger.LogException(e);
+                    try
+                    {
+                        _storesList.AddRange(assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(DocumentStore))));
+                        _managersList.AddRange(assembly.GetTypes()
+                            .Where(t => typeof(AbstractDrawingObjectManager).IsAssignableFrom(t)));
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogException(e);
+                    }
                 }
             }
 
