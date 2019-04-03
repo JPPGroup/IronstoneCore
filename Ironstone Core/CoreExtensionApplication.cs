@@ -171,12 +171,11 @@ namespace Jpp.Ironstone.Core
             Container.RegisterType<IModuleLoader, ModuleLoader>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ObjectModel, ObjectModel>(new ContainerControlledLifetimeManager());
-
-            _logger = Container.Resolve<ILogger>();
-
+            
             try
             {
                 LoadConfiguration();
+                _logger = Container.Resolve<ILogger>();
                 _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
 
                 _authentication = Container.Resolve<IAuthentication>();
