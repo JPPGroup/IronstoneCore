@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Configuration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <EnableInstallerUpdate>true</EnableInstallerUpdate>
+  <EnableObjectModelUpdate>true</EnableObjectModelUpdate>
+  <EnableModuleUpdate>true</EnableModuleUpdate>
+  <LoadAppDirectory>true</LoadAppDirectory>
+</Configuration>
+

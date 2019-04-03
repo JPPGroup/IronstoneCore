@@ -164,6 +164,12 @@
     <None Include="IronstoneCore.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="IronstoneConfigRelease.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="IronstoneConfigBeta.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="IronstoneConfig.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <Directory Id="TARGETDIR" Name="SourceDir">
+    <Directory Id="ProgramFiles64Folder">
+      <Directory Id="Company" Name="JPP Consulting">
+        <Directory Id="INSTALLFOLDER" Name="Ironstone" />
+      </Directory>
+    </Directory>
+    <Directory Id="AppDataFolder" Name="AppDir">
+      <Directory Id="CompanyAdf" Name="JPP Consulting">
+        <Directory Id="APPDATAINSTALLFOLDER" Name="Ironstone" />
+      </Directory>
+    </Directory>
+  </Directory>
+</Include>
