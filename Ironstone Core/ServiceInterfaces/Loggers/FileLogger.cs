@@ -18,7 +18,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public FileLogger()
         {
-            filePath = Jpp.Ironstone.Core.Constants.LOG_FILE;
+            filePath = CoreExtensionApplication._current.Configuration.LogFile;
 
             var config = new NLog.Config.LoggingConfiguration();
             var logfile = new NLog.Targets.FileTarget("logfile") { FileName = filePath, KeepFileOpen = false, ArchiveAboveSize = 1000000, MaxArchiveFiles = 10};

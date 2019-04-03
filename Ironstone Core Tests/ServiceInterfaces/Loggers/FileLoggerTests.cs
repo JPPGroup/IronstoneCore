@@ -11,7 +11,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void LogFilePresent()
         {
-            var logPath = Constants.LOG_FILE;
+            var logPath = CoreExtensionApplication._current.Configuration.LogFile;
 
             if (File.Exists(logPath)) File.Delete(logPath);
 
@@ -23,7 +23,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
             if (File.Exists(logPath))
             {
                 Assert.Pass("Log file found");
-                File.Delete(Constants.LOG_FILE);
+                File.Delete(CoreExtensionApplication._current.Configuration.LogFile);
             }
             else
             {
@@ -41,7 +41,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
                 string contents;
                 try
                 {
-                    using (TextReader tr = File.OpenText(Constants.LOG_FILE))
+                    using (TextReader tr = File.OpenText(CoreExtensionApplication._current.Configuration.LogFile))
                     {
                         contents = tr.ReadToEnd();
                     }

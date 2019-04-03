@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,28 @@ namespace Jpp.Ironstone.Core
         public bool EnableModuleUpdate;
         public bool LoadAppDirectory;
 
+        public string AppData
+        {
+            get
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + AppDataRelative;
+            }
+        }
+        public string AppDataRelative;
+
+        public string LogFile
+        {
+            get
+            {
+                return Path.Combine(AppData, LogFileRelative);
+            }
+        }
+        public string LogFileRelative;
+
+        public string InstallerUrl;
+        public string BaseUrl;
+        public string ObjectModelUrl;
+
         public Configuration()
         {
             ContainerResolvers = new SerializableDictionary<string, string>();
@@ -25,6 +48,13 @@ namespace Jpp.Ironstone.Core
             EnableObjectModelUpdate = true;
             EnableModuleUpdate = true;
             LoadAppDirectory = true;
+
+            AppDataRelative = "\\JPP Consulting\\Ironstone";
+            LogFileRelative = "Ironstone.Log";
+            InstallerUrl = "https://ironstone.blob.core.windows.net/ironstone/IronstoneCore.xml";
+            BaseUrl = "https://ironstone.blob.core.windows.net/ironstone/";
+            ObjectModelUrl = "https://ironstone.blob.core.windows.net/ironstone/IronstoneObjectModel.xml";
+
         }
 
         public void TestSettings()

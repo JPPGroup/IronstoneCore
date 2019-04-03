@@ -223,7 +223,7 @@ namespace Jpp.Ironstone.Core
         {
             if (Configuration.EnableInstallerUpdate)
             {
-                AutoUpdate.Updater<CoreExtensionApplication>.Start(Constants.INSTALLER_URL, this);
+                AutoUpdate.Updater<CoreExtensionApplication>.Start(CoreExtensionApplication._current.Configuration.InstallerUrl, this);
                 AutoUpdate.Updater<CoreExtensionApplication>.CheckForUpdateEvent += (UpdateInfoEventArgs args) =>
                 {
                     if (args == null)
