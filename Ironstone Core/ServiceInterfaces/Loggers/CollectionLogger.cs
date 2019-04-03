@@ -14,7 +14,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
             _loggers.Add(new TelemetryLogger());
 #endif
             _loggers.Add(new ConsoleLogger());
-            _loggers.Add(new FileLogger());
+            _loggers.Add(new FileLogger(CoreExtensionApplication._current.Configuration.LogFile));
         }
         
         public void Entry(string message)

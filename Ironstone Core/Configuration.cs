@@ -64,6 +64,7 @@ namespace Jpp.Ironstone.Core
             EnableObjectModelUpdate = false;
             LoadAppDirectory = false;
             ContainerResolvers.Add(typeof(IAuthentication).FullName, typeof(PassDummyAuth).FullName);
+            LogFileRelative = "UnitTestsIronstone.Log";
         }
     }
 }

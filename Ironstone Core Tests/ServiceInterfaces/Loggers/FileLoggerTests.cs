@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
 using NUnit.Framework;
 
@@ -11,11 +12,14 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void LogFilePresent()
         {
-            var logPath = CoreExtensionApplication._current.Configuration.LogFile;
+            Configuration config = new Configuration();
+            config.TestSettings();
+
+            var logPath = config.LogFile;
 
             if (File.Exists(logPath)) File.Delete(logPath);
 
-            using (var fl = new FileLogger())
+            using (var fl = new FileLogger(logPath))
             {
                 fl.Entry("Test message");
             }
@@ -23,7 +27,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
             if (File.Exists(logPath))
             {
                 Assert.Pass("Log file found");
-                File.Delete(CoreExtensionApplication._current.Configuration.LogFile);
+                File.Delete(logPath);
             }
             else
             {
@@ -34,14 +38,17 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
         [Test]
         public void LogFileCanRead()
         {
-            using (var log = new FileLogger())
+            Configuration config = new Configuration();
+            config.TestSettings();
+
+            using (var log = new FileLogger(config.LogFile))
             {
                 log.Entry("Test message");
 
                 string contents;
                 try
                 {
-                    using (TextReader tr = File.OpenText(CoreExtensionApplication._current.Configuration.LogFile))
+                    using (TextReader tr = File.OpenText(config.LogFile))
                     {
                         contents = tr.ReadToEnd();
                     }

@@ -26,15 +26,17 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
     {
         public DataServiceTests() : base(Assembly.GetExecutingAssembly(), typeof(DataServiceTests), "IronstoneCore.dll") { }
 
+        public Configuration config;
+
         public override void Setup()
         {
-            //Clear existing log before loading
-            if(File.Exists(CoreExtensionApplication._current.Configuration.LogFile))
-                File.Delete(CoreExtensionApplication._current.Configuration.LogFile);
-
-            Configuration config = new Configuration();
+            config = new Configuration();
             config.TestSettings();
             ConfigurationHelper.CreateConfiguration(config);
+
+            //Clear existing log before loading
+            if (File.Exists(config.LogFile))
+                File.Delete(config.LogFile);
         }
 
        [Test]
@@ -84,7 +86,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         [Test(Description = "Test to confirm that non Ironstone dlls have been skipped by checking if log file contains any load exceptions. #IR-24")]
         public void CheckLogForLoadException()
         {
-            using (TextReader tr = File.OpenText(CoreExtensionApplication._current.Configuration.LogFile))
+            using (TextReader tr = File.OpenText(config.LogFile))
             {
                 string contents = tr.ReadToEnd();
                 if (contents.Contains(
