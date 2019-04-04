@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <Component Id="IronstoneConfig.xml" Guid="14c55cf1-6281-4cd3-a0ec-401af4af494e" Win64="yes">
+    <File Id="IronstoneConfig.xml" Name="IronstoneConfig.xml" Source="..\bin\x64\Release\IronstoneConfigBeta.xml" Checksum="yes"/>
+  </Component>
+</Include>

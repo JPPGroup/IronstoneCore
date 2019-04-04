@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Configuration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <EnableInstallerUpdate>true</EnableInstallerUpdate>
+  <EnableObjectModelUpdate>true</EnableObjectModelUpdate>
+  <EnableModuleUpdate>true</EnableModuleUpdate>
+  <LoadAppDirectory>true</LoadAppDirectory>
+  <AppData>\\JPP Consulting\\IronstoneBeta</AppData>
+  <LogFileRelative>Ironstone.log</LogFileRelative>
+  <ModuleManifest>ModuleManifestBeta.txt</ModuleManifest>
+  <InstallerUrl>https://ironstone.blob.core.windows.net/ironstonebeta/IronstoneCoreBeta.xml</InstallerUrl>
+  <BaseUrl>https://ironstone.blob.core.windows.net/ironstonebeta/</BaseUrl>
+  <ObjectModelUrl>https://ironstone.blob.core.windows.net/ironstonebeta/IronstoneObjectModel.xml</ObjectModelUrl>
+  <ContainerResolvers>
+    <item>
+      <key>
+        <string>Jpp.Ironstone.Core.ServiceInterfaces.IAuthentication</string>
+      </key>
+      <value>
+        <string>Jpp.Ironstone.Core.Mocking.PassDummyAuth</string>
+      </value>
+    </item>
+  </ContainerResolvers>
+</Configuration>
+

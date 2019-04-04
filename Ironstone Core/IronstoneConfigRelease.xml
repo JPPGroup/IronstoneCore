@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<Configuration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <EnableInstallerUpdate>true</EnableInstallerUpdate>
+  <EnableObjectModelUpdate>true</EnableObjectModelUpdate>
+  <EnableModuleUpdate>true</EnableModuleUpdate>
+  <LoadAppDirectory>true</LoadAppDirectory>
+  <AppData>\\JPP Consulting\\Ironstone</AppData>
+  <LogFileRelative>Ironstone.log</LogFileRelative>
+  <ModuleManifest>ModuleManifest.txt</ModuleManifest>
+  <InstallerUrl>https://ironstone.blob.core.windows.net/ironstone/IronstoneCore.xml</InstallerUrl>
+  <BaseUrl>https://ironstone.blob.core.windows.net/ironstone/</BaseUrl>
+  <ObjectModelUrl>https://ironstone.blob.core.windows.net/ironstone/IronstoneObjectModel.xml</ObjectModelUrl>
+</Configuration>
+

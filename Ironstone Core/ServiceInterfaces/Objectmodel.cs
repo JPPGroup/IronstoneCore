@@ -40,7 +40,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             if (CoreExtensionApplication._current.Configuration.EnableObjectModelUpdate)
             {
-                AutoUpdate.Updater<ObjectModel>.Start(Constants.OBJECT_MODEL_URL, this);
+                AutoUpdate.Updater<ObjectModel>.Start(CoreExtensionApplication._current.Configuration.ObjectModelUrl, this);
             }
             else
             {

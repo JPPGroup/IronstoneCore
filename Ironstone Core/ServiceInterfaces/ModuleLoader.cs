@@ -25,7 +25,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             
             BinPath = Assembly.GetExecutingAssembly().Location;
             BinPath = BinPath.Substring(0, BinPath.LastIndexOf('\\'));
-            DataPath = Jpp.Ironstone.Core.Constants.APPDATA;
+            DataPath = CoreExtensionApplication._current.Configuration.AppData;
 
             _loadedModules = new Dictionary<string, Module>();
 
@@ -100,7 +100,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public void ProcessManifest()
         {
-            string moduleFile = DataPath + "\\ModuleManifest.txt";
+            string moduleFile = DataPath + "\\" + CoreExtensionApplication._current.Configuration.ModuleManifest;
             UpdateManifest(moduleFile);
 
             //Verify the file actually existis
@@ -139,7 +139,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                             {
                                 using (var client = new WebClient())
                                 {
-                                    string downloadPath = Constants.BASE_URL + fileName;
+                                    string downloadPath = CoreExtensionApplication._current.Configuration.BaseUrl + fileName;
                                     try
                                     {
                                         client.DownloadFile(downloadPath, filePath);
@@ -179,7 +179,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             using (var client = new WebClient())
             {
-                string ModuleUrl = Constants.BASE_URL + "ModuleManifest.txt";
+                string ModuleUrl = CoreExtensionApplication._current.Configuration.BaseUrl + CoreExtensionApplication._current.Configuration.ModuleManifest;
                 try
                 {
                     client.DownloadFile(ModuleUrl, moduleFile);
