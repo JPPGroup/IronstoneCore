@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -192,7 +193,7 @@ namespace Jpp.Ironstone.Core
             string configPath = Path.Combine(containingFoler, "IronstoneConfig.xml");
             if (File.Exists(configPath))
             {
-                using (Stream s = File.Open(configPath, FileMode.Open))
+                using (Stream s = File.Open(configPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     Configuration = xml.Deserialize(s) as Configuration;
                 }
