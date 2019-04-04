@@ -4,8 +4,9 @@
   <EnableObjectModelUpdate>true</EnableObjectModelUpdate>
   <EnableModuleUpdate>true</EnableModuleUpdate>
   <LoadAppDirectory>true</LoadAppDirectory>
-    <AppData>\\JPP Consulting\\Ironstone</AppData
-  <LogFile>Ironstone.log</LogFile>
+  <AppData>\\JPP Consulting\\Ironstone</AppData>
+  <LogFileRelative>Ironstone.log</LogFileRelative>
+  <ModuleManifest>ModuleManifest.txt</ModuleManifest>
   <InstallerUrl>https://ironstone.blob.core.windows.net/ironstone/IronstoneCore.xml</InstallerUrl>
   <BaseUrl>https://ironstone.blob.core.windows.net/ironstone/</BaseUrl>
   <ObjectModelUrl>https://ironstone.blob.core.windows.net/ironstone/IronstoneObjectModel.xml</ObjectModelUrl>

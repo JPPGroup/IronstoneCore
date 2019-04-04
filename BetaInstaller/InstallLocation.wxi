@@ -8,7 +8,7 @@
     </Directory>
     <Directory Id="AppDataFolder" Name="AppDir">
       <Directory Id="CompanyAdf" Name="JPP Consulting">
-        <Directory Id="APPDATAINSTALLFOLDER" Name="Ironstone" />
+        <Directory Id="APPDATAINSTALLFOLDER" Name="IronstoneBeta" />
       </Directory>
     </Directory>
   </Directory>

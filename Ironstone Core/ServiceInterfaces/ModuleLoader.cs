@@ -100,7 +100,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public void ProcessManifest()
         {
-            string moduleFile = DataPath + "\\ModuleManifest.txt";
+            string moduleFile = DataPath + "\\" + CoreExtensionApplication._current.Configuration.ModuleManifest;
             UpdateManifest(moduleFile);
 
             //Verify the file actually existis
@@ -179,7 +179,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             using (var client = new WebClient())
             {
-                string ModuleUrl = CoreExtensionApplication._current.Configuration.BaseUrl + "ModuleManifest.txt";
+                string ModuleUrl = CoreExtensionApplication._current.Configuration.BaseUrl + CoreExtensionApplication._current.Configuration.ModuleManifest;
                 try
                 {
                     client.DownloadFile(ModuleUrl, moduleFile);

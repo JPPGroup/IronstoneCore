@@ -28,6 +28,7 @@ namespace Jpp.Ironstone.Core
         }
         public string AppDataRelative;
 
+        public string LogFileRelative;
         public string LogFile
         {
             get
@@ -35,8 +36,8 @@ namespace Jpp.Ironstone.Core
                 return Path.Combine(AppData, LogFileRelative);
             }
         }
-        public string LogFileRelative;
 
+        public string ModuleManifest;
         public string InstallerUrl;
         public string BaseUrl;
         public string ObjectModelUrl;
@@ -51,6 +52,7 @@ namespace Jpp.Ironstone.Core
 
             AppDataRelative = "\\JPP Consulting\\Ironstone";
             LogFileRelative = "Ironstone.Log";
+            ModuleManifest = "ModuleManifest.txt";
             InstallerUrl = "https://ironstone.blob.core.windows.net/ironstone/IronstoneCore.xml";
             BaseUrl = "https://ironstone.blob.core.windows.net/ironstone/";
             ObjectModelUrl = "https://ironstone.blob.core.windows.net/ironstone/IronstoneObjectModel.xml";
