@@ -53,6 +53,9 @@
 		  <Component Id="System.Runtime.CompilerServices.Unsafe.dll" Guid="f32738ed-378c-47bb-b12d-50735f991aff" Win64="yes">
 		    <File Id="System.Runtime.CompilerServices.Unsafe.dll" Source="..\bin\x64\Release\System.Runtime.CompilerServices.Unsafe.dll" Checksum="yes"/>
 		  </Component>
+		  <Component Id="NLog.dll" Guid="7d677e2c-5c6c-41f2-962a-34d1460d864c" Win64="yes">
+		    <File Id="NLog.dll" Source="..\bin\x64\Release\NLog.dll" Checksum="yes"/>
+		  </Component>
 		  <?include ConfigFile.wxi?>
 		  <Component Id="RegistryEntries" Guid="DBD2BF14-98A3-42C1-867D-72FEFF681867">
 		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.0\ACAD-2000:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">

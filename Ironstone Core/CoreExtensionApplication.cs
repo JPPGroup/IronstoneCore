@@ -1,19 +1,13 @@
 ﻿using System;
-using System.CodeDom;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
 using System.Xml.Serialization;
-using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.Runtime;
-using Autodesk.AutoCAD.Windows;
 using Autodesk.Civil.ApplicationServices;
 using Jpp.AutoUpdate;
 using Jpp.AutoUpdate.Classes;
 using Jpp.Ironstone.Core;
-using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
@@ -193,9 +187,12 @@ namespace Jpp.Ironstone.Core
         private void LoadConfiguration()
         {
             XmlSerializer xml = new XmlSerializer(typeof(Configuration));
-            if (File.Exists("IronstoneConfig.xml"))
+            string dll = Assembly.GetExecutingAssembly().Location;
+            string containingFoler = dll.Remove(dll.LastIndexOf("\\"));
+            string configPath = Path.Combine(containingFoler, "IronstoneConfig.xml");
+            if (File.Exists(configPath))
             {
-                using (Stream s = File.Open("IronstoneConfig.xml", FileMode.Open))
+                using (Stream s = File.Open(configPath, FileMode.Open))
                 {
                     Configuration = xml.Deserialize(s) as Configuration;
                 }

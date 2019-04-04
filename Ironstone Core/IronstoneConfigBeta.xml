@@ -4,7 +4,7 @@
   <EnableObjectModelUpdate>true</EnableObjectModelUpdate>
   <EnableModuleUpdate>true</EnableModuleUpdate>
   <LoadAppDirectory>true</LoadAppDirectory>
-  <AppData>\\JPP Consulting\\IronstoneBeta</AppData>
+  <AppDataRelative>\\JPP Consulting\\IronstoneBeta</AppDataRelative>
   <LogFileRelative>Ironstone.log</LogFileRelative>
   <ModuleManifest>ModuleManifestBeta.txt</ModuleManifest>
   <InstallerUrl>https://ironstone.blob.core.windows.net/ironstonebeta/IronstoneCoreBeta.xml</InstallerUrl>
