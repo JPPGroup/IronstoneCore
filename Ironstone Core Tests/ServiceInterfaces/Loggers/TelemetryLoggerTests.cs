@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Jpp.AcTestFramework;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
 using Microsoft.ApplicationInsights;
@@ -11,7 +10,7 @@ using NUnit.Framework;
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
 {
     [TestFixture]
-    class TelemetryLoggerTests : IronstoneTestFixture
+    public class TelemetryLoggerTests : IronstoneTestFixture
     {
         public TelemetryLoggerTests() : base(Assembly.GetExecutingAssembly(), typeof(TelemetryLoggerTests)) { }
 

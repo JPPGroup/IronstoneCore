@@ -1,42 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.ApplicationServices.Core;
-using Autodesk.AutoCAD.DatabaseServices;
-using Jpp.AcTestFramework;
-using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.Tests.TestObjects;
 using NUnit.Framework;
-using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 {
     [TestFixture]
-    class DataServiceTests : BaseNUnitTestFixture
+    public class DataServiceTests : IronstoneTestFixture
     {
-        public DataServiceTests() : base(Assembly.GetExecutingAssembly(), typeof(DataServiceTests), "IronstoneCore.dll") { }
+        public DataServiceTests() : base(Assembly.GetExecutingAssembly(), typeof(DataServiceTests)) { }
 
-        public Configuration config;
+        public Configuration Config;
 
         public override void Setup()
         {
-            config = new Configuration();
-            config.TestSettings();
-            ConfigurationHelper.CreateConfiguration(config);
+            Config = new Configuration();
+            Config.TestSettings();
+            ConfigurationHelper.CreateConfiguration(Config);
 
             //Clear existing log before loading
-            if (File.Exists(config.LogFile))
-                File.Delete(config.LogFile);
+            if (File.Exists(Config.LogFile))
+                File.Delete(Config.LogFile);
         }
 
        [Test]
@@ -56,7 +43,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         [Test]
         public void VerifyTestStoreLoaded()
         {
-            Assert.True(RunTest<bool>("VerifyTestStoreLoadedResident"));
+            Assert.True(RunTest<bool>(nameof(VerifyTestStoreLoadedResident)));
         }
 
         public bool VerifyTestStoreLoadedResident()
@@ -86,7 +73,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         [Test(Description = "Test to confirm that non Ironstone dlls have been skipped by checking if log file contains any load exceptions. #IR-24")]
         public void CheckLogForLoadException()
         {
-            using (TextReader tr = File.OpenText(config.LogFile))
+            using (TextReader tr = File.OpenText(Config.LogFile))
             {
                 string contents = tr.ReadToEnd();
                 if (contents.Contains(

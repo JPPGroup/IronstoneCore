@@ -3,7 +3,7 @@
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
 {
     [Serializable]
-    class TelemetryClientTestData
+    public class TelemetryClientTestData
     {
         public string SessionId { get; set; }
         public string UserId { get; set; }
