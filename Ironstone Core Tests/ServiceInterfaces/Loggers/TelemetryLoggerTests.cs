@@ -11,9 +11,9 @@ using NUnit.Framework;
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Loggers
 {
     [TestFixture]
-    class TelemetryLoggerTests : BaseNUnitTestFixture
+    class TelemetryLoggerTests : IronstoneTestFixture
     {
-        public TelemetryLoggerTests() : base(Assembly.GetExecutingAssembly(), typeof(TelemetryLoggerTests), "IronstoneCore.dll") { }
+        public TelemetryLoggerTests() : base(Assembly.GetExecutingAssembly(), typeof(TelemetryLoggerTests)) { }
 
         [Test]
         public void VerifyDefaultConstructor()
