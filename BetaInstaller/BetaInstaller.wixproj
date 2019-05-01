@@ -48,7 +48,7 @@
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>"C:\Program Files (x86)\Windows Kits\10\bin\10.0.17763.0\x86\signtool.exe" sign /a /tr "http://sha256timestamp.ws.symantec.com/sha256/timestamp" "$(ProjectDir)\..\bin\$(PlatformName)\$(ConfigurationName)\Ironstone.msi"</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)\..\packages\Jpp.Common.Tooling.Signing.0.3.0\tools\signtool.exe" sign /sm /a /tr "http://sha256timestamp.ws.symantec.com/sha256/timestamp" "$(ProjectDir)\..\bin\$(PlatformName)\$(ConfigurationName)\Ironstone.msi"</PostBuildEvent>
   </PropertyGroup>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
