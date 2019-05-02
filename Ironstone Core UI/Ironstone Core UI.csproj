@@ -86,12 +86,11 @@
       <HintPath>..\packages\AutoCAD.NET.23.0.0\lib\net47\AdWindows.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AutoUpdate, Version=1.0.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoUpdate.1.0.14\lib\net47\AutoUpdate.dll</HintPath>
+    <Reference Include="AutoUpdate, Version=1.0.15.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoUpdate.1.0.15\lib\net47\AutoUpdate.dll</HintPath>
     </Reference>
     <Reference Include="Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Common.0.1.4\lib\netstandard2.0\Common.dll</HintPath>
+      <HintPath>..\packages\Common.0.1.5\lib\netstandard2.0\Common.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.ApplicationInsights, Version=2.9.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.9.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
@@ -127,8 +126,8 @@
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-    <Reference Include="ZipExtract, Version=1.0.14.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoUpdate.1.0.14\lib\net47\ZipExtract.dll</HintPath>
+    <Reference Include="ZipExtract, Version=1.0.15.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoUpdate.1.0.15\lib\net47\ZipExtract.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -190,11 +189,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\Jpp.Common.Tooling.Signing.0.2.0\build\Jpp.Common.Tooling.Signing.targets" Condition="Exists('..\packages\Jpp.Common.Tooling.Signing.0.2.0\build\Jpp.Common.Tooling.Signing.targets')" />
+  <Import Project="..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets" Condition="Exists('..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Jpp.Common.Tooling.Signing.0.2.0\build\Jpp.Common.Tooling.Signing.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Jpp.Common.Tooling.Signing.0.2.0\build\Jpp.Common.Tooling.Signing.targets'))" />
+    <Error Condition="!Exists('..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets'))" />
   </Target>
 </Project>
