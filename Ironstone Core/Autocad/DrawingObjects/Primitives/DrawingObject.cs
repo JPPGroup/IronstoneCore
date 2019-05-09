@@ -82,5 +82,7 @@ namespace Jpp.Ironstone.Core.Autocad
         public bool DirtyModified { get; set; }
         public bool DirtyAdded { get; set; }
         public bool DirtyRemoved { get; set; }
+
+        public abstract void Erase();
     }
 }

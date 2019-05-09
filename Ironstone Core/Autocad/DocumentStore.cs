@@ -20,7 +20,7 @@ namespace Jpp.Ironstone.Core.Autocad
         protected Document acDoc;
         protected Database acCurDb;
 
-        protected List<AbstractDrawingObjectManager> Managers;
+        protected List<IDrawingObjectManager> Managers;
         private Type[] _managerTypes;
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Jpp.Ironstone.Core.Autocad
             acDoc = doc;
             acCurDb = doc.Database;
             _managerTypes = ManagerTypes;
-            Managers = new List<AbstractDrawingObjectManager>();
+            Managers = new List<IDrawingObjectManager>();
         }
         #endregion
 
@@ -88,11 +88,11 @@ namespace Jpp.Ironstone.Core.Autocad
                 {
                     using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
                     {
-                        Managers = LoadBinary<List<AbstractDrawingObjectManager>>("Managers", _managerTypes);
-                        foreach (AbstractDrawingObjectManager abstractDrawingObjectManager in Managers)
+                        Managers = LoadBinary<List<IDrawingObjectManager>>("Managers", _managerTypes);
+                        foreach (IDrawingObjectManager drawingObjectManager in Managers)
                         {
-                            abstractDrawingObjectManager.HostDocument = acDoc;
-                            abstractDrawingObjectManager.ActivateObjects();
+                            drawingObjectManager.SetHostDocument(acDoc);
+                            drawingObjectManager.ActivateObjects();
                         }
                         Load();
                         tr.Commit();
@@ -229,18 +229,8 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        public T GetManager<T>() where T : AbstractDrawingObjectManager
+        public T GetManager<T>() where T : class, IDrawingObjectManager
         {
-            /*if (Managers.ContainsKey(typeof(T)))
-            {
-                return (T) Managers[typeof(T)];
-            }
-            else
-            {
-                T dom = (T)Activator.CreateInstance(typeof(T), this.acDoc);
-                Managers.Add(typeof(T), dom);
-                return dom;
-            }*/
             T foundmanager = null;
             foreach (var manager in Managers)
             {

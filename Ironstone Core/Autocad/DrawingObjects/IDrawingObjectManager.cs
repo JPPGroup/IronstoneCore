@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.ApplicationServices;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -32,5 +33,11 @@ namespace Jpp.Ironstone.Core.Autocad
         /// Activate all objects managed by this instance. Called by the framework upon manager being loaded.
         /// </summary>
         void ActivateObjects();
+
+        /// <summary>
+        /// Set the document that hosts this drawing object manager
+        /// </summary>
+        /// <param name="doc">The host document</param>
+        void SetHostDocument(Document doc);
     }
 }

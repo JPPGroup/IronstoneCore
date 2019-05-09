@@ -93,6 +93,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Autocad\DrawingObjects\AbstractDrawingObjectManagerTests.cs" />
     <Compile Include="IronstoneTestFixture.cs" />
     <Compile Include="CoreExtensionApplicationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -105,6 +106,8 @@
     <Compile Include="ServiceInterfaces\ModuleLoaderTests.cs" />
     <Compile Include="ServiceInterfaces\ObjectModelTests.cs" />
     <Compile Include="TestObjects\TestDocumentStore.cs" />
+    <Compile Include="TestObjects\TestDrawingObject.cs" />
+    <Compile Include="TestObjects\TestDrawingObjectManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -117,6 +120,7 @@
       <Name>Ironstone Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

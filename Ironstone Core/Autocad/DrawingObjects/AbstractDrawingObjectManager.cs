@@ -39,9 +39,19 @@ namespace Jpp.Ironstone.Core.Autocad
             RemoveErased();
         }
 
-        public abstract void UpdateAll();
+        public virtual void UpdateAll()
+        {
+            RemoveErased();
+        }
 
-        public abstract void Clear();
+        public void Clear()
+        {
+            foreach (T managedObject in ManagedObjects)
+            {
+                managedObject.Erase();
+            }
+            ManagedObjects.Clear();
+        }
 
         public virtual void AllDirty()
         {
@@ -97,6 +107,11 @@ namespace Jpp.Ironstone.Core.Autocad
             {
                 ManagedObjects.RemoveAt(i);
             }
+        }
+
+        public void SetHostDocument(Document doc)
+        {
+            this.HostDocument = doc;
         }
     }
 }

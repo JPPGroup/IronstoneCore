@@ -156,7 +156,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     {
                         _storesList.AddRange(assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(DocumentStore))));
                         _managersList.AddRange(assembly.GetTypes()
-                            .Where(t => typeof(AbstractDrawingObjectManager).IsAssignableFrom(t)));
+                            .Where(t => typeof(IDrawingObjectManager).IsAssignableFrom(t)));
                     }
                     catch (Exception e)
                     {
