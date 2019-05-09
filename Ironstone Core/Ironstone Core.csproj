@@ -113,6 +113,7 @@
     <Compile Include="Autocad\DrawingObjects\PersistentObjectIdCollection.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\CircleDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\DrawingObject.cs" />
+    <Compile Include="Autocad\DrawingObjects\Primitives\CurveDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\LineDrawingObject.cs" />
     <Compile Include="Autocad\EntityExtension.cs" />
     <Compile Include="Autocad\LayerInfo.cs" />
