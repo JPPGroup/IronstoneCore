@@ -9,6 +9,7 @@ using Jpp.Ironstone.Core.Autocad;
 
 namespace Jpp.Ironstone.Core.Tests.TestObjects
 {
+    //Requires AcDbMgd to be copied local to run
     class TestDrawingObject : DrawingObject
     {
         protected override void ObjectModified(object sender, EventArgs e)
