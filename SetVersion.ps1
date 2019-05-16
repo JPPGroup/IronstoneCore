@@ -1,5 +1,5 @@
 $version = git describe --tags --always
-$charCount = $version.Length - $version.IndexOf("-") + 1
+$charCount = $version.Length - $version.IndexOf("-") - 1
 $preverison = $version.Substring($version.Length - $charCount)
 $version = $version.Substring(0, $version.IndexOf("-"))
 $build = $args[0]
