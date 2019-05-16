@@ -1,6 +1,10 @@
 $version = git describe --tags --always
+$charCount = $version.Length - $version.IndexOf("-") - 1
+$preverison = $version.Substring($version.Length - $charCount)
+$version = $version.Substring(0, $version.IndexOf("-"))
 $build = $args[0]
 Write-Host "##teamcity[setParameter name='TagVersion' value='$version']"
+Write-Host "##teamcity[setParameter name='TagPreVersion' value='$preverison']"
 
 $files = Get-ChildItem -Include *AssemblyInfo.cs -Recurse 
 foreach ($file in $files){
