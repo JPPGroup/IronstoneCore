@@ -1,6 +1,7 @@
 $version = git describe --tags --always
 $charCount = $version.Length - $version.IndexOf("-")
 $preverison = $version.Substring($version.Length - $charCount)
+$version = $version.Substring(0, $version.IndexOf("-"))
 $build = $args[0]
 Write-Host "##teamcity[setParameter name='TagVersion' value='$version']"
 Write-Host "##teamcity[setParameter name='TagPreVersion' value='$preverison']"
