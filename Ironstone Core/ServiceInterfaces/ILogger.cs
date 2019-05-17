@@ -43,5 +43,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
     public enum Event
     {
         Command,
+        Message
     }
 }
