@@ -13,6 +13,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
     {
         public ObjectModel(IModuleLoader modules)
         {
+            modules.Scan(); // Scan to ensure we have an up to date list of modules. 
+
             var module = modules.GetModules().FirstOrDefault(m => m.ObjectModel);
             if(module != null)
                 this.InstalledVersion = module.Version;
