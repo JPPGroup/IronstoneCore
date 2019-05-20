@@ -9,7 +9,7 @@
   <ModuleManifest>ModuleManifestBeta.txt</ModuleManifest>
   <InstallerUrl>https://ironstone.blob.core.windows.net/ironstonebeta/IronstoneCoreBeta.xml</InstallerUrl>
   <BaseUrl>https://ironstone.blob.core.windows.net/ironstonebeta/</BaseUrl>
-  <ObjectModelUrl>https://ironstone.blob.core.windows.net/ironstonebeta/IronstoneObjectmodelBeta.xml</ObjectModelUrl>
+  <ObjectModelUrl>https://ironstone.blob.core.windows.net/ironstonebeta/IronstoneObjectModelBeta.xml</ObjectModelUrl>
   <ContainerResolvers>
     <item>
       <key>
