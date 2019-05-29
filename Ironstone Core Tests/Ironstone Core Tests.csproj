@@ -93,6 +93,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Autocad\DocumentStoreTests.cs" />
     <Compile Include="Autocad\DrawingObjects\AbstractDrawingObjectManagerTests.cs" />
     <Compile Include="IronstoneTestFixture.cs" />
     <Compile Include="CoreExtensionApplicationTests.cs" />

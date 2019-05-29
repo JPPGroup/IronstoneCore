@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -24,15 +21,13 @@ namespace Jpp.Ironstone.Core.Autocad
         /// Create an instance of the manager
         /// </summary>
         /// <param name="document">The document in which the manager resides</param>
-        public AbstractDrawingObjectManager(Document document)
+        protected AbstractDrawingObjectManager(Document document)
         {
             HostDocument = document;
             ManagedObjects = new List<T>();
         }
 
-        protected AbstractDrawingObjectManager()
-        {
-        }
+        protected AbstractDrawingObjectManager() { }
 
         public virtual void UpdateDirty()
         {
@@ -63,16 +58,15 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public virtual void ActivateObjects()
         {
-            // Get the current document and database
-            Database acCurDb = HostDocument.Database;
-
             //TODO: Trace usage paths to confirm transaction is needed
-            using (Transaction acTrans = acCurDb.TransactionManager.StartTransaction())
+            using (Transaction acTrans = HostDocument.Database.TransactionManager.StartTransaction())
             {
                 foreach (T managedObject in ManagedObjects)
                 {
                     managedObject.CreateActiveObject();
                 }
+
+                acTrans.Commit();
             }
         }
 
@@ -82,6 +76,8 @@ namespace Jpp.Ironstone.Core.Autocad
         /// <param name="toBeManaged">Object to be added. Dirty added does not need to be marked</param>
         public void Add(T toBeManaged)
         {
+            if (!toBeManaged.Active) throw new ArgumentException("Drawing object not active.");
+
             ManagedObjects.Add(toBeManaged);
             toBeManaged.DirtyAdded = true;
         }

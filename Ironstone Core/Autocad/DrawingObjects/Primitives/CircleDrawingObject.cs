@@ -4,7 +4,7 @@ using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
-namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
+namespace Jpp.Ironstone.Core.Autocad
 {
     public abstract class CircleDrawingObject : DrawingObject
     {

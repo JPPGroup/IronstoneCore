@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Autodesk.AutoCAD.ApplicationServices;
 using Jpp.Ironstone.Core.Autocad;
 
 namespace Jpp.Ironstone.Core.Tests.TestObjects
 {
-    class TestDrawingObjectManager : AbstractDrawingObjectManager<TestDrawingObject>
+    public class TestDrawingObjectManager : AbstractDrawingObjectManager<TestDrawingObject>
     {
-       
+        public TestDrawingObjectManager(Document document) : base(document) { }
+        private TestDrawingObjectManager() { }
+
     }
 }

@@ -137,7 +137,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 throw new ArgumentException();
             }
 
-            DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes());
+            DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes(), _logger);
             ds.LoadWrapper();
             return ds;
         }
@@ -156,7 +156,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     {
                         _storesList.AddRange(assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(DocumentStore))));
                         _managersList.AddRange(assembly.GetTypes()
-                            .Where(t => typeof(IDrawingObjectManager).IsAssignableFrom(t)));
+                            .Where(t => typeof(IDrawingObjectManager).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface));
                     }
                     catch (Exception e)
                     {
@@ -188,7 +188,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 //TODO: Check this works
                 if (GlobalCommandName.ToLower().Contains("regen"))
                 {
-                    documentStore.ReenerateManagers();
+                    documentStore.RegenerateManagers();
                 }
                 else
                 {
