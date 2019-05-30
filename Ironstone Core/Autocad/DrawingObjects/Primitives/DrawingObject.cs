@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -13,11 +9,11 @@ namespace Jpp.Ironstone.Core.Autocad
 {
     public abstract class DrawingObject
     {
-        [XmlIgnore]
-        DBObject _activeObject;
+        private DBObject _activeObject;
 
+        //TODO: review setter
         public long BaseObjectPtr { get; set; }
-
+        [XmlIgnore] public bool Active { get; private set; }
         [XmlIgnore]
         public ObjectId BaseObject
         {
@@ -45,6 +41,8 @@ namespace Jpp.Ironstone.Core.Autocad
             _activeObject = acTrans.GetObject(BaseObject, OpenMode.ForWrite);
             _activeObject.Erased += ActiveObject_Erased;
             _activeObject.Modified += ActiveObject_Modified;
+
+            Active = true;
         }
 
         private void ActiveObject_Modified(object sender, EventArgs e)
@@ -82,5 +80,7 @@ namespace Jpp.Ironstone.Core.Autocad
         public bool DirtyModified { get; set; }
         public bool DirtyAdded { get; set; }
         public bool DirtyRemoved { get; set; }
+
+        public abstract void Erase();
     }
 }

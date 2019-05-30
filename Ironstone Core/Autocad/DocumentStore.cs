@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using Jpp.Common;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -17,21 +17,25 @@ namespace Jpp.Ironstone.Core.Autocad
     {
         #region Constructor and Fields
 
-        protected Document acDoc;
-        protected Database acCurDb;
+        protected Document AcDoc;
+        protected Database AcCurDb;
 
-        protected List<AbstractDrawingObjectManager> Managers;
-        private Type[] _managerTypes;
+        protected List<IDrawingObjectManager> Managers;
+        private readonly Type[] _managerTypes;
+        private readonly ILogger _log;
 
         /// <summary>
         /// Create a new document store
         /// </summary>
-        public DocumentStore(Document doc, Type[] ManagerTypes)
+        public DocumentStore(Document doc, Type[] managerTypes, ILogger log)
         {
-            acDoc = doc;
-            acCurDb = doc.Database;
-            _managerTypes = ManagerTypes;
-            Managers = new List<AbstractDrawingObjectManager>();
+            AcDoc = doc;
+            AcCurDb = doc.Database;
+
+            _managerTypes = managerTypes;
+            _log = log;
+
+            Managers = new List<IDrawingObjectManager>();
         }
         #endregion
 
@@ -60,11 +64,14 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             try
             {
-                using (DocumentLock dl = acDoc?.LockDocument())
+                using (DocumentLock dl = AcDoc?.LockDocument())
                 {
-                    using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
+                    using (Transaction tr = AcCurDb.TransactionManager.StartTransaction())
                     {
-                        SaveBinary("Managers", Managers, _managerTypes);
+                        var mgrObjList = new List<object>();
+                        Managers.ForEach(mgr => mgrObjList.Add(mgr));
+
+                        SaveBinary("Managers", mgrObjList, _managerTypes);
                         Save();
                         tr.Commit();
                     }
@@ -72,8 +79,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                //TODO: Add log
-                //Application.ShowAlertDialog("Error saving - " + e.Message);
+                _log.LogException(e);
             }
         }
 
@@ -84,15 +90,19 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             try
             {
-                using (DocumentLock dl = acDoc?.LockDocument())
+                using (DocumentLock dl = AcDoc?.LockDocument())
                 {
-                    using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
+                    using (Transaction tr = AcCurDb.TransactionManager.StartTransaction())
                     {
-                        Managers = LoadBinary<List<AbstractDrawingObjectManager>>("Managers", _managerTypes);
-                        foreach (AbstractDrawingObjectManager abstractDrawingObjectManager in Managers)
+                        Managers.Clear();
+
+                        var mgrObjList = LoadBinary<List<object>>("Managers", _managerTypes);
+
+                        foreach (IDrawingObjectManager drawingObjectManager in mgrObjList)
                         {
-                            abstractDrawingObjectManager.HostDocument = acDoc;
-                            abstractDrawingObjectManager.ActivateObjects();
+                            drawingObjectManager.SetHostDocument(AcDoc);
+                            drawingObjectManager.ActivateObjects();
+                            Managers.Add(drawingObjectManager);
                         }
                         Load();
                         tr.Commit();
@@ -101,8 +111,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                //TODO: Add log
-                //Application.ShowAlertDialog("Error saving - " + e.Message);
+                _log.LogException(e);
             }
         }
         #endregion
@@ -111,10 +120,10 @@ namespace Jpp.Ironstone.Core.Autocad
         protected void SaveBinary(string key, object binaryObject, Type[] additionalTypes = null)
         {
             //Database acCurDb = Application.DocumentManager.MdiActiveDocument.Database;
-            Transaction tr = acCurDb.TransactionManager.TopTransaction;
+            Transaction tr = AcCurDb.TransactionManager.TopTransaction;
 
             // Find the NOD in the database
-            DBDictionary nod = (DBDictionary)tr.GetObject(acCurDb.NamedObjectsDictionaryId, OpenMode.ForWrite);
+            DBDictionary nod = (DBDictionary)tr.GetObject(AcCurDb.NamedObjectsDictionaryId, OpenMode.ForWrite);
 
             // We use Xrecord class to store data in Dictionaries
             Xrecord plotXRecord = new Xrecord();
@@ -155,15 +164,15 @@ namespace Jpp.Ironstone.Core.Autocad
             tr.AddNewlyCreatedDBObject(plotXRecord, true);
         }
 
-        protected T LoadBinary<T>(string Key, Type[] additionalTypes = null) where T : new()
+        protected T LoadBinary<T>(string key, Type[] additionalTypes = null) where T : new()
         {
             //Database acCurDb = Application.DocumentManager.MdiActiveDocument.Database;
-            Transaction tr = acCurDb.TransactionManager.TopTransaction;
+            Transaction tr = AcCurDb.TransactionManager.TopTransaction;
 
             // Find the NOD in the database
-            DBDictionary nod = (DBDictionary)tr.GetObject(acCurDb.NamedObjectsDictionaryId, OpenMode.ForWrite);
+            DBDictionary nod = (DBDictionary)tr.GetObject(AcCurDb.NamedObjectsDictionaryId, OpenMode.ForWrite);
 
-            string id = this.GetType().FullName + Key;
+            string id = this.GetType().FullName + key;
 
             if (nod.Contains(id))
             {
@@ -198,14 +207,13 @@ namespace Jpp.Ironstone.Core.Autocad
                 }
                 catch (Exception e)
                 {
-                    throw new NotImplementedException();
+                    _log.LogException(e);
+                    return new T();
                 }
             }
-            else
-            {
-                //TODO: check changing from default has not broken this
-                return new T();
-            }
+
+            //TODO: check changing from default has not broken this
+            return new T();
         }
 
         public void Dispose()
@@ -221,7 +229,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        public void ReenerateManagers()
+        public void RegenerateManagers()
         {
             foreach (IDrawingObjectManager drawingObjectManager in Managers)
             {
@@ -229,34 +237,20 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        public T GetManager<T>() where T : AbstractDrawingObjectManager
+        public T GetManager<T>() where T : class, IDrawingObjectManager
         {
-            /*if (Managers.ContainsKey(typeof(T)))
-            {
-                return (T) Managers[typeof(T)];
-            }
-            else
-            {
-                T dom = (T)Activator.CreateInstance(typeof(T), this.acDoc);
-                Managers.Add(typeof(T), dom);
-                return dom;
-            }*/
-            T foundmanager = null;
+            T foundManager = null;
             foreach (var manager in Managers)
             {
-                if (manager is T)
-                {
-                    foundmanager = manager as T;
-                }
+                if (manager is T objectManager) foundManager = objectManager;
             }
 
-            if (foundmanager == null)
-            {
-                foundmanager = (T)Activator.CreateInstance(typeof(T), this.acDoc);
-                Managers.Add(foundmanager);
-            }
+            if (foundManager != null) return foundManager;
 
-            return foundmanager;
+            foundManager = (T)Activator.CreateInstance(typeof(T), this.AcDoc);
+            Managers.Add(foundManager);
+
+            return foundManager;
 
         }
         #endregion
