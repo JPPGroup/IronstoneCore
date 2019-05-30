@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices.Core;
-using Autodesk.AutoCAD.DatabaseServices;
-using Autodesk.AutoCAD.Geometry;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.Tests.TestObjects;
 using NUnit.Framework;

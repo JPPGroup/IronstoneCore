@@ -94,7 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Autocad\DocumentStoreTests.cs" />
-    <Compile Include="Autocad\AbstractDrawingObjectManagerTests.cs" />
+    <Compile Include="Autocad\DrawingObjectManagerTests.cs" />
     <Compile Include="IronstoneTestFixture.cs" />
     <Compile Include="CoreExtensionApplicationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

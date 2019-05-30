@@ -13,12 +13,12 @@ namespace Jpp.Ironstone.Core.Tests.TestObjects
 
         protected override void ObjectModified(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            //Do nothing...
         }
 
         protected override void ObjectErased(object sender, ObjectErasedEventArgs e)
         {
-            throw new NotImplementedException();
+            //Do nothing...
         }
 
         public override Point3d Location { get; set; }
@@ -30,7 +30,7 @@ namespace Jpp.Ironstone.Core.Tests.TestObjects
         public override double Rotation { get; set; }
         public override void Erase()
         {
-            throw new NotImplementedException();
+            //Do nothing...
         }
 
         public static TestDrawingObject CreateActiveObject(Guid id)
