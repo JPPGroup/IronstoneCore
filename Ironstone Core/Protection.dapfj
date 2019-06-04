@@ -44,7 +44,7 @@
          "MaxDays": "no limit",
          "ExpiryWarning": null,
          "Features": 0,
-         "LicenceMaxNetUsers": 0
+         "LicenceMaxNetUsers": "no limit"
       },
       {
          "Name": "IronstoneDocumentManagement",
@@ -54,7 +54,7 @@
          "MaxDays": "no limit",
          "ExpiryWarning": null,
          "Features": 0,
-         "LicenceMaxNetUsers": 0
+         "LicenceMaxNetUsers": "no limit"
       }
    ],
 
