@@ -16,23 +16,23 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         public DrawingObjectManagerTests() : base(Assembly.GetExecutingAssembly(), typeof(DrawingObjectManagerTests)) { }
 
         [Test]
-        public void VerifyTestManagerConstructor()
+        public void VerifyManagerConstructor()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyTestManagerConstructorResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyManagerConstructorResident)));
         }
 
-        public bool VerifyTestManagerConstructorResident()
+        public bool VerifyManagerConstructorResident()
         {
             return Activator.CreateInstance(typeof(TestDrawingObjectManager), true) is TestDrawingObjectManager;
         }
 
         [Test]
-        public void VerifyTestManagerExists()
+        public void VerifyManagerExists()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyTestManagerExistsResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyManagerExistsResident)));
         }
 
-        public bool VerifyTestManagerExistsResident()
+        public bool VerifyManagerExistsResident()
         {
             try
             {
@@ -45,12 +45,12 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         } 
 
         [Test]
-        public void VerifyTestAddManagedObjectActive()
+        public void VerifyAddManagedObjectActive()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyTestAddManagedObjectActiveResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyAddManagedObjectActiveResident)));
         }
 
-        public bool VerifyTestAddManagedObjectActiveResident()
+        public bool VerifyAddManagedObjectActiveResident()
         {
             try
             {
@@ -72,12 +72,12 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyTestAddManagedObjectNonActive()
+        public void VerifyAddManagedObjectNonActive()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyTestAddManagedObjectNonActiveResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyAddManagedObjectNonActiveResident)));
         }
 
-        public bool VerifyTestAddManagedObjectNonActiveResident()
+        public bool VerifyAddManagedObjectNonActiveResident()
         {
             try
             {
@@ -103,12 +103,12 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyTestClear()
+        public void VerifyClear()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyTestClearResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyClearResident)));
         }
 
-        public bool VerifyTestClearResident()
+        public bool VerifyClearResident()
         {
             try
             {
@@ -128,10 +128,10 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         [Test]
         public void VerifyAllDirtyClear()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyTestAllDirtyResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyAllDirtyResident)));
         }
 
-        public bool VerifyTestAllDirtyResident()
+        public bool VerifyAllDirtyResident()
         {
             try
             {
@@ -149,12 +149,12 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyTestRemovedErased()
+        public void VerifyRemovedErased()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyTestRemovedErasedResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyRemovedErasedResident)));
         }
 
-        public bool VerifyTestRemovedErasedResident()
+        public bool VerifyRemovedErasedResident()
         {
             try
             {
@@ -180,12 +180,12 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyTestUpdateDirty()
+        public void VerifyUpdateDirty()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyTestUpdateDirtyResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUpdateDirtyResident)));
         }
 
-        public bool VerifyTestUpdateDirtyResident()
+        public bool VerifyUpdateDirtyResident()
         {
             try
             {
@@ -211,12 +211,12 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyTestUpdateAll()
+        public void VerifyUpdateAll()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyTestUpdateAllResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUpdateAllResident)));
         }
 
-        public bool VerifyTestUpdateAllResident()
+        public bool VerifyUpdateAllResident()
         {
             try
             {
@@ -234,6 +234,40 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                 manager.UpdateAll();
 
                 return manager.ManagedObjects.Count == 1;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        [Test]
+        public void VerifyUndoAction()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUndoActionResident)));
+        }
+
+        public bool VerifyUndoActionResident()
+        {
+            try
+            {
+                ClearDrawingObjects();
+
+                var ed = Application.DocumentManager.MdiActiveDocument.Editor;
+                var manager = GetManager();
+                
+                if (manager == null) return false;
+                manager.Clear();
+
+                ed.Command("_regen");
+                if (GetObjectCount() != 1) return false;
+
+                ed.Command("_undo", "MARK");
+
+                ed.Command("_circle", "0,0", 10);
+                if (GetObjectCount() != 2) return false;
+
+                ed.Command("_undo", "BACK");
+                return GetObjectCount() == 1;
             }
             catch (Exception)
             {
@@ -278,6 +312,38 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                 var entity = trans.GetObject(obj.BaseObject, OpenMode.ForWrite) as Entity;
                 entity?.Erase();
                 trans.Commit();
+            }
+        }
+
+        private static int GetObjectCount()
+        {
+            var db = Application.DocumentManager.MdiActiveDocument.Database;
+
+            using (var tr = db.TransactionManager.StartTransaction())
+            {
+                var blockTable = (BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead);
+                var blockTableRecord = (BlockTableRecord)tr.GetObject(blockTable[BlockTableRecord.ModelSpace], OpenMode.ForWrite);
+
+                return blockTableRecord.Cast<ObjectId>().Count();
+            }
+        }
+
+        private static void ClearDrawingObjects()
+        {
+            var db = Application.DocumentManager.MdiActiveDocument.Database;
+
+            using (var tr = db.TransactionManager.StartTransaction())
+            {
+                var blockTable = (BlockTable)tr.GetObject(db.BlockTableId, OpenMode.ForRead);
+                var blockTableRecord = (BlockTableRecord)tr.GetObject(blockTable[BlockTableRecord.ModelSpace], OpenMode.ForWrite);
+
+                foreach (var objectId in blockTableRecord.Cast<ObjectId>())
+                {
+                    var entity = tr.GetObject(objectId, OpenMode.ForWrite) as Entity;
+                    entity?.Erase();
+          
+                }
+                tr.Commit();
             }
         }
     }
