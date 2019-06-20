@@ -223,18 +223,26 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public void UpdateManagers()
         {
+            AcCurDb.DisableUndoRecording(true);
+
             foreach (IDrawingObjectManager drawingObjectManager in Managers)
             {
                 drawingObjectManager.UpdateDirty();
             }
+
+            AcCurDb.DisableUndoRecording(false);
         }
 
         public void RegenerateManagers()
         {
+            AcCurDb.DisableUndoRecording(true);
+
             foreach (IDrawingObjectManager drawingObjectManager in Managers)
             {
                 drawingObjectManager.UpdateAll();
             }
+
+            AcCurDb.DisableUndoRecording(false);
         }
 
         public T GetManager<T>() where T : class, IDrawingObjectManager
