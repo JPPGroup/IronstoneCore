@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Runtime;
+using Exception = System.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
@@ -15,6 +18,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
         public void Entry(string message, Severity sev)
         {
             WriteMessage(message);            
+        }
+
+        public void LogCommand(Type type, string method)
+        {
+            var rtMethod = type.GetRuntimeMethod(method, new Type[] { });
+            var attribute = rtMethod.GetCustomAttribute<CommandMethodAttribute>();
+
+            LogEvent(Event.Command, attribute.GlobalName);
         }
 
         public void LogEvent(Event eventType, string eventParameters)

@@ -6,7 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Autodesk.AutoCAD.Runtime;
 using NLog;
+using Exception = System.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
@@ -57,6 +59,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
                     _logger.Fatal(message);
                     break;
             }
+        }
+
+        public void LogCommand(Type type, string method)
+        {
+            var rtMethod = type.GetRuntimeMethod(method, new Type[] { });
+            var attribute = rtMethod.GetCustomAttribute<CommandMethodAttribute>();
+
+            LogEvent(Event.Command, attribute.GlobalName);
         }
 
         public void LogEvent(Event eventType, string eventParameters)

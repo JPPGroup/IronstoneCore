@@ -24,6 +24,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         /// <param name="sev">Severity of message</param>
         void Entry(string message, Severity sev);
 
+        void LogCommand(Type type, string method);
         void LogEvent(Event eventType, string eventParameters);
         void LogException(Exception exception);
     }

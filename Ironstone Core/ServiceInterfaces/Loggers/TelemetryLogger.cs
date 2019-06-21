@@ -2,7 +2,9 @@
 using System.Reflection;
 using Microsoft.ApplicationInsights;
 using Autodesk.AutoCAD.ApplicationServices.Core;
+using Autodesk.AutoCAD.Runtime;
 using Microsoft.ApplicationInsights.DataContracts;
+using Exception = System.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
@@ -17,6 +19,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
         public void Entry(string message, Severity sev)
         {
             _client.TrackTrace(message, MapSeverity(sev));
+        }
+
+        public void LogCommand(Type type, string method)
+        {
+            var rtMethod = type.GetRuntimeMethod(method, new Type[] { });
+            var attribute = rtMethod.GetCustomAttribute<CommandMethodAttribute>();
+
+            LogEvent(Event.Command, attribute.GlobalName);
         }
 
         public void LogEvent(Event eventType, string eventParameters)

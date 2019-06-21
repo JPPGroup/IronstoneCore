@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using Autodesk.Windows;
-using Jpp.Ironstone.Core.Properties;
+﻿using Autodesk.Windows;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.UI.Properties;
 using Jpp.Ironstone.Core.UI.ViewModels;
 using Jpp.Ironstone.Core.UI.Views;
@@ -14,6 +9,9 @@ namespace Jpp.Ironstone.Core.UI
 {
     public class CoreUIExtensionApplication : IIronstoneExtensionApplication
     {
+        public ILogger Logger { get; private set; }
+        public static CoreUIExtensionApplication Current { get; private set; }
+
         private IUnityContainer _container;
 
         public void CreateUI()
@@ -25,14 +23,17 @@ namespace Jpp.Ironstone.Core.UI
 
         public void Initialize()
         {
+            Current = this;
             CoreExtensionApplication._current.RegisterExtension(this);
         }
 
-        public void InjectContainer(Unity.IUnityContainer container)
+        public void InjectContainer(IUnityContainer container)
         {
             _container = container;
+
             _container.RegisterType<About>();
             _container.RegisterType<AboutViewModel>();
+            Logger = _container.Resolve<ILogger>();
         }
 
         public void Terminate()
