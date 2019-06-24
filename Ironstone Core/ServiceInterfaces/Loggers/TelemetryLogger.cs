@@ -3,33 +3,12 @@ using System.Reflection;
 using Microsoft.ApplicationInsights;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Microsoft.ApplicationInsights.DataContracts;
+using Exception = System.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
-    public class TelemetryLogger : ILogger
+    public class TelemetryLogger : BaseLogger
     {
-        #region Interfaces
-        public void Entry(string message)
-        {
-            Entry(message, Severity.Information);
-        }
-
-        public void Entry(string message, Severity sev)
-        {
-            _client.TrackTrace(message, MapSeverity(sev));
-        }
-
-        public void LogEvent(Event eventType, string eventParameters)
-        {
-            _client.TrackEvent($"{eventType} - {eventParameters}");            
-        }
-
-        public void LogException(Exception exception)
-        {
-            _client.TrackException(exception);
-        }
-        #endregion
-
         private const string INSTRUMENTATION_KEY = "59426689-6bc0-4f42-a449-58eec75d8ba3";
         private TelemetryClient _client;
        
@@ -43,10 +22,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
             var acVersion = Application.Version.ToString();
             var coreVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            //var modules = loadedModules.GetModules().Select(a => $"{a.Name}, {a.Version}").Aggregate((current, next) => $"{current}; {next}");
-
+            
             _client.Context.GlobalProperties.Add("AcVersion", acVersion);
             _client.Context.GlobalProperties.Add("CoreVersion", coreVersion);
+
+            //Possibly include modules?
+            //var modules = loadedModules.GetModules().Select(a => $"{a.Name}, {a.Version}").Aggregate((current, next) => $"{current}; {next}");
             //_client.Context.GlobalProperties.Add("Modules", modules);
         }
 
@@ -66,6 +47,21 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
             if (i >= 300 & i < 999) return SeverityLevel.Error;
 
             return SeverityLevel.Critical;
+        }
+
+        public override void Entry(string message, Severity sev)
+        {
+            _client.TrackTrace(message, MapSeverity(sev));
+        }
+
+        public override void LogEvent(Event eventType, string eventParameters)
+        {
+            _client.TrackEvent($"{eventType}:{eventParameters}");
+        }
+
+        public override void LogException(Exception exception)
+        {
+            _client.TrackException(exception);
         }
     }
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
@@ -23,6 +19,13 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         /// <param name="message">Message to be added</param>
         /// <param name="sev">Severity of message</param>
         void Entry(string message, Severity sev);
+
+        /// <summary>
+        /// Add message to log when a command is invoked
+        /// </summary>
+        /// <param name="type">Type for command method</param>
+        /// <param name="method">Method name of command</param>
+        void LogCommand(Type type, string method);
 
         void LogEvent(Event eventType, string eventParameters);
         void LogException(Exception exception);

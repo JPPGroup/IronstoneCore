@@ -1,44 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using NLog;
+using Exception = System.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
-    class FileLogger : ILogger, IDisposable
+    public class FileLogger : BaseLogger, IDisposable
     {
-        private Process Process => Process.GetCurrentProcess();
-        private string filePath;
-        private Logger _logger;
+        private static Process Process => Process.GetCurrentProcess();
+        private readonly Logger _logger;
 
         public FileLogger(string path)
         {
-            filePath = path;
-
             var config = new NLog.Config.LoggingConfiguration();
-            var logfile = new NLog.Targets.FileTarget("logfile") { FileName = filePath, KeepFileOpen = false, ArchiveAboveSize = 1000000, MaxArchiveFiles = 10};
+            var logfile = new NLog.Targets.FileTarget
+            {
+                Name= "logfile",
+                FileName = path,
+                KeepFileOpen = false,
+                ArchiveAboveSize = 1000000,
+                MaxArchiveFiles = 10
+            };
+
             config.AddRule(LogLevel.Trace, LogLevel.Fatal, logfile);
-            NLog.LogManager.Configuration = config;
-            _logger = NLog.LogManager.GetCurrentClassLogger();
+
+            LogManager.Configuration = config;
+
+            _logger = LogManager.GetCurrentClassLogger();
         }
 
-        public void Entry(string message)
+        public void Dispose()
         {
-            _logger.Info($"{Process.Id} : {message}");
+            LogManager.Flush();
         }
 
-        public void Entry(string message, Severity sev)
+        public override void Entry(string message, Severity sev)
         {
-            message = $"{Process.Id} : {message}";
+            message = $"{Process.Id}:{message}";
             switch (sev)
             {
-                    case Severity.Debug:
-                        _logger.Debug(message);
+                case Severity.Debug:
+                    _logger.Debug(message);
                     break;
 
                 case Severity.Information:
@@ -59,24 +61,19 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
             }
         }
 
-        public void LogEvent(Event eventType, string eventParameters)
+        public override void LogEvent(Event eventType, string eventParameters)
         {
-            _logger.Trace($"{Process.Id} : {eventType} - {eventParameters}");
+            _logger.Trace($"{Process.Id}:{eventType}:{eventParameters}");
         }
 
-        public void LogException(Exception exception)
+        public override void LogException(Exception exception)
         {
             _logger.Error(exception, Process.Id.ToString);
         }
 
-        public void Dispose()
-        {
-            NLog.LogManager.Flush();
-        }
-
         ~FileLogger()
         {
-            NLog.LogManager.Flush();
+            LogManager.Flush();
         }
     }
 }
