@@ -124,6 +124,7 @@
     <Compile Include="IIronstoneExtensionApplication.cs" />
     <Compile Include="Mocking\ConfigurationHelper.cs" />
     <Compile Include="Mocking\PassDummyAuth.cs" />
+    <Compile Include="ServiceInterfaces\Loggers\BaseLogger.cs" />
     <Compile Include="ServiceInterfaces\Loggers\FileLogger.cs" />
     <Compile Include="ServiceInterfaces\ObjectModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

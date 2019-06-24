@@ -1,48 +1,28 @@
-﻿using System;
-using System.Reflection;
-using Autodesk.AutoCAD.ApplicationServices.Core;
-using Autodesk.AutoCAD.EditorInput;
-using Autodesk.AutoCAD.Runtime;
+﻿using Autodesk.AutoCAD.ApplicationServices.Core;
 using Exception = System.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
-    public class ConsoleLogger : ILogger
+    public class ConsoleLogger : BaseLogger
     {
-        #region Interfaces
-        public void Entry(string message)
+        private static void WriteEditorMessage(string message)
         {
-            Entry(message, Severity.Information);
+            Application.DocumentManager.MdiActiveDocument?.Editor?.WriteMessage($"{message}\n");
         }
 
-        public void Entry(string message, Severity sev)
+        public override void Entry(string message, Severity sev)
         {
-            WriteMessage(message);            
+            WriteEditorMessage($"{sev}:{message}");
         }
 
-        public void LogCommand(Type type, string method)
+        public override void LogEvent(Event eventType, string eventParameters)
         {
-            var rtMethod = type.GetRuntimeMethod(method, new Type[] { });
-            var attribute = rtMethod.GetCustomAttribute<CommandMethodAttribute>();
-
-            LogEvent(Event.Command, attribute.GlobalName);
+            WriteEditorMessage($"{eventType}:{eventParameters}");
         }
 
-        public void LogEvent(Event eventType, string eventParameters)
+        public override void LogException(Exception exception)
         {
-            WriteMessage($"{eventType} - {eventParameters}");
-        }
-
-        public void LogException(Exception exception)
-        {
-            WriteMessage(exception.ToString());
-        }
-        #endregion
-
-        private static void WriteMessage(string message)
-        {
-            Editor ed = Application.DocumentManager.MdiActiveDocument?.Editor;
-            ed?.WriteMessage($"{message}\n");
+            WriteEditorMessage($"ERROR:{exception}");
         }
     }
 }
