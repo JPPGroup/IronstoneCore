@@ -121,6 +121,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="CoreExtensionApplication.cs" />
+    <Compile Include="Helpers\EditorHelper.cs" />
     <Compile Include="IIronstoneExtensionApplication.cs" />
     <Compile Include="Mocking\ConfigurationHelper.cs" />
     <Compile Include="Mocking\PassDummyAuth.cs" />
