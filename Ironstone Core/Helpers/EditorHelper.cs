@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using Autodesk.AutoCAD.EditorInput;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -38,6 +39,22 @@ namespace Jpp.Ironstone.Core.Helpers
 
             return selectionResult;
         }
+
+        public static PromptResult PromptForKeywords(string promptMessage, string[] keywords) 
+        {
+            var ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            var pKeyOpts = new PromptKeywordOptions(promptMessage);
+
+            foreach (var keyword in keywords)
+            {
+                pKeyOpts.Keywords.Add(keyword);
+            }
+            
+            pKeyOpts.AllowNone = false;
+
+           return ed.GetKeywords(pKeyOpts);
+        }
+
 
         public static void WriteMessage(string message)
         {
