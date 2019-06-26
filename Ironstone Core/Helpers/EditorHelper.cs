@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.NetworkInformation;
 using Autodesk.AutoCAD.EditorInput;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -40,7 +39,7 @@ namespace Jpp.Ironstone.Core.Helpers
             return selectionResult;
         }
 
-        public static PromptResult PromptForKeywords(string promptMessage, string[] keywords) 
+        public static PromptResult PromptForKeywords(string promptMessage, string[] keywords, string defaultKeyword = null) 
         {
             var ed = Application.DocumentManager.MdiActiveDocument.Editor;
             var pKeyOpts = new PromptKeywordOptions(promptMessage);
@@ -51,10 +50,33 @@ namespace Jpp.Ironstone.Core.Helpers
             }
             
             pKeyOpts.AllowNone = false;
+            if (!string.IsNullOrWhiteSpace(defaultKeyword)) pKeyOpts.Keywords.Default = defaultKeyword;
 
            return ed.GetKeywords(pKeyOpts);
         }
 
+        public static PromptResult PromptForString(string promptMessage, string defaultValue = null)
+        {
+            var ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            var pStrOpts = new PromptStringOptions(promptMessage) { AllowSpaces = false};
+            
+            if (!string.IsNullOrWhiteSpace(defaultValue)) pStrOpts.DefaultValue = defaultValue;
+
+
+            return ed.GetString(pStrOpts);
+        }
+
+        public static PromptEntityResult PromptForEntity(string promptMessage, Type type, string rejectMessage = null, bool exactMatch = false)
+        {
+            var ed = Application.DocumentManager.MdiActiveDocument.Editor;
+            var pEntRes = new PromptEntityOptions(promptMessage);
+
+            if (!string.IsNullOrWhiteSpace(rejectMessage)) pEntRes.SetRejectMessage(rejectMessage);
+
+            pEntRes.AddAllowedClass(type, exactMatch);
+
+            return ed.GetEntity(pEntRes);
+        }
 
         public static void WriteMessage(string message)
         {

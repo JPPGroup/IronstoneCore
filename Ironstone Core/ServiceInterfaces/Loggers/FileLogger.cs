@@ -68,7 +68,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public override void LogException(Exception exception)
         {
-            _logger.Error(exception, Process.Id.ToString);
+            //_logger.Error(exception, Process.Id.ToString);
+            _logger.Error(exception);
         }
 
         ~FileLogger()
