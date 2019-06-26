@@ -117,6 +117,7 @@
     <Compile Include="Autocad\EntityExtension.cs" />
     <Compile Include="Autocad\LayerInfo.cs" />
     <Compile Include="Autocad\LayoutExtensions.cs" />
+    <Compile Include="Autocad\PolylineExtensions.cs" />
     <Compile Include="Autocad\TransactionException.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Constants.cs" />

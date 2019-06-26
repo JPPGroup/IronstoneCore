@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
-using Autodesk.AutoCAD.Geometry;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
     public static class DatabaseExtensions
     {
-        public static BlockTableRecord GetModelSpace(this Database currentDatabase)
+        public static BlockTableRecord GetModelSpace(this Database currentDatabase, bool forWrite = false)
         {
             Transaction acTrans = currentDatabase.TransactionManager.TopTransaction;
-            if (acTrans == null)
-                throw new TransactionException("No top transaction");
+            if (acTrans == null) throw new TransactionException("No top transaction");
 
             ObjectId modelSpaceId = SymbolUtilityServices.GetBlockModelSpaceId(currentDatabase);
-            BlockTableRecord modelSpace = acTrans.GetObject(modelSpaceId, OpenMode.ForRead) as BlockTableRecord;
+            OpenMode mode = forWrite ? OpenMode.ForWrite : OpenMode.ForRead;
+
+            BlockTableRecord modelSpace = acTrans.GetObject(modelSpaceId, mode) as BlockTableRecord;
 
             return modelSpace;
         }
