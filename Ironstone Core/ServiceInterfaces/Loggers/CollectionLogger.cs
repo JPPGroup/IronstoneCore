@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Exception = System.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
-    public class CollectionLogger : ILogger
+    public class CollectionLogger : BaseLogger
     {
         private readonly ICollection<ILogger> _loggers = new List<ILogger>();
 
@@ -16,23 +16,18 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
             _loggers.Add(new ConsoleLogger());
             _loggers.Add(new FileLogger(CoreExtensionApplication._current.Configuration.LogFile));
         }
-        
-        public void Entry(string message)
-        {
-            foreach (var logger in _loggers) logger.Entry(message);            
-        }
 
-        public void Entry(string message, Severity sev)
+        public override void Entry(string message, Severity sev)
         {
             foreach (var logger in _loggers) logger.Entry(message, sev);
         }
 
-        public void LogEvent(Event eventType, string eventParameters)
+        public override void LogEvent(Event eventType, string eventParameters)
         {
             foreach (var logger in _loggers) logger.LogEvent(eventType, eventParameters);
         }
 
-        public void LogException(Exception exception)
+        public override void LogException(Exception exception)
         {
             foreach (var logger in _loggers) logger.LogException(exception);
         }

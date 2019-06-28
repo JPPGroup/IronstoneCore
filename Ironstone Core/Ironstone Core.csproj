@@ -117,6 +117,7 @@
     <Compile Include="Autocad\EntityExtension.cs" />
     <Compile Include="Autocad\LayerInfo.cs" />
     <Compile Include="Autocad\LayoutExtensions.cs" />
+    <Compile Include="Autocad\PolylineExtensions.cs" />
     <Compile Include="Autocad\TransactionException.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Constants.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="IIronstoneExtensionApplication.cs" />
     <Compile Include="Mocking\ConfigurationHelper.cs" />
     <Compile Include="Mocking\PassDummyAuth.cs" />
+    <Compile Include="ServiceInterfaces\Loggers\BaseLogger.cs" />
     <Compile Include="ServiceInterfaces\Loggers\FileLogger.cs" />
     <Compile Include="ServiceInterfaces\ObjectModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

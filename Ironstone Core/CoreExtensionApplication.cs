@@ -171,6 +171,7 @@ namespace Jpp.Ironstone.Core
             {
                 LoadConfiguration();
                 _logger = Container.Resolve<ILogger>();
+                _logger.LogEvent(Event.Message, "Application Startup");
                 _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
 
                 _authentication = Container.Resolve<IAuthentication>();

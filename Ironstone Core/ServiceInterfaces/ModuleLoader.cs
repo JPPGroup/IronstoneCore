@@ -125,13 +125,22 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                         bool found = false;
                         string fileName = s + ".dll";
                         string filePath = DataPath + "\\" + fileName;
-                        foreach (string existingModule in existingModules)
-                        {
-                            if (existingModule == (filePath))
-                            {
-                                found = true;
-                            }
-                        }
+
+                        /*
+                         * TODO: Need to add version information, etc to correctly updated.
+                         * For now just download/replace the module every time.
+                         * Will need the correct version is present.
+                         * Regardless of whether Core or Object Model is updated.
+                         * A module might change without changes to O/M or Core.
+                         */
+
+                        //foreach (string existingModule in existingModules)
+                        //{
+                        //    if (existingModule == (filePath))
+                        //    {
+                        //        found = true;
+                        //    }
+                        //}
 
                         if (!found)
                         {

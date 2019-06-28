@@ -1,33 +1,29 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
-namespace Jpp.Ironstone.Core.Autocad.DrawingObjects
+namespace Jpp.Ironstone.Core.Autocad
 {
     public class PersistentObjectIdCollection : IEnumerable
     {
         public List<long> Pointers { get; private set; }
 
-        private ObjectIdCollection collection;
+        private ObjectIdCollection _collection;
 
         [XmlIgnore]
         public ObjectIdCollection Collection
         {
             get
             {
-                if (collection == null)
+                if (_collection == null)
                 {
                     BuildCollection();
                 }
 
-                return collection;
+                return _collection;
             }
         }
 
@@ -54,12 +50,12 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects
         public PersistentObjectIdCollection()
         {
             Pointers = new List<long>();
-            collection = new ObjectIdCollection();
+            _collection = new ObjectIdCollection();
         }
 
         private void BuildCollection()
         {
-            collection = new ObjectIdCollection();
+            _collection = new ObjectIdCollection();
 
             Document acDoc = Application.DocumentManager.MdiActiveDocument;
             Database acCurDb = acDoc.Database;
@@ -72,7 +68,7 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects
                     collection.Add(newObj);
                 }*/
                 newObj = acCurDb.GetObjectId(false, new Handle(ptr), 0);
-                collection.Add(newObj);
+                _collection.Add(newObj);
             }
         }
 

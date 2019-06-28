@@ -131,6 +131,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Autocad\EditorExtensions.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="CoreUIExtensionApplication.cs" />
     <Compile Include="EnumBindingSource.cs" />
