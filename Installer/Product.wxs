@@ -61,10 +61,22 @@
 		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.0\ACAD-2000:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
 		      <RegistryValue Type="string" Name="DESCRIPTION" Value="Loader for JPP Ironstone"/>
 		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]IronstoneCore.dll"/>
-          <RegistryValue Type="integer" Name="LOADCTRLS" Value="2"/>
+			  <RegistryValue Type="integer" Name="LOADCTRLS" Value="2"/>
 		      <RegistryValue Type="integer" Name="MANAGED" Value="1"/>
 		    </RegistryKey>
 		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.0\ACAD-2001:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
+		      <RegistryValue Type="string" Name="DESCRIPTION" Value="Loader for JPP Ironstone"/>
+		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]IronstoneCore.dll"/>
+		      <RegistryValue Type="integer" Name="LOADCTRLS" Value="2"/>
+		      <RegistryValue Type="integer" Name="MANAGED" Value="1"/>
+		    </RegistryKey>
+			<RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.1\ACAD-3000:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
+		      <RegistryValue Type="string" Name="DESCRIPTION" Value="Loader for JPP Ironstone"/>
+		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]IronstoneCore.dll"/>
+			  <RegistryValue Type="integer" Name="LOADCTRLS" Value="2"/>
+		      <RegistryValue Type="integer" Name="MANAGED" Value="1"/>
+		    </RegistryKey>
+		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.1\ACAD-3001:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
 		      <RegistryValue Type="string" Name="DESCRIPTION" Value="Loader for JPP Ironstone"/>
 		      <RegistryValue Type="string" Name="LOADER" Value="[INSTALLFOLDER]IronstoneCore.dll"/>
 		      <RegistryValue Type="integer" Name="LOADCTRLS" Value="2"/>
