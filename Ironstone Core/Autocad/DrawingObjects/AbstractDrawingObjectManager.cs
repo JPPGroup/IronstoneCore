@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -13,6 +14,16 @@ namespace Jpp.Ironstone.Core.Autocad
     public abstract class AbstractDrawingObjectManager<T> : IDrawingObjectManager where T : DrawingObject
     {
         public List<T> ManagedObjects;
+
+        [XmlIgnore] 
+        public IReadOnlyList<T> ActiveObjects {
+            get
+            {
+                if(_activeObjects == null) SetActiveObjects();
+                return _activeObjects;
+            }
+        }
+        private IReadOnlyList<T> _activeObjects;
 
         [XmlIgnore]
         public Document HostDocument { get; set; }
@@ -31,12 +42,19 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public virtual void UpdateDirty()
         {
-            RemoveErased();
+            //TODO: Review how to handle erased base objects
+            //RemoveErased();
+
+            SetActiveObjects();
         }
+
 
         public virtual void UpdateAll()
         {
-            RemoveErased();
+            //TODO: Review how to handle erased base objects
+            //RemoveErased();
+
+            SetActiveObjects();
         }
 
         public void Clear()
@@ -46,6 +64,7 @@ namespace Jpp.Ironstone.Core.Autocad
                 managedObject.Erase();
             }
             ManagedObjects.Clear();
+            SetActiveObjects();
         }
 
         public virtual void AllDirty()
@@ -80,6 +99,8 @@ namespace Jpp.Ironstone.Core.Autocad
 
             ManagedObjects.Add(toBeManaged);
             toBeManaged.DirtyAdded = true;
+
+            SetActiveObjects();
         }
 
         /// <summary>
@@ -87,6 +108,7 @@ namespace Jpp.Ironstone.Core.Autocad
         /// </summary>
         public void RemoveErased()
         {
+            //TODO: Review how to handle erased base objects
             List<int> indicesToRemove = new List<int>();
 
             for (int i = ManagedObjects.Count - 1; i >= 0; i--)
@@ -108,6 +130,11 @@ namespace Jpp.Ironstone.Core.Autocad
         public void SetHostDocument(Document doc)
         {
             this.HostDocument = doc;
+        }
+
+        private void SetActiveObjects()
+        {
+            _activeObjects = ManagedObjects.Where(obj => !obj.Erased).ToList().AsReadOnly();
         }
     }
 }

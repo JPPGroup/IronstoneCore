@@ -60,9 +60,10 @@ namespace Jpp.Ironstone.Core.Autocad
 
         private void ActiveObject_Erased(object sender, ObjectErasedEventArgs e)
         {
-            Erased = true;
+            Erased = e.Erased;
             ObjectErased(sender, e);
-            DirtyRemoved = true;
+            DirtyRemoved = e.Erased;
+            DirtyAdded = !e.Erased;
         }
 
         protected abstract void ObjectErased(object sender, ObjectErasedEventArgs e);
