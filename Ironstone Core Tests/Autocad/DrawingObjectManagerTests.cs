@@ -42,7 +42,47 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
             {
                 return false;
             }
-        } 
+        }
+
+        [Test]
+        public void VerifyManagerManagedObjects()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyManagerManagedObjectsResident)));
+        }
+
+        public bool VerifyManagerManagedObjectsResident()
+        {
+            try
+            {
+                var manager = GetManager();
+                if (manager == null) return false;
+                return manager.ManagedObjects.Count == 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyManagerActiveObjects()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyManagerActiveObjectsResident)));
+        }
+
+        public bool VerifyManagerActiveObjectsResident()
+        {
+            try
+            {
+                var manager = GetManager();
+                if (manager == null) return false;
+                return manager.ActiveObjects.Count == 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         [Test]
         public void VerifyAddManagedObjectActive_ManagedList()
