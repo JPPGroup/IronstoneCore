@@ -62,6 +62,8 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             Erased = e.Erased;
             ObjectErased(sender, e);
+            
+            //TODO: Review once dirty system implemented
             DirtyRemoved = e.Erased;
             DirtyAdded = !e.Erased;
         }

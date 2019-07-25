@@ -100,6 +100,7 @@ namespace Jpp.Ironstone.Core.Autocad
             ManagedObjects.Add(toBeManaged);
             toBeManaged.DirtyAdded = true;
 
+            //TODO: Belt and Braces. Review implementation of Active and Managed object lists in line with dirty system.
             SetActiveObjects();
         }
 
