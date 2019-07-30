@@ -1,4 +1,5 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -30,9 +31,10 @@ namespace Jpp.Ironstone.Core.Autocad
         void ActivateObjects();
 
         /// <summary>
-        /// Set the document that hosts this drawing object manager
+        /// Sets dependencies this drawing object manager
         /// </summary>
         /// <param name="doc">The host document</param>
-        void SetHostDocument(Document doc);
+        /// <param name="log"></param>
+        void SetDependencies(Document doc, ILogger log);
     }
 }

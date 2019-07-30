@@ -100,7 +100,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
                         foreach (IDrawingObjectManager drawingObjectManager in mgrObjList)
                         {
-                            drawingObjectManager.SetHostDocument(AcDoc);
+                            drawingObjectManager.SetDependencies(AcDoc, _log);
                             drawingObjectManager.ActivateObjects();
                             Managers.Add(drawingObjectManager);
                         }
@@ -255,7 +255,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
             if (foundManager != null) return foundManager;
 
-            foundManager = (T)Activator.CreateInstance(typeof(T), this.AcDoc);
+            foundManager = (T)Activator.CreateInstance(typeof(T), AcDoc, _log);
             Managers.Add(foundManager);
 
             return foundManager;
