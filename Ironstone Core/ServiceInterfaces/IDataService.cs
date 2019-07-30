@@ -9,6 +9,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     public interface IDataService
     {
+        void CreateStoresFromAppDocumentManager();
         void PopulateStoreTypes();
 
         Type[] GetManagerTypes();
