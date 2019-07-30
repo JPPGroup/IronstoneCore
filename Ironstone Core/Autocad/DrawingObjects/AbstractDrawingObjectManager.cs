@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -26,16 +27,20 @@ namespace Jpp.Ironstone.Core.Autocad
         private IReadOnlyList<T> _activeObjects;
 
         [XmlIgnore]
-        public Document HostDocument { get; set; }
+        public Document HostDocument { get; private set; }
+        [XmlIgnore]
+        public ILogger Log { get; private set; }
 
         /// <summary>
         /// Create an instance of the manager
         /// </summary>
         /// <param name="document">The document in which the manager resides</param>
-        protected AbstractDrawingObjectManager(Document document)
+        /// <param name="log"></param>
+        protected AbstractDrawingObjectManager(Document document, ILogger log)
         {
             HostDocument = document;
             ManagedObjects = new List<T>();
+            Log = log;
         }
 
         protected AbstractDrawingObjectManager() { }
@@ -128,10 +133,12 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        public void SetHostDocument(Document doc)
+        public void SetDependencies(Document doc, ILogger log)
         {
-            this.HostDocument = doc;
+            HostDocument = doc;
+            Log = log;
         }
+
 
         private void SetActiveObjects()
         {

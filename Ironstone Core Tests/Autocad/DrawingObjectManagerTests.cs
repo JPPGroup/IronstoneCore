@@ -45,6 +45,40 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
+        public void VerifyManagerDependenciesSet()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.IsTrue(RunTest<bool>(nameof(VerifyManagerDependenciesSet_HostDocumentResident)));
+                Assert.IsTrue(RunTest<bool>(nameof(VerifyManagerDependenciesSet_LogResident)));
+            });
+        }
+
+        public bool VerifyManagerDependenciesSet_HostDocumentResident()
+        {
+            try
+            {
+                return GetManager()?.HostDocument != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool VerifyManagerDependenciesSet_LogResident()
+        {
+            try
+            {
+                return GetManager()?.Log != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
         public void VerifyManagerManagedObjects()
         {
             Assert.IsTrue(RunTest<bool>(nameof(VerifyManagerManagedObjectsResident)));
