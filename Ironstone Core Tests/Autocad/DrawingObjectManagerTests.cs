@@ -42,15 +42,55 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
             {
                 return false;
             }
-        } 
-
-        [Test]
-        public void VerifyAddManagedObjectActive()
-        {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyAddManagedObjectActiveResident)));
         }
 
-        public bool VerifyAddManagedObjectActiveResident()
+        [Test]
+        public void VerifyManagerManagedObjects()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyManagerManagedObjectsResident)));
+        }
+
+        public bool VerifyManagerManagedObjectsResident()
+        {
+            try
+            {
+                var manager = GetManager();
+                if (manager == null) return false;
+                return manager.ManagedObjects.Count == 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyManagerActiveObjects()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyManagerActiveObjectsResident)));
+        }
+
+        public bool VerifyManagerActiveObjectsResident()
+        {
+            try
+            {
+                var manager = GetManager();
+                if (manager == null) return false;
+                return manager.ActiveObjects.Count == 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyAddManagedObjectActive_ManagedList()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyAddManagedObjectActive_ManagedListResident)));
+        }
+
+        public bool VerifyAddManagedObjectActive_ManagedListResident()
         {
             try
             {
@@ -64,6 +104,33 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                 manager.Add(obj);
 
                 return manager.ManagedObjects.Count == 1;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyAddManagedObjectActive_ActiveList()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyAddManagedObjectActive_ActiveListResident)));
+        }
+
+        public bool VerifyAddManagedObjectActive_ActiveListResident()
+        {
+            try
+            {
+                var manager = GetManager();
+                if (manager == null) return false;
+
+                manager.Clear();
+
+                var objId = Guid.NewGuid();
+                var obj = TestDrawingObject.CreateActiveObject(objId);
+                manager.Add(obj);
+
+                return manager.ActiveObjects.Count == 1;
             }
             catch (Exception)
             {
@@ -90,7 +157,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                 var obj = TestDrawingObject.CreateNonActiveObject(objId);
                 manager.Add(obj);
 
-                return manager.ManagedObjects.Count == 0;
+                return false;
             }
             catch (ArgumentException e)
             {
@@ -103,12 +170,12 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyClear()
+        public void VerifyClear_ManagedList()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyClearResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyClear_ManagedListResident)));
         }
 
-        public bool VerifyClearResident()
+        public bool VerifyClear_ManagedListResident()
         {
             try
             {
@@ -126,12 +193,35 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyAllDirtyClear()
+        public void VerifyClear_ActiveList()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyAllDirtyResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyClear_ActiveListResident)));
         }
 
-        public bool VerifyAllDirtyResident()
+        public bool VerifyClear_ActiveListResident()
+        {
+            try
+            {
+                var manager = GetManager();
+                SetupObjects(manager);
+
+                manager.Clear();
+
+                return manager.ActiveObjects.Count == 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyAllDirty_ManagedList()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyAllDirty_ManagedListResident)));
+        }
+
+        public bool VerifyAllDirty_ManagedListResident()
         {
             try
             {
@@ -141,6 +231,29 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                 manager.AllDirty();
 
                 return manager.ManagedObjects.All(obj => obj.DirtyModified);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyAllDirty_ActiveList()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyAllDirty_ActiveListResident)));
+        }
+
+        public bool VerifyAllDirty_ActiveListResident()
+        {
+            try
+            {
+                var manager = GetManager();
+                SetupObjects(manager);
+
+                manager.AllDirty();
+
+                return manager.ActiveObjects.All(obj => obj.DirtyModified);
             }
             catch (Exception)
             {
@@ -180,12 +293,12 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyUpdateDirty()
+        public void VerifyUpdateDirty_ManagedList()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyUpdateDirtyResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUpdateDirty_ManagedListResident)));
         }
 
-        public bool VerifyUpdateDirtyResident()
+        public bool VerifyUpdateDirty_ManagedListResident()
         {
             try
             {
@@ -202,7 +315,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
 
                 manager.UpdateDirty();
 
-                return manager.ManagedObjects.Count == 1;
+                return manager.ManagedObjects.Count == 2;
             }
             catch (Exception)
             {
@@ -211,12 +324,43 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyUpdateAll()
+        public void VerifyUpdateDirty_ActiveList()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyUpdateAllResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUpdateDirty_ActiveListResident)));
         }
 
-        public bool VerifyUpdateAllResident()
+        public bool VerifyUpdateDirty_ActiveListResident()
+        {
+            try
+            {
+                var manager = GetManager();
+                SetupObjects(manager);
+
+                var obj = manager.ActiveObjects.First();
+
+                EraseObject(obj);
+
+                if (manager.ManagedObjects.Count != 2) return false;
+                if (manager.ManagedObjects.Count(o => o.DirtyRemoved) != 1) return false;
+                if (manager.ManagedObjects.Count(o => o.DirtyModified) != 1) return false;
+
+                manager.UpdateDirty();
+
+                return manager.ActiveObjects.Count == 1;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyUpdateAll_ManagedList()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUpdateAll_ManagedListResident)));
+        }
+
+        public bool VerifyUpdateAll_ManagedListResident()
         {
             try
             {
@@ -233,20 +377,52 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
 
                 manager.UpdateAll();
 
-                return manager.ManagedObjects.Count == 1;
+                return manager.ManagedObjects.Count == 2;
             }
             catch (Exception)
             {
                 return false;
             }
         }
+
         [Test]
-        public void VerifyUndoAction()
+        public void VerifyUpdateAll_ActiveList()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyUndoActionResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUpdateAll_ActiveListResident)));
         }
 
-        public bool VerifyUndoActionResident()
+        public bool VerifyUpdateAll_ActiveListResident()
+        {
+            try
+            {
+                var manager = GetManager();
+                SetupObjects(manager);
+
+                var obj = manager.ActiveObjects.First();
+
+                EraseObject(obj);
+
+                if (manager.ManagedObjects.Count != 2) return false;
+                if (manager.ManagedObjects.Count(o => o.DirtyRemoved) != 1) return false;
+                if (manager.ManagedObjects.Count(o => o.DirtyModified) != 1) return false;
+
+                manager.UpdateAll();
+
+                return manager.ActiveObjects.Count == 1;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyUndoRegenerate()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUndoRegenerateResident)));
+        }
+
+        public bool VerifyUndoRegenerateResident()
         {
             try
             {
@@ -268,6 +444,76 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
 
                 ed.Command("_undo", "BACK");
                 return GetObjectCount() == 1;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyUndo_ManagedList()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUndo_ManagedListResident)));
+        }
+
+        public bool VerifyUndo_ManagedListResident()
+        {
+            try
+            {
+                var ed = Application.DocumentManager.MdiActiveDocument.Editor;
+                var manager = GetManager();
+                SetupObjects(manager);
+
+                if (manager.ManagedObjects.Count != 2) return false;
+
+                ed.Command("_undo", "MARK");
+
+                var obj = manager.ManagedObjects.First();
+                EraseObject(obj);
+
+                ed.Command("_regen");
+
+                if (manager.ManagedObjects.Count != 2) return false;
+
+                ed.Command("_undo", "BACK");
+
+                return manager.ManagedObjects.Count == 2;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        [Test]
+        public void VerifyUndo_ActiveList()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyUndo_ActiveListResident)));
+        }
+
+        public bool VerifyUndo_ActiveListResident()
+        {
+            try
+            {
+                var ed = Application.DocumentManager.MdiActiveDocument.Editor;
+                var manager = GetManager();
+                SetupObjects(manager);
+
+                if (manager.ActiveObjects.Count != 2) return false;
+
+                ed.Command("_undo", "MARK");
+
+                var obj = manager.ActiveObjects.First();
+                EraseObject(obj);
+
+                ed.Command("_regen");
+
+                if (manager.ActiveObjects.Count != 1) return false;
+
+                ed.Command("_undo", "BACK");
+
+                return manager.ActiveObjects.Count == 2;
             }
             catch (Exception)
             {
