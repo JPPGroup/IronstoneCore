@@ -48,6 +48,15 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.DocumentToBeDestroyed += DocumentManagerOnDocumentToBeDestroyed;
 
             //Incase the document has been loaded before the application (should only happen with manual loads...)
+            CreateStoresFromAppDocumentManager();
+        }
+
+        public void CreateStoresFromAppDocumentManager()
+        {
+            //Clear and force reload of stores
+            _stores.Clear();
+            _storeTypesInvalidated = true;
+
             foreach (Document d in Application.DocumentManager)
             {
                 CreateStoresOnDocument(d);

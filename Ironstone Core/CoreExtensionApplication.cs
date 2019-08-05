@@ -175,8 +175,12 @@ namespace Jpp.Ironstone.Core
                 _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
 
                 _authentication = Container.Resolve<IAuthentication>();
+
                 IDataService dataService = Container.Resolve<IDataService>();
+
                 Update();
+
+                dataService.CreateStoresFromAppDocumentManager();
             }
             catch (System.Exception e)
             {
