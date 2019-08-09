@@ -179,8 +179,6 @@ namespace Jpp.Ironstone.Core
                 IDataService dataService = Container.Resolve<IDataService>();
 
                 Update();
-
-                dataService.CreateStoresFromAppDocumentManager();
             }
             catch (System.Exception e)
             {

@@ -3,6 +3,7 @@ using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
+using Autodesk.AutoCAD.Runtime;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.Autocad
@@ -26,6 +27,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
                 Document acDoc = Application.DocumentManager.MdiActiveDocument;
                 Database acCurDb = acDoc.Database;
+                
                 return acCurDb.GetObjectId(false, new Handle(BaseObjectPtr), 0);
             }
             set
@@ -35,14 +37,26 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        public void CreateActiveObject()
+        public bool CreateActiveObject()
         {
-            Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
-            _activeObject = acTrans.GetObject(BaseObject, OpenMode.ForWrite);
-            _activeObject.Erased += ActiveObject_Erased;
-            _activeObject.Modified += ActiveObject_Modified;
+            try
+            {
+                Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
 
-            Active = true;
+                _activeObject = acTrans.GetObject(BaseObject, OpenMode.ForWrite);
+                _activeObject.Erased += ActiveObject_Erased;
+                _activeObject.Modified += ActiveObject_Modified;
+
+                Active = true;
+
+                return true;
+            }
+            catch (Autodesk.AutoCAD.Runtime.Exception acEx)
+            {
+                if (acEx.ErrorStatus == ErrorStatus.UnknownHandle) return false;
+
+                throw;
+            }
         }
 
         private void ActiveObject_Modified(object sender, EventArgs e)

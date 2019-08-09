@@ -53,7 +53,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
         }
 
-        public void Load()
+        public void Load(IDataService dataService)
         {
             if (!CoreExtensionApplication.CoreConsole)
             {
@@ -96,6 +96,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     }
                 }
             }
+
+            dataService.CreateStoresFromAppDocumentManager();
         }
 
         public void ProcessManifest()

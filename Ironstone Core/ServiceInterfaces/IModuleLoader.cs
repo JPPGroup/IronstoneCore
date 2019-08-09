@@ -13,7 +13,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         string DataPath { get; set; }
 
         void Scan();
-        void Load();
+        void Load(IDataService dataService);
 
         void ProcessManifest();
 
