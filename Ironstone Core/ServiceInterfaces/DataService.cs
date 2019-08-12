@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.EditorInput;
 using Jpp.Ironstone.Core.Autocad;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -17,6 +19,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         /// Stores that are currently loaded into memory
         /// </summary>
         internal Dictionary<string, Dictionary<Type, DocumentStore>> _stores;
+
+        internal List<ITemplateSource> _templateSources;
 
         private bool _storeTypesInvalidated = true;
 
@@ -44,6 +48,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             _current = this;
             _logger = logger;
             _stores = new Dictionary<string, Dictionary<Type, DocumentStore>>();
+            _templateSources = new List<ITemplateSource>();
 
             //Add the document hooks
             Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.DocumentCreated += DocumentManagerOnDocumentCreated;
@@ -106,6 +111,24 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             return (T)_stores[ID][typeof(T)];
         }
 
+        public ITemplateSource GetTemplateSource(Guid id)
+        {
+            foreach (ITemplateSource templateSource in _templateSources)
+            {
+                if (templateSource.Contains(id))
+                {
+                    return templateSource;
+                }
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(id), "Template Id not found in available sources");
+        }
+
+        public void RegisterSource(ITemplateSource source)
+        {
+            _templateSources.Add(source);
+        }
+
         private void DocumentManagerOnDocumentCreated(object sender, DocumentCollectionEventArgs e)
         {
             if (_stores.ContainsKey(e.Document.Name))
@@ -115,6 +138,31 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             else
             {
                 CreateStoresOnDocument(e.Document);
+                RegisterAppKey(e.Document);
+            }
+        }
+
+        public void RegisterAppKey(Document document)
+        {
+            using (Transaction tr = document.TransactionManager.StartTransaction())
+            {
+
+                RegAppTable rat = (RegAppTable)tr.GetObject(document.Database.RegAppTableId, OpenMode.ForRead, false);
+
+                if (!rat.Has(Constants.REG_APP_NAME))
+                {
+
+                    rat.UpgradeOpen();
+                    RegAppTableRecord ratr = new RegAppTableRecord
+                    {
+                        Name = Constants.REG_APP_NAME
+                    };
+
+                    rat.Add(ratr);
+                    tr.AddNewlyCreatedDBObject(ratr, true);
+
+                    tr.Commit();
+                }
             }
         }
 

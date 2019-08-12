@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -71,6 +72,84 @@ namespace Jpp.Ironstone.Core.Autocad
         protected abstract void ObjectErased(object sender, ObjectErasedEventArgs e);
 
         public bool Erased { get; set; }
+
+        private Dictionary<string, string> _XData;
+
+        [XmlIgnore]
+        public string this[string key]
+        {
+            get
+            {
+                if (_XData == null)
+                {
+                    if (_XData.ContainsKey(key))
+                        throw new KeyNotFoundException();
+
+                    _XData = new Dictionary<string, string>();
+                    Transaction tr = BaseObject.Database.TransactionManager.TopTransaction;
+                    DBObject obj = tr.GetObject(BaseObject, OpenMode.ForRead);
+
+                    ResultBuffer rb = obj.XData;
+
+                    if (rb != null)
+                    {
+                        foreach (TypedValue tv in rb)
+                        {
+                            string data = tv.Value as string;
+                            string[] keyvalue = data.Split(':');
+                            _XData.Add(keyvalue[0], keyvalue[1]);
+                        }
+                    }
+                }
+
+                return _XData[key];
+            }
+            set
+            {
+                Transaction tr = BaseObject.Database.TransactionManager.TopTransaction;
+                DBObject obj = tr.GetObject(BaseObject, OpenMode.ForRead);
+
+                ResultBuffer rb = obj.XData;
+                ResultBuffer newBuffer = new ResultBuffer();
+
+                if (rb != null && _XData.ContainsKey(key))
+                {
+                    for(int i = 0; i < rb.AsArray().Length; i++)//foreach (TypedValue tv in rb)
+                    {
+                        TypedValue tv = rb.AsArray()[i];
+                        string data = tv.Value as string;
+                        string[] keyvalue = data.Split(':');
+                        if (keyvalue[0] == key)
+                        {
+                            TypedValue newTypedValue = new TypedValue(1000 ,$"{keyvalue[0]}:{value}");
+                            newBuffer.Add(newTypedValue);
+                        }
+                        else
+                        {
+                            newBuffer.Add(tv);
+                        }
+                    }
+                }
+                else
+                {
+                    TypedValue newTypedValue = new TypedValue(1000, $"{key}:{value}");
+                    newBuffer.Add(newTypedValue);
+                }
+                
+                obj.XData = newBuffer;
+
+                rb.Dispose();
+                tr.Commit();
+            }
+        }
+
+        public bool HasKey(string key)
+        {
+            if (_XData == null)
+                return false;
+
+            return _XData.ContainsKey(key);
+        }
 
         [XmlIgnore]
         public abstract Point3d Location { get; set; }
