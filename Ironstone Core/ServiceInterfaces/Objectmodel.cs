@@ -11,7 +11,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     class ObjectModel : IUpdateable
     {
-        public ObjectModel(IModuleLoader modules, IDataService dataService)
+        public ObjectModel(IModuleLoader modules)
         {
             modules.Scan(); // Scan to ensure we have an up to date list of modules. 
 
@@ -33,7 +33,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     modules.Scan();               
                 }
 
-                modules.Load(dataService);
+                modules.Load();
             };
             AutoUpdate.Updater<ObjectModel>.ApplicationExitEvent += () =>
             {
@@ -47,7 +47,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             else
             {
                 modules.Scan();
-                modules.Load(dataService);                
+                modules.Load();                
             }
         }
 
