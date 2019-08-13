@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
@@ -23,11 +25,12 @@ namespace Jpp.Ironstone.Core.Autocad
         protected List<IDrawingObjectManager> Managers;
         private readonly Type[] _managerTypes;
         private readonly ILogger _log;
+        private readonly LayerManager _layerManager;
 
         /// <summary>
         /// Create a new document store
         /// </summary>
-        public DocumentStore(Document doc, Type[] managerTypes, ILogger log)
+        public DocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm)
         {
             AcDoc = doc;
             AcCurDb = doc.Database;
@@ -36,6 +39,24 @@ namespace Jpp.Ironstone.Core.Autocad
             _log = log;
 
             Managers = new List<IDrawingObjectManager>();
+
+            PopulateLayers();
+        }
+
+        public void PopulateLayers()
+        {
+            var layers =  this.GetType().GetCustomAttributes(typeof(LayerAttribute), true).ToList();
+
+            foreach (IDrawingObjectManager objManager in Managers)
+            {
+                layers.AddRange(objManager.GetRequiredLayers());
+            }
+
+            foreach (object layerObj in layers)
+            {
+                LayerAttribute layer = layerObj as LayerAttribute;
+                _layerManager.CreateLayer(AcCurDb, layer.Name);
+            }
         }
         #endregion
 

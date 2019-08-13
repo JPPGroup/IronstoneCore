@@ -118,7 +118,9 @@
     <Compile Include="Autocad\DrawingObjects\Primitives\DrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\LineDrawingObject.cs" />
     <Compile Include="Autocad\EntityExtension.cs" />
+    <Compile Include="Autocad\LayerAttribute.cs" />
     <Compile Include="Autocad\LayerInfo.cs" />
+    <Compile Include="Autocad\LayerManager.cs" />
     <Compile Include="Autocad\LayoutExtensions.cs" />
     <Compile Include="Autocad\PolylineExtensions.cs" />
     <Compile Include="Autocad\TransactionException.cs" />

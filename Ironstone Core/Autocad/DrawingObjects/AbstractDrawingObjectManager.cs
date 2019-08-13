@@ -139,6 +139,11 @@ namespace Jpp.Ironstone.Core.Autocad
             Log = log;
         }
 
+        public object[] GetRequiredLayers()
+        {
+            return typeof(T).GetCustomAttributes(typeof(LayerAttribute), true);
+        }
+
 
         private void SetActiveObjects()
         {

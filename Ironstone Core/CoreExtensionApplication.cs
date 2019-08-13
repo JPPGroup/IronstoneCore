@@ -9,6 +9,7 @@ using Autodesk.Civil.ApplicationServices;
 using Jpp.AutoUpdate;
 using Jpp.AutoUpdate.Classes;
 using Jpp.Ironstone.Core;
+using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
@@ -167,7 +168,8 @@ namespace Jpp.Ironstone.Core
             Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ObjectModel, ObjectModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IUserSettings, StandardUserSettings>(new ContainerControlledLifetimeManager());
-            
+            Container.RegisterType<LayerManager>(new ContainerControlledLifetimeManager());
+
             try
             {
                 LoadConfiguration();
