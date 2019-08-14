@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NLog.Layouts;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
@@ -16,15 +17,30 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public StandardUserSettings(ILogger logger, Configuration configuration)
         {
-            _settings = new Dictionary<string, string>();
-            this.LoadFrom("N:\\Consulting\\Library\\Ironstone\\Config.json").LoadFrom(configuration.AppData + "Config.json");
             _logger = logger;
+
+            _settings = new Dictionary<string, string>();
+            this.LoadFrom(configuration.NetworkUserSettingsPath).LoadFrom(configuration.AppData + "Config.json");
         }
 
         public IUserSettings LoadFrom(string path)
         {
             if (File.Exists(path))
             {
+                using (StreamReader sr = File.OpenText(path))
+                {
+                    string json = sr.ReadToEnd();
+                    try
+                    {
+                        JToken.Parse(json);
+                    }
+                    catch (JsonReaderException ex)
+                    {
+                        _logger.Entry($"Invalid settings file found at path {path}", Severity.Error);
+                        return this;
+                    }
+                }
+
                 var importedSettings = JsonConvert.DeserializeObject<Dictionary<string, string>>(path);
                 foreach (KeyValuePair<string, string> s in importedSettings)
                 {
@@ -40,7 +56,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
             else
             {
-                _logger.Entry($"No log file found at path {path}", Severity.Warning);
+                _logger.Entry($"No settings file found at path {path}", Severity.Warning);
             }
 
             return this;
@@ -48,7 +64,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public string GetValue(string key)
         {
-            return _settings[key];
+            if (_settings.ContainsKey(key))
+            {
+                return _settings[key];
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

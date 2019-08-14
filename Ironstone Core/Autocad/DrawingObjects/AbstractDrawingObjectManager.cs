@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
@@ -141,7 +142,14 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public object[] GetRequiredLayers()
         {
-            return typeof(T).GetCustomAttributes(typeof(LayerAttribute), true);
+            List<object> result = new List<object>();
+
+            var t = this.GetType();
+            var add = t.GetCustomAttributes(typeof(LayerAttribute), true);
+
+            result.AddRange(add);
+            result.AddRange(typeof(T).GetCustomAttributes(typeof(LayerAttribute), true));
+            return result.ToArray();
         }
 
 

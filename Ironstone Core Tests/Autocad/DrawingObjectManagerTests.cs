@@ -106,15 +106,19 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
 
         public bool VerifyManagerActiveObjectsResident()
         {
-            try
+            using (Transaction trans = Application.DocumentManager
+                .MdiActiveDocument.TransactionManager.StartTransaction())
             {
-                var manager = GetManager();
-                if (manager == null) return false;
-                return manager.ActiveObjects.Count == 0;
-            }
-            catch (Exception)
-            {
-                return false;
+                try
+                {
+                    var manager = GetManager();
+                    if (manager == null) return false;
+                    return manager.ActiveObjects.Count == 0;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
         }
 
@@ -153,22 +157,26 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
 
         public bool VerifyAddManagedObjectActive_ActiveListResident()
         {
-            try
+            using (Transaction trans = Application.DocumentManager
+                .MdiActiveDocument.TransactionManager.StartTransaction())
             {
-                var manager = GetManager();
-                if (manager == null) return false;
+                try
+                {
+                    var manager = GetManager();
+                    if (manager == null) return false;
 
-                manager.Clear();
+                    manager.Clear();
 
-                var objId = Guid.NewGuid();
-                var obj = TestDrawingObject.CreateActiveObject(objId);
-                manager.Add(obj);
+                    var objId = Guid.NewGuid();
+                    var obj = TestDrawingObject.CreateActiveObject(objId);
+                    manager.Add(obj);
 
-                return manager.ActiveObjects.Count == 1;
-            }
-            catch (Exception)
-            {
-                return false;
+                    return manager.ActiveObjects.Count == 1;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
         }
 
@@ -561,6 +569,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
             ds.InvalidateStoreTypes();
 
             var store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
+
             return store?.GetManager<TestDrawingObjectManager>();
         }
 
@@ -624,6 +633,34 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
           
                 }
                 tr.Commit();
+            }
+        }
+
+        [Test]
+        public void VerifyLayerCreation()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyLayerCreationResident)));
+        }
+
+        public bool VerifyLayerCreationResident()
+        {
+            using (Transaction trans = Application.DocumentManager.MdiActiveDocument.Database.TransactionManager
+                .StartTransaction())
+            {
+                DataService ds = DataService.Current;
+                ds._stores.Remove(Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                    .MdiActiveDocument.Name);
+                GetManager();
+
+                trans.Commit();
+            }
+
+            using (Transaction trans = Application.DocumentManager.MdiActiveDocument.Database.TransactionManager
+                .StartTransaction())
+            {
+                return Application.DocumentManager.MdiActiveDocument.Database
+                           .GetLayer("TestDrawingObjectManagerLayer") !=
+                       null;
             }
         }
     }

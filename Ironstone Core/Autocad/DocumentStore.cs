@@ -37,6 +37,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
             _managerTypes = managerTypes;
             _log = log;
+            _layerManager = lm;
 
             Managers = new List<IDrawingObjectManager>();
 
@@ -45,7 +46,8 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public void PopulateLayers()
         {
-            var layers =  this.GetType().GetCustomAttributes(typeof(LayerAttribute), true).ToList();
+            Type type = this.GetType();
+            var layers =  type.GetCustomAttributes(typeof(LayerAttribute), true).ToList();
 
             foreach (IDrawingObjectManager objManager in Managers)
             {
@@ -278,6 +280,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
             foundManager = (T)Activator.CreateInstance(typeof(T), AcDoc, _log);
             Managers.Add(foundManager);
+            PopulateLayers();
 
             return foundManager;
 
