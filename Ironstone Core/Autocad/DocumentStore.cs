@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,7 +43,7 @@ namespace Jpp.Ironstone.Core.Autocad
             PopulateLayers();
         }
 
-        public void PopulateLayers()
+        private void PopulateLayers()
         {
             Type type = this.GetType();
             var layers =  type.GetCustomAttributes(typeof(LayerAttribute), true).ToList();
@@ -128,6 +127,7 @@ namespace Jpp.Ironstone.Core.Autocad
                             Managers.Add(drawingObjectManager);
                         }
                         Load();
+                        PopulateLayers();
                         tr.Commit();
                     }
                 }
@@ -286,29 +286,5 @@ namespace Jpp.Ironstone.Core.Autocad
 
         }
         #endregion
-
-        /*public static void LoadStores(Document doc)
-        {
-            //Get all document stores and load
-            List<Type> storesList = new List<Type>();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (Assembly assembly in assemblies)
-            {
-                try
-                {
-                    storesList.AddRange(assembly.GetTypes().Where(t => typeof(DocumentStore).IsAssignableFrom(t)));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-
-            foreach (Type type in storesList)
-            {
-                //Load docstore to generate managers
-                doc.GetDocumentStore(type);
-            }
-        }*/
     }
 }
