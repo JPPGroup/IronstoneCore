@@ -18,6 +18,8 @@ namespace Jpp.Ironstone.Core.Autocad
     {
         #region Constructor and Fields
 
+        public event EventHandler<DocumentNameChangedEventArgs> DocumentNameChanged;
+
         protected Document AcDoc;
         protected Database AcCurDb;
 
@@ -25,6 +27,8 @@ namespace Jpp.Ironstone.Core.Autocad
         private readonly Type[] _managerTypes;
         private readonly ILogger _log;
         private readonly LayerManager _layerManager;
+        private readonly Document _host;
+
 
         /// <summary>
         /// Create a new document store
@@ -37,8 +41,13 @@ namespace Jpp.Ironstone.Core.Autocad
             _managerTypes = managerTypes;
             _log = log;
             _layerManager = lm;
+            _host = doc;
 
             Managers = new List<IDrawingObjectManager>();
+
+            _host.Database.BeginSave += (o, args) => BeginSave(args.FileName);
+            _host.CommandEnded += (o, args) => CommandEnded(args.GlobalCommandName);
+            _host.CommandCancelled += (o, args) => CommandEnded(args.GlobalCommandName);
 
             PopulateLayers();
         }
@@ -60,6 +69,48 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
         #endregion
+
+        private void BeginSave(string fileName)
+        {
+            SaveWrapper();
+
+            if (_host.Name == fileName) return;
+            var hostDoc = _host.Name;
+
+            // ReSharper disable once ConvertToLocalFunction
+            DatabaseIOEventHandler handler = null;
+            handler = (sender, args) =>
+            {
+                _host.Database.SaveComplete -= handler;
+                DocumentNameChangeOnSave(hostDoc, fileName);
+            };
+
+            _host.Database.SaveComplete += handler;
+        }
+
+        private void DocumentNameChangeOnSave(string oldName, string newName)
+        {
+            DocumentNameChangedEventArgs args = new DocumentNameChangedEventArgs { OldName = oldName, NewName = newName };
+            OnDocumentNameChanged(args);
+        }
+
+        protected virtual void OnDocumentNameChanged(DocumentNameChangedEventArgs e)
+        {
+            EventHandler<DocumentNameChangedEventArgs> handler = DocumentNameChanged;
+            handler?.Invoke(this, e);
+        }
+
+        private void CommandEnded(string globalCommandName)
+        {
+            if (globalCommandName.ToLower().Contains("regen"))
+            {
+                RegenerateManagers();
+            }
+            else
+            {
+                UpdateManagers();
+            }
+        }
 
         #region Save and Load Methods
         /// <summary>
@@ -286,5 +337,11 @@ namespace Jpp.Ironstone.Core.Autocad
 
         }
         #endregion
+    }
+
+    public class DocumentNameChangedEventArgs : EventArgs
+    {
+        public string OldName { get; set; }
+        public string NewName { get; set; }
     }
 }
