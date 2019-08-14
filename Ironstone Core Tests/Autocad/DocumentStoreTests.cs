@@ -16,6 +16,38 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         public DocumentStoreTests() : base(Assembly.GetExecutingAssembly(), typeof(DocumentStoreTests)) { }
 
         [Test]
+        public void VerifyDocumentStoreSaveCommand()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyDocumentStoreSaveCommandResident)));
+        }
+
+        public bool VerifyDocumentStoreSaveCommandResident()
+        {
+            try
+            {
+                var ds = DataService.Current;
+                ds.InvalidateStoreTypes();
+
+                var store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
+                if (store.SaveTestProperty) return false;
+
+                store.SaveTestProperty = true;
+
+                var ed = Application.DocumentManager.MdiActiveDocument.Editor;
+                ed.Command("_qsave", "Test1.dwg");
+                store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
+
+                return store.SaveTestProperty;
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+
+        [Test]
         public void VerifyTestManagerSaveLoadManagedObject()
         {
             Assert.IsTrue(RunTest<bool>(nameof(VerifyTestManagerSaveLoadManagedObjectResident)));
