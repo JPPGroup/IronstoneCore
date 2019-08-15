@@ -76,7 +76,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             {
                 _logger.Entry("Document does not exist.\n", Severity.Error);
             }
-            
         }
 
         public T GetStore<T>(string ID) where T : DocumentStore
@@ -131,10 +130,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
 
             _stores.Add(document.Name, storeContainer);
-
-            document.Database.BeginSave += (o, args) => SaveStores(document.Name);
-            document.CommandEnded += (o, args) => CommandEnded(document.Name, args.GlobalCommandName);
-            document.CommandCancelled += (o, args) => CommandEnded(document.Name, args.GlobalCommandName);
         }
 
         private object CreateDocumentStore(Type T, Document doc)
@@ -149,8 +144,18 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
 
             DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes(), _logger, _layerManager);
+            ds.DocumentNameChanged += Store_DocumentNameChanged;
             ds.LoadWrapper();
             return ds;
+        }
+
+        private void Store_DocumentNameChanged(object sender, DocumentNameChangedEventArgs e)
+        {
+            if (!_stores.ContainsKey(e.OldName)) return;
+
+            Dictionary<Type, DocumentStore> storesDictionary = _stores[e.OldName];
+            _stores.Add(e.NewName, storesDictionary);
+            _stores.Remove(e.OldName);
         }
 
         public void PopulateStoreTypes()
@@ -184,30 +189,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             _storeTypesInvalidated = true;
         }
 
-        private void SaveStores(string ID)
-        {
-            foreach (DocumentStore documentStore in _stores[ID].Values)
-            {
-                documentStore.SaveWrapper();
-            }
-        }
-
-        private void CommandEnded(string DocName, string GlobalCommandName)
-        {
-            foreach (DocumentStore documentStore in _stores[DocName].Values)
-            {
-                //TODO: Check this works
-                if (GlobalCommandName.ToLower().Contains("regen"))
-                {
-                    documentStore.RegenerateManagers();
-                }
-                else
-                {
-                    documentStore.UpdateManagers();
-                }
-            }
-        }
-
         public Type[] GetManagerTypes()
         {
             return _managersList.ToArray();
@@ -225,6 +206,5 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             return null;
         }
-
     }
 }
