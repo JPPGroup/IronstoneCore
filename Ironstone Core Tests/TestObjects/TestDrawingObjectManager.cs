@@ -7,6 +7,7 @@ using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Tests.TestObjects
 {
+    [Layer(Name = "TestDrawingObjectManagerLayer")]
     public class TestDrawingObjectManager : AbstractDrawingObjectManager<TestDrawingObject>
     {
         public PersistentObjectIdCollection ObjectCollection { get; set; }

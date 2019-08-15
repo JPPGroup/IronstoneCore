@@ -6,6 +6,7 @@ using Jpp.Ironstone.Core.Autocad;
 
 namespace Jpp.Ironstone.Core.Tests.TestObjects
 {
+    [Layer(Name = "TestDrawingObjectLayer")]
     //Requires AcDbMgd to be copied local to run
     public class TestDrawingObject : DrawingObject
     {

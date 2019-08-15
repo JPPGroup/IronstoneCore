@@ -5,8 +5,9 @@ using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Tests.TestObjects
 {
+    [Layer(Name = "TestDocumentStoreLayer")]
     public class TestDocumentStore : DocumentStore
     {
-        public TestDocumentStore(Document doc, Type[] managerTypes, ILogger log) : base(doc, managerTypes, log) { }
+        public TestDocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm) : base(doc, managerTypes, log, lm) { }
     }
 }

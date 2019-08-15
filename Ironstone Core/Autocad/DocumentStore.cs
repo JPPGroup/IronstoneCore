@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
@@ -23,19 +24,40 @@ namespace Jpp.Ironstone.Core.Autocad
         protected List<IDrawingObjectManager> Managers;
         private readonly Type[] _managerTypes;
         private readonly ILogger _log;
+        private readonly LayerManager _layerManager;
 
         /// <summary>
         /// Create a new document store
         /// </summary>
-        public DocumentStore(Document doc, Type[] managerTypes, ILogger log)
+        public DocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm)
         {
             AcDoc = doc;
             AcCurDb = doc.Database;
 
             _managerTypes = managerTypes;
             _log = log;
+            _layerManager = lm;
 
             Managers = new List<IDrawingObjectManager>();
+
+            PopulateLayers();
+        }
+
+        private void PopulateLayers()
+        {
+            Type type = this.GetType();
+            var layers =  type.GetCustomAttributes(typeof(LayerAttribute), true).ToList();
+
+            foreach (IDrawingObjectManager objManager in Managers)
+            {
+                layers.AddRange(objManager.GetRequiredLayers());
+            }
+
+            foreach (object layerObj in layers)
+            {
+                LayerAttribute layer = layerObj as LayerAttribute;
+                _layerManager.CreateLayer(AcCurDb, layer.Name);
+            }
         }
         #endregion
 
@@ -105,6 +127,7 @@ namespace Jpp.Ironstone.Core.Autocad
                             Managers.Add(drawingObjectManager);
                         }
                         Load();
+                        PopulateLayers();
                         tr.Commit();
                     }
                 }
@@ -257,34 +280,11 @@ namespace Jpp.Ironstone.Core.Autocad
 
             foundManager = (T)Activator.CreateInstance(typeof(T), AcDoc, _log);
             Managers.Add(foundManager);
+            PopulateLayers();
 
             return foundManager;
 
         }
         #endregion
-
-        /*public static void LoadStores(Document doc)
-        {
-            //Get all document stores and load
-            List<Type> storesList = new List<Type>();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (Assembly assembly in assemblies)
-            {
-                try
-                {
-                    storesList.AddRange(assembly.GetTypes().Where(t => typeof(DocumentStore).IsAssignableFrom(t)));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-
-            foreach (Type type in storesList)
-            {
-                //Load docstore to generate managers
-                doc.GetDocumentStore(type);
-            }
-        }*/
     }
 }

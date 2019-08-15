@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices.Core;
+using Autodesk.AutoCAD.DatabaseServices;
+using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.Tests.TestObjects;
 using NUnit.Framework;
@@ -21,34 +23,65 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
 
         public bool VerifyTestManagerSaveLoadManagedObjectResident()
         {
-            try
+            using (Transaction trans = Application.DocumentManager
+                .MdiActiveDocument.TransactionManager.StartTransaction())
             {
-                var ds = DataService.Current;
-                ds.InvalidateStoreTypes();
+                try
+                {
+                    var ds = DataService.Current;
+                    ds.InvalidateStoreTypes();
 
-                var store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
-                var manager = store?.GetManager<TestDrawingObjectManager>();
+                    var store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
+                    var manager = store?.GetManager<TestDrawingObjectManager>();
 
-                if (manager == null) return false;
+                    if (manager == null) return false;
 
-                var objId = Guid.NewGuid();
-                var obj = TestDrawingObject.CreateActiveObject(objId);
-                manager.Add(obj);
+                    var objId = Guid.NewGuid();
+                    var obj = TestDrawingObject.CreateActiveObject(objId);
+                    manager.Add(obj);
 
-                store.SaveWrapper();
-                store.LoadWrapper();
+                    store.SaveWrapper();
+                    store.LoadWrapper();
 
-                manager = store.GetManager<TestDrawingObjectManager>();
-                if (manager == null) return false;
+                    manager = store.GetManager<TestDrawingObjectManager>();
+                    if (manager == null) return false;
 
-                var objCount = manager.ManagedObjects.Count;
-                if (objCount != 1) return false; 
+                    var objCount = manager.ManagedObjects.Count;
+                    if (objCount != 1) return false;
 
-                return manager.ManagedObjects.First().BaseGuid == objId;
+                    return manager.ManagedObjects.First().BaseGuid == objId;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
-            catch (Exception)
+        }
+
+        [Test]
+        public void VerifyLayerCreation()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyLayerCreationResident)));
+        }
+
+        public bool VerifyLayerCreationResident()
+        {
+            using (Transaction trans = Application.DocumentManager.MdiActiveDocument.Database.TransactionManager.StartTransaction())
             {
-                return false;
+                DataService ds = DataService.Current;
+                ds.InvalidateStoreTypes();
+                var store = ds.GetStore<TestDocumentStore>(Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                    .MdiActiveDocument.Name);
+
+                trans.Commit();
+            }
+
+            using (Transaction trans = Application.DocumentManager.MdiActiveDocument.Database.TransactionManager
+                .StartTransaction())
+            {
+                return Application.DocumentManager.MdiActiveDocument.Database
+                           .GetLayer("TestDocumentStoreLayer") !=
+                       null;
             }
         }
     }

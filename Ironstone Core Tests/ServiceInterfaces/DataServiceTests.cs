@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using Autodesk.AutoCAD.ApplicationServices.Core;
+using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.Tests.TestObjects;
@@ -48,24 +51,29 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 
         public bool VerifyTestStoreLoadedResident()
         {
-            try
+            using (Transaction trans = Application.DocumentManager
+                .MdiActiveDocument.TransactionManager.StartTransaction())
             {
-                DataService ds = DataService.Current;
-                ds.InvalidateStoreTypes();
-                var store = ds.GetStore<TestDocumentStore>(Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
-                    .MdiActiveDocument.Name);
-                if (store != null)
+                try
                 {
-                    return true;
+                    DataService ds = DataService.Current;
+                    ds.InvalidateStoreTypes();
+                    var store = ds.GetStore<TestDocumentStore>(Autodesk.AutoCAD.ApplicationServices.Core.Application
+                        .DocumentManager
+                        .MdiActiveDocument.Name);
+                    if (store != null)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
-                else
+                catch (Exception e)
                 {
                     return false;
                 }
-            }
-            catch (Exception e)
-            {
-                return false;
             }
         }
 

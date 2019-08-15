@@ -72,6 +72,9 @@
       <HintPath>..\packages\Microsoft.ApplicationInsights.2.9.1\lib\net46\Microsoft.ApplicationInsights.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.6.3\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -115,7 +118,9 @@
     <Compile Include="Autocad\DrawingObjects\Primitives\DrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\LineDrawingObject.cs" />
     <Compile Include="Autocad\EntityExtension.cs" />
+    <Compile Include="Autocad\LayerAttribute.cs" />
     <Compile Include="Autocad\LayerInfo.cs" />
+    <Compile Include="Autocad\LayerManager.cs" />
     <Compile Include="Autocad\LayoutExtensions.cs" />
     <Compile Include="Autocad\PolylineExtensions.cs" />
     <Compile Include="Autocad\TransactionException.cs" />
@@ -125,6 +130,7 @@
     <Compile Include="IIronstoneExtensionApplication.cs" />
     <Compile Include="Mocking\ConfigurationHelper.cs" />
     <Compile Include="Mocking\PassDummyAuth.cs" />
+    <Compile Include="ServiceInterfaces\IUserSettings.cs" />
     <Compile Include="ServiceInterfaces\Loggers\BaseLogger.cs" />
     <Compile Include="ServiceInterfaces\Loggers\FileLogger.cs" />
     <Compile Include="ServiceInterfaces\ObjectModel.cs" />
@@ -145,6 +151,7 @@
     <Compile Include="ServiceInterfaces\Loggers\ConsoleLogger.cs" />
     <Compile Include="ServiceInterfaces\Loggers\TelemetryLogger.cs" />
     <Compile Include="ServiceInterfaces\ModuleLoader.cs" />
+    <Compile Include="ServiceInterfaces\StandardUserSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
