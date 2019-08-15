@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices.Core;
@@ -23,26 +24,30 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
 
         public bool VerifyDocumentStoreSaveCommandResident()
         {
-            try
-            {
-                var ds = DataService.Current;
-                ds.InvalidateStoreTypes();
+            using (Transaction trans = Application.DocumentManager.MdiActiveDocument.TransactionManager.StartTransaction())
+            { 
+                try
+                {
+                    var ds = DataService.Current;
+                    ds.InvalidateStoreTypes();
 
-                var store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
-                if (store.SaveTestProperty) return false;
+                    var store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
+                    if (store.SaveTestProperty) return false;
 
-                store.SaveTestProperty = true;
+                    store.SaveTestProperty = true;
 
-                var ed = Application.DocumentManager.MdiActiveDocument.Editor;
-                ed.Command("_qsave", "Test1.dwg");
-                store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
+                    var ed = Application.DocumentManager.MdiActiveDocument.Editor;
+                    ed.Command("_qsave", "Test1.dwg");
+                    store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
+                    
+                    trans.Commit();
 
-                return store.SaveTestProperty;
-
-            }
-            catch (Exception)
-            {
-                return false;
+                    return store.SaveTestProperty;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
         }
 

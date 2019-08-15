@@ -151,8 +151,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private void Store_DocumentNameChanged(object sender, DocumentNameChangedEventArgs e)
         {
-            Debugger.Launch();
-
             if (!_stores.ContainsKey(e.OldName)) return;
 
             Dictionary<Type, DocumentStore> storesDictionary = _stores[e.OldName];
