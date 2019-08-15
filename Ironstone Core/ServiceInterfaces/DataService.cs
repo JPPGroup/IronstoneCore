@@ -81,6 +81,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public T GetStore<T>(string ID) where T : DocumentStore
         {
+            return (T)getStore(typeof(T), ID, false);
+        }
+
+        private DocumentStore getStore(Type T, string ID, bool reset)
+        {
             Document doc = GetDocumentByName(ID);
 
             if (!_stores.ContainsKey(ID))
@@ -99,12 +104,51 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             Dictionary<Type, DocumentStore> foundStores = _stores[ID];
 
-            if (!foundStores.ContainsKey(typeof(T)))
+            if (foundStores.ContainsKey(T) && reset)
             {
-                foundStores.Add(typeof(T), (DocumentStore) CreateDocumentStore(typeof(T), doc));
+                foundStores.Remove(T);
             }
 
-            return (T)_stores[ID][typeof(T)];
+            if (!foundStores.ContainsKey(T))
+            {
+                foundStores.Add(T, (DocumentStore) CreateDocumentStore(T, doc));
+            }
+
+            return _stores[ID][T];
+        }
+
+        public IEnumerable<DocumentStore> GetAllStores(string ID)
+        {
+            Document doc = GetDocumentByName(ID);
+
+            if (!_stores.ContainsKey(ID))
+            {
+                _logger.Entry("Store not found.\n", Severity.Warning);
+                if (doc != null)
+                {
+                    CreateStoresOnDocument(doc);
+                }
+                else
+                {
+                    _logger.Entry("Document not found for get all stores.\n", Severity.Crash);
+                    throw new ArgumentException();
+                }
+            }
+
+            return _stores[ID].Values;
+        }
+
+        public T ResetStore<T>(string ID) where T : DocumentStore
+        {
+            return (T)getStore(typeof(T), ID, true);
+        }
+
+        public DocumentStore ResetStore(Type T, string ID)
+        {
+            if(!T.IsAssignableFrom(typeof(DocumentStore)))
+                throw new ArgumentException($"Passed type {T} is not a document store.");
+
+            return getStore(T, ID, true);
         }
 
         private void DocumentManagerOnDocumentCreated(object sender, DocumentCollectionEventArgs e)

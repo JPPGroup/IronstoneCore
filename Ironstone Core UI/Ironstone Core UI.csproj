@@ -145,8 +145,19 @@
     <Compile Include="RibbonCommandHandler.cs" />
     <Compile Include="UIHelper.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
+    <Compile Include="ViewModels\DatabaseExplorerViewModel.cs" />
+    <Compile Include="ViewModels\DatabaseExplorer\DatabseEntry.cs" />
+    <Compile Include="ViewModels\DatabaseExplorer\ManagerEntry.cs" />
+    <Compile Include="ViewModels\DatabaseExplorer\DocumentStoreEntry.cs" />
+    <Compile Include="ViewModels\ObjectInspectorViewModel.cs" />
     <Compile Include="Views\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DatabaseExplorerView.xaml.cs">
+      <DependentUpon>DatabaseExplorerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ObjectInspectorView.xaml.cs">
+      <DependentUpon>ObjectInspectorView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +172,14 @@
     <Page Include="Views\About.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DatabaseExplorerView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ObjectInspectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +203,12 @@
       <Project>{a3bfa507-a2c4-4c33-943b-6083133ee63c}</Project>
       <Name>Ironstone Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Target-Small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Database-Small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
