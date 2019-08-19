@@ -109,6 +109,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Autocad\ArcExtension.cs" />
     <Compile Include="Autocad\DatabaseExtensions.cs" />
     <Compile Include="Autocad\DocumentStore.cs" />
     <Compile Include="Autocad\DrawingObjects\AbstractDrawingObjectManager.cs" />
