@@ -93,6 +93,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Autocad\PolylineExtensionTests.cs" />
+    <Compile Include="Autocad\ArcExtensionTests.cs" />
     <Compile Include="Autocad\DocumentStoreTests.cs" />
     <Compile Include="Autocad\DrawingObjectManagerTests.cs" />
     <Compile Include="Autocad\DrawingObjectTests.cs" />
