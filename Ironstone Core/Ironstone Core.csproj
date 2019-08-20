@@ -114,7 +114,11 @@
     <Compile Include="Autocad\DocumentStore.cs" />
     <Compile Include="Autocad\DrawingObjects\AbstractDrawingObjectManager.cs" />
     <Compile Include="Autocad\DrawingObjects\IDrawingObjectManager.cs" />
+    <Compile Include="Autocad\DrawingObjects\Primitives\BlockDrawingObject.cs" />
+    <Compile Include="ServiceInterfaces\ITemplatedObject.cs" />
+    <Compile Include="ServiceInterfaces\ITemplateSource.cs" />
     <Compile Include="Autocad\DrawingObjects\PersistentObjectIdCollection.cs" />
+    <Compile Include="Autocad\DrawingObjects\Primitives\BlockRefDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\CircleDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\DrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\LineDrawingObject.cs" />
@@ -131,6 +135,7 @@
     <Compile Include="IIronstoneExtensionApplication.cs" />
     <Compile Include="Mocking\ConfigurationHelper.cs" />
     <Compile Include="Mocking\PassDummyAuth.cs" />
+    <Compile Include="ServiceInterfaces\Library\LibraryNode.cs" />
     <Compile Include="ServiceInterfaces\IUserSettings.cs" />
     <Compile Include="ServiceInterfaces\Loggers\BaseLogger.cs" />
     <Compile Include="ServiceInterfaces\Loggers\FileLogger.cs" />

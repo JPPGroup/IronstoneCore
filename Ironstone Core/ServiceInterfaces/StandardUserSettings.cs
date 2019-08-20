@@ -27,9 +27,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             if (File.Exists(path))
             {
+                string json;
+
                 using (StreamReader sr = File.OpenText(path))
                 {
-                    string json = sr.ReadToEnd();
+                    json = sr.ReadToEnd();
                     try
                     {
                         JToken.Parse(json);
@@ -41,7 +43,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     }
                 }
 
-                var importedSettings = JsonConvert.DeserializeObject<Dictionary<string, string>>(path);
+                var importedSettings = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
                 foreach (KeyValuePair<string, string> s in importedSettings)
                 {
                     if (_settings.ContainsKey(s.Key))

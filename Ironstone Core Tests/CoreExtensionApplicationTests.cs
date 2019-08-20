@@ -26,5 +26,17 @@ namespace Jpp.Ironstone.Core.Tests
 
             return (auth && logger && moduleLoader);
         }
+
+        [Test]
+        public void VerifyConfigurationResolver()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyConfigurationResolverResident)));
+        }
+
+        public bool VerifyConfigurationResolverResident()
+        {            
+            Configuration config = CoreExtensionApplication._current.Container.Resolve<Configuration>();
+            return (config.LogFileRelative.Equals("UnitTestsIronstone.Log"));
+        }
     }
 }
