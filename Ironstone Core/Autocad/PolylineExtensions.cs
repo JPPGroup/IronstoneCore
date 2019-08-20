@@ -1,5 +1,4 @@
 ﻿using System;
-using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
@@ -40,41 +39,6 @@ namespace Jpp.Ironstone.Core.Autocad
             pLine.SetPointAt(index + 1, pt2);
             return 1;
         }
-
-        public static DBObjectCollection ExplodeAndErase(this Polyline pLine)
-        {
-            var acDoc = Application.DocumentManager.MdiActiveDocument;
-            var acCurDb = acDoc.Database;
-            var acDbObjColl = new DBObjectCollection();
-
-            using (var acTrans = acCurDb.TransactionManager.StartTransaction())
-            {
-                var actualPolyline = acTrans.GetObject(pLine.ObjectId, OpenMode.ForWrite) as Polyline;
-                var acBlkTbl = acTrans.GetObject(acCurDb.BlockTableId, OpenMode.ForRead) as BlockTable;
-
-                if (acBlkTbl != null)
-                {
-                    var acBlkTblRec = acTrans.GetObject(acBlkTbl[BlockTableRecord.ModelSpace], OpenMode.ForWrite) as BlockTableRecord;
-
-                    if (acBlkTblRec != null)
-                    {
-                        actualPolyline?.Explode(acDbObjColl);
-
-                        foreach (Entity acEnt in acDbObjColl)
-                        {
-                            acBlkTblRec.AppendEntity(acEnt);
-                            acTrans.AddNewlyCreatedDBObject(acEnt, true);
-                        }
-
-                        actualPolyline?.Erase();
-                    }
-                }
-                acTrans.Commit();
-            }
-
-            return acDbObjColl;
-        }
-
 
         private static bool Clockwise(Point2d p1, Point2d p2, Point2d p3)
         {
