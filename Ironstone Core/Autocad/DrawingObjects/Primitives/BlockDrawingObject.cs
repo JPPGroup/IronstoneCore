@@ -15,6 +15,10 @@ namespace Jpp.Ironstone.Core.Autocad
         {
         }
 
+        private BlockDrawingObject()
+        {
+        }
+
         protected override void ObjectModified(object sender, EventArgs e)
         {
             throw new NotImplementedException();
