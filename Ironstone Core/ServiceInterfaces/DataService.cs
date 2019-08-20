@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -150,17 +149,19 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
                 if (!rat.Has(Constants.REG_APP_NAME))
                 {
-
-                    rat.UpgradeOpen();
-                    RegAppTableRecord ratr = new RegAppTableRecord
+                    using (document.LockDocument())
                     {
-                        Name = Constants.REG_APP_NAME
-                    };
+                        rat.UpgradeOpen();
+                        RegAppTableRecord ratr = new RegAppTableRecord
+                        {
+                            Name = Constants.REG_APP_NAME
+                        };
 
-                    rat.Add(ratr);
-                    tr.AddNewlyCreatedDBObject(ratr, true);
+                        rat.Add(ratr);
+                        tr.AddNewlyCreatedDBObject(ratr, true);
 
-                    tr.Commit();
+                        tr.Commit();
+                    }
                 }
             }
         }
