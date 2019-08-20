@@ -138,7 +138,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             else
             {
                 CreateStoresOnDocument(e.Document);
-                RegisterAppKey(e.Document);
             }
         }
 
@@ -168,7 +167,9 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private void CreateStoresOnDocument(Document document)
         {
-            if(_storeTypesInvalidated)
+            RegisterAppKey(document);
+
+            if (_storeTypesInvalidated)
                 PopulateStoreTypes();
 
             Dictionary<Type, DocumentStore> storeContainer = new Dictionary<Type, DocumentStore>();
