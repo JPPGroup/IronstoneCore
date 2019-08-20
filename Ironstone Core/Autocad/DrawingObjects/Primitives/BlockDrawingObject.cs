@@ -5,11 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
-    public class BlockDrawingObject : DrawingObject
+    public class BlockDrawingObject : DrawingObject, ITemplatedObject
     {
+        public BlockDrawingObject(Database database) : base(database)
+        {
+        }
+
         protected override void ObjectModified(object sender, EventArgs e)
         {
             throw new NotImplementedException();
@@ -28,6 +33,12 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public override double Rotation { get; set; }
         public override void Erase()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Guid TemplateID { get; set; }
+        public void UpdateFromTemplate(ITemplateSource source)
         {
             throw new NotImplementedException();
         }

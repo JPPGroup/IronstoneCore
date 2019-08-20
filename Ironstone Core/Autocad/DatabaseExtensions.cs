@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 
@@ -183,6 +184,24 @@ namespace Jpp.Ironstone.Core.Autocad
                     toBePurged = false;
                 }
             }
+        }
+
+        public static List<BlockTableRecord> GetAllBlocks(this Database currentDatabase)
+        {
+            Transaction acTrans = currentDatabase.TransactionManager.TopTransaction;
+            List<BlockTableRecord> result = new List<BlockTableRecord>();
+
+            BlockTable blkTable = (BlockTable)acTrans.GetObject(currentDatabase.BlockTableId, OpenMode.ForRead);
+            foreach (ObjectId id in blkTable)
+            {
+                BlockTableRecord btRecord = (BlockTableRecord)acTrans.GetObject(id, OpenMode.ForRead);
+                if (!btRecord.IsLayout)
+                {
+                    result.Add(btRecord);
+                }
+            }
+
+            return result;
         }
     }
 }

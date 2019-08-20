@@ -11,6 +11,7 @@ namespace Jpp.Ironstone.Core.Autocad
     public abstract class DrawingObject
     {
         private DBObject _activeObject;
+        private Database _database;
 
         //TODO: review setter
         public long BaseObjectPtr { get; set; }
@@ -25,9 +26,7 @@ namespace Jpp.Ironstone.Core.Autocad
                     GenerateBase();
                 }
 
-                Document acDoc = Application.DocumentManager.MdiActiveDocument;
-                Database acCurDb = acDoc.Database;
-                return acCurDb.GetObjectId(false, new Handle(BaseObjectPtr), 0);
+                return _database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
             }
             set
             {
@@ -38,7 +37,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public void CreateActiveObject()
         {
-            Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
+            Transaction acTrans = _database.TransactionManager.TopTransaction;
             _activeObject = acTrans.GetObject(BaseObject, OpenMode.ForWrite);
             _activeObject.Erased += ActiveObject_Erased;
             _activeObject.Modified += ActiveObject_Modified;
@@ -162,6 +161,17 @@ namespace Jpp.Ironstone.Core.Autocad
         public bool DirtyModified { get; set; }
         public bool DirtyAdded { get; set; }
         public bool DirtyRemoved { get; set; }
+
+        [Obsolete("Please use constructor with explicit database")]
+        public DrawingObject()
+        {
+            _database = Application.DocumentManager.MdiActiveDocument.Database;
+        }
+
+        public DrawingObject(Database database)
+        {
+            _database = database;
+        }
 
         public abstract void Erase();
     }
