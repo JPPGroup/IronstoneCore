@@ -51,9 +51,25 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             set
             {
+                if (BaseObjectPtr == value.Handle.Value) return;
+
+                //Remove event handles from previous object, change pointer and activate new object.
+                UnhookActiveObject();
                 BaseObjectPtr = value.Handle.Value;
                 CreateActiveObject();
             }
+        }
+
+        private void UnhookActiveObject()
+        {
+            if (!Active) return;
+
+            Transaction acTrans = _database.TransactionManager.TopTransaction;
+            _activeObject = acTrans.GetObject(BaseObject, OpenMode.ForWrite);
+            _activeObject.Erased -= ActiveObject_Erased;
+            _activeObject.Modified -= ActiveObject_Modified;
+
+            Active = false;
         }
 
         public void CreateActiveObject()
@@ -183,13 +199,12 @@ namespace Jpp.Ironstone.Core.Autocad
         public bool DirtyAdded { get; set; }
         public bool DirtyRemoved { get; set; }
 
-        [Obsolete("Please use constructor with explicit database")]
-        public DrawingObject()
+        protected DrawingObject()
         {
             _database = Application.DocumentManager.MdiActiveDocument.Database;
         }
 
-        public DrawingObject(Database database)
+        protected DrawingObject(Database database)
         {
             _database = database;
         }
