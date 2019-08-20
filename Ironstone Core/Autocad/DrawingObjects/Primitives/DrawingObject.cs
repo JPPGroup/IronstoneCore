@@ -13,6 +13,27 @@ namespace Jpp.Ironstone.Core.Autocad
         private DBObject _activeObject;
         private Database _database;
 
+        public string DatabaseName
+        {
+            get { return _database.Filename; }
+            set
+            {
+                DocumentCollection docs = Application.DocumentManager;
+
+                foreach (Document doc in docs)
+                {
+                    if (doc.Database.Filename.Equals(value))
+                    {
+                        _database = doc.Database;
+                        return;
+                    }
+                }
+
+                //TODO: Review this and try to deal with database changing name
+                _database = Application.DocumentManager.MdiActiveDocument.Database;
+            }
+        }
+
         //TODO: review setter
         public long BaseObjectPtr { get; set; }
         [XmlIgnore] public bool Active { get; private set; }
