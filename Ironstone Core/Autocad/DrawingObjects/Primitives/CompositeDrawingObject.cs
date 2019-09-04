@@ -4,25 +4,19 @@ using Autodesk.AutoCAD.DatabaseServices;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
-    public abstract class CompositeDrawingObject : DrawingObject
+    public abstract class CompositeDrawingObject<T> : DrawingObject where T : DrawingObject
     {
-        public ObservableCollection<DrawingObject> ChildObjects { get; set; }
+        public ObservableCollection<T> ChildObjects { get; set; }
 
         public override ObjectId BaseObject
         {
-            get
-            {
-                throw new NotImplementedException();
-            }
-            set
-            {
-                throw new NotImplementedException();
-            }
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
         }
 
-        public CompositeDrawingObject() : base()
+        protected CompositeDrawingObject() : base()
         {
-            ChildObjects = new ObservableCollection<DrawingObject>();
+            ChildObjects = new ObservableCollection<T>();
             ChildObjects.CollectionChanged += ChildObjects_CollectionChanged;
         }
 
@@ -47,15 +41,15 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        public CompositeDrawingObject(Database database) : base(database)
+        protected CompositeDrawingObject(Database database) : base(database)
         {
-            ChildObjects = new ObservableCollection<DrawingObject>();
+            ChildObjects = new ObservableCollection<T>();
             ChildObjects.CollectionChanged += ChildObjects_CollectionChanged;
         }
 
         public override void CreateActiveObject()
         {
-            foreach (DrawingObject drawingObject in ChildObjects)
+            foreach (T drawingObject in ChildObjects)
             {
                 drawingObject.CreateActiveObject();
             }
@@ -63,7 +57,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public override void Generate()
         {
-            foreach (DrawingObject drawingObject in ChildObjects)
+            foreach (T drawingObject in ChildObjects)
             {
                 drawingObject.Generate();
             }

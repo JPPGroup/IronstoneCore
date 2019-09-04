@@ -113,10 +113,10 @@
     <Compile Include="Autocad\DatabaseExtensions.cs" />
     <Compile Include="Autocad\DocumentStore.cs" />
     <Compile Include="Autocad\DrawingObjects\AbstractDrawingObjectManager.cs" />
-    <Compile Include="Autocad\DrawingObjects\CompositeDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\IDrawingObjectManager.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\BlockDrawingObject.cs" />
     <Compile Include="Autocad\LayerState.cs" />
+    <Compile Include="Autocad\DrawingObjects\Primitives\CompositeDrawingObject.cs" />
     <Compile Include="ServiceInterfaces\ITemplatedObject.cs" />
     <Compile Include="ServiceInterfaces\ITemplateSource.cs" />
     <Compile Include="Autocad\DrawingObjects\PersistentObjectIdCollection.cs" />
