@@ -39,7 +39,7 @@ namespace Jpp.Ironstone.Core.Autocad
         public long BaseObjectPtr { get; set; }
         [XmlIgnore] public bool Active { get; private set; }
         [XmlIgnore]
-        public ObjectId BaseObject
+        public virtual ObjectId BaseObject
         {
             get
             {
@@ -73,11 +73,11 @@ namespace Jpp.Ironstone.Core.Autocad
             Active = false;
         }
 
-        public bool CreateActiveObject()
+        public virtual bool CreateActiveObject()
         {
             try
             {
-                Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
+                Transaction acTrans = _database.TransactionManager.TopTransaction;
 
                 _activeObject = acTrans.GetObject(BaseObject, OpenMode.ForWrite);
                 _activeObject.Erased += ActiveObject_Erased;
@@ -125,7 +125,7 @@ namespace Jpp.Ironstone.Core.Autocad
         private Dictionary<string, string> _XData;
 
         [XmlIgnore]
-        public string this[string key]
+        public virtual string this[string key]
         {
             get
             {
