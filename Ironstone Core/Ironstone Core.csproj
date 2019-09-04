@@ -113,6 +113,7 @@
     <Compile Include="Autocad\DatabaseExtensions.cs" />
     <Compile Include="Autocad\DocumentStore.cs" />
     <Compile Include="Autocad\DrawingObjects\AbstractDrawingObjectManager.cs" />
+    <Compile Include="Autocad\DrawingObjects\CompositeDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\IDrawingObjectManager.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\BlockDrawingObject.cs" />
     <Compile Include="Autocad\LayerState.cs" />
@@ -136,8 +137,10 @@
     <Compile Include="IIronstoneExtensionApplication.cs" />
     <Compile Include="Mocking\ConfigurationHelper.cs" />
     <Compile Include="Mocking\PassDummyAuth.cs" />
+    <Compile Include="ServiceInterfaces\Library\LibraryLeaf.cs" />
     <Compile Include="ServiceInterfaces\Library\LibraryNode.cs" />
     <Compile Include="ServiceInterfaces\IUserSettings.cs" />
+    <Compile Include="ServiceInterfaces\Library\StandardDetailLibrary.cs" />
     <Compile Include="ServiceInterfaces\Loggers\BaseLogger.cs" />
     <Compile Include="ServiceInterfaces\Loggers\FileLogger.cs" />
     <Compile Include="ServiceInterfaces\ObjectModel.cs" />

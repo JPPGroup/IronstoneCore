@@ -13,6 +13,7 @@ using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
+using Jpp.Ironstone.Core.ServiceInterfaces.Library;
 using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
 using Unity;
 using Unity.Lifetime;
@@ -202,6 +203,10 @@ namespace Jpp.Ironstone.Core
                 _authentication = Container.Resolve<IAuthentication>();
 
                 IDataService dataService = Container.Resolve<IDataService>();
+
+                //Register and create standard detail library
+                Container.RegisterType<StandardDetailLibrary>(new ContainerControlledLifetimeManager());
+                Container.Resolve<StandardDetailLibrary>();
 
                 Update();
             }
