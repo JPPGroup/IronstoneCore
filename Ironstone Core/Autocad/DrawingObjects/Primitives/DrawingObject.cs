@@ -72,7 +72,7 @@ namespace Jpp.Ironstone.Core.Autocad
             Active = false;
         }
 
-        public void CreateActiveObject()
+        public virtual void CreateActiveObject()
         {
             Transaction acTrans = _database.TransactionManager.TopTransaction;
             _activeObject = acTrans.GetObject(BaseObject, OpenMode.ForWrite);
