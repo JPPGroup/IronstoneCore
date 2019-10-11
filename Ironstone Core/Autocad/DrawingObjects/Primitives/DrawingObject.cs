@@ -44,7 +44,7 @@ namespace Jpp.Ironstone.Core.Autocad
             {
                 if (BaseObjectPtr == 0)
                 {
-                    GenerateBase();
+                    GenerateBase(_database);
                 }
 
                 return _database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
@@ -88,7 +88,7 @@ namespace Jpp.Ironstone.Core.Autocad
             DirtyModified = true;
         }
 
-        protected virtual void GenerateBase()
+        protected virtual void GenerateBase(Database database)
         {
             throw new NullReferenceException("No base object has been linked");
         }
