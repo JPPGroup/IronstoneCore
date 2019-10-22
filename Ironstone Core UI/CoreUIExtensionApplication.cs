@@ -50,15 +50,15 @@ namespace Jpp.Ironstone.Core.UI
             RibbonControl rc = ComponentManager.Ribbon;
             RibbonTab designTab = new RibbonTab
             {
-                Name = Constants.IRONSTONE_TAB_TITLE,
-                Title = Constants.IRONSTONE_TAB_TITLE,
+                Name = Resources.ExtensionApplication_IronstoneTab_Design_Name,
+                Title = Resources.ExtensionApplication_IronstoneTab_Design_Name,
                 Id = Constants.IRONSTONE_TAB_ID
             };
 
             RibbonTab conceptTab = new RibbonTab
             {
-                Name = Constants.IRONSTONE_CONCEPT_TAB_TITLE,
-                Title = Constants.IRONSTONE_CONCEPT_TAB_TITLE,
+                Name = Resources.ExtensionApplication_IronstoneTab_Concept_Name,
+                Title = Resources.ExtensionApplication_IronstoneTab_Concept_Name,
                 Id = Constants.IRONSTONE_CONCEPT_TAB_ID
             };
 
