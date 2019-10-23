@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Autodesk.AutoCAD.Runtime;
+using Autodesk.AutoCAD.Windows;
+using Autodesk.Windows;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Media.Imaging;
-using Autodesk.AutoCAD.Windows;
-using Autodesk.Windows;
 using Orientation = System.Windows.Controls.Orientation;
 
 
@@ -19,6 +21,20 @@ namespace Jpp.Ironstone.Core.UI
     /// </summary>
     public static class UIHelper
     {
+        /// <summary>
+        /// Gets the command global name from a given method
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="method"></param>
+        /// <returns>Global command name</returns>
+        public static string GetCommandGlobalName(Type type, string method)
+        {
+            var rtMethod = type.GetRuntimeMethod(method, Array.Empty<Type>());
+            var attribute = rtMethod.GetCustomAttribute<CommandMethodAttribute>();
+
+            return attribute.GlobalName;
+        }
+
         /// <summary>
         /// Convert resource image to format useable by autocad
         /// </summary>
