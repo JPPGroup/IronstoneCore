@@ -124,4 +124,10 @@
   <data name="ExtensionApplication_AboutWindow_Name" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="ExtensionApplication_IronstoneTab_Concept_Name" xml:space="preserve">
+    <value>Ironstone Concept</value>
+  </data>
+  <data name="ExtensionApplication_IronstoneTab_Design_Name" xml:space="preserve">
+    <value>Ironstone Design</value>
+  </data>
 </root>
