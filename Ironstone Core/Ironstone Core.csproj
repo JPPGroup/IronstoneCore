@@ -28,6 +28,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <StartAction>Program</StartAction>
@@ -41,6 +42,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -110,11 +112,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Autocad\ArcExtension.cs" />
+    <Compile Include="Autocad\CurveExtension.cs" />
     <Compile Include="Autocad\DatabaseExtensions.cs" />
     <Compile Include="Autocad\DocumentStore.cs" />
     <Compile Include="Autocad\DrawingObjects\AbstractDrawingObjectManager.cs" />
+    <Compile Include="Autocad\DrawingObjects\DrawingObjectBuilder.cs" />
+    <Compile Include="Autocad\DrawingObjects\SerializablePoint.cs" />
     <Compile Include="Autocad\DrawingObjects\IDrawingObjectManager.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\BlockDrawingObject.cs" />
+    <Compile Include="Helpers\AngleHelper.cs" />
     <Compile Include="ServiceInterfaces\ITemplatedObject.cs" />
     <Compile Include="ServiceInterfaces\ITemplateSource.cs" />
     <Compile Include="Autocad\DrawingObjects\PersistentObjectIdCollection.cs" />
@@ -190,6 +196,7 @@
     </Content>
     <None Include="IronstoneCoreBeta.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

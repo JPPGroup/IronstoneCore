@@ -56,5 +56,37 @@ namespace Jpp.Ironstone.Core.Autocad
 
             return acDbObjColl;
         }
+
+        public static Polyline ToPolyline(this Entity entity)
+        {
+            if (entity == null) return null;
+
+            Polyline polyline = new Polyline();
+            Plane plane = new Plane(Point3d.Origin, Vector3d.ZAxis);
+            double bulge = 0.0;
+
+            Point2d startPoint;
+            Point2d endPoint;
+
+            switch (entity)
+            {
+                case Arc arc:
+                    startPoint = arc.StartPoint.Convert2d(plane);
+                    endPoint = arc.EndPoint.Convert2d(plane);
+                    bulge = arc.Bulge(plane);
+                    break;
+                case Line line:
+                    startPoint = line.StartPoint.Convert2d(plane);
+                    endPoint = line.EndPoint.Convert2d(plane);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(entity), entity, @"Type not handled");
+            }
+
+            polyline.AddVertexAt(0, startPoint, bulge, 0.0, 0.0);
+            polyline.AddVertexAt(1, endPoint, 0.0, 0.0, 0.0);
+
+            return polyline;
+        }
     }
 }
