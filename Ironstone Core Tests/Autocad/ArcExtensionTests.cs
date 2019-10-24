@@ -1,9 +1,10 @@
-﻿using System;
-using System.Reflection;
-using Autodesk.AutoCAD.DatabaseServices;
+﻿using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Jpp.Ironstone.Core.Autocad;
 using NUnit.Framework;
+using System;
+using System.Collections;
+using System.Reflection;
 
 namespace Jpp.Ironstone.Core.Tests.Autocad
 {
@@ -92,6 +93,52 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
             arc.ReverseCurve();
 
             return arc.IsClockwise();
+        }
+
+
+        [TestCaseSource(typeof(ArcExtensionData), nameof(ArcExtensionData.BulgeTestCases))]
+        public double VerifyBulge(double radius, double startAngle, double endAngle)
+        {
+            var values = new object[] { radius , startAngle, endAngle };
+            return RunTest<double>(nameof(VerifyBulgeResident), values);
+        }
+
+        public static double VerifyBulgeResident(object[] values)
+        {
+            var radius = (double) values[0];
+            var startAngle = (double)values[1];
+            var endAngle = (double)values[2];
+            var centre = new Point3d(0, 0, 0);
+
+            var arc = new Arc(centre, radius, startAngle, endAngle);
+            return arc.Bulge(new Plane(Point3d.Origin, Vector3d.ZAxis));
+        }
+
+        private static class ArcExtensionData
+        {
+            public static IEnumerable BulgeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(5, 0, Math.PI / 4).Returns(0.19891236737965792d);
+                    yield return new TestCaseData(5, 0, Math.PI / 2).Returns(0.41421356237309515d);
+                    yield return new TestCaseData(5, 0, Math.PI).Returns(1.0d);
+                    yield return new TestCaseData(5, 0, Math.PI * 1.5).Returns(0.41421356237309509d);
+                    yield return new TestCaseData(5, 0, Math.PI * 2).Returns(double.NaN);
+
+                    yield return new TestCaseData(10, 0, Math.PI / 4).Returns(0.19891236737965792d);
+                    yield return new TestCaseData(10, 0, Math.PI / 2).Returns(0.41421356237309515d);
+                    yield return new TestCaseData(10, 0, Math.PI).Returns(1.0d);
+                    yield return new TestCaseData(10, 0, Math.PI * 1.5).Returns(0.41421356237309509d);
+                    yield return new TestCaseData(10, 0, Math.PI * 2).Returns(double.NaN);
+
+                    yield return new TestCaseData(20, 0, Math.PI / 4).Returns(0.19891236737965792d);
+                    yield return new TestCaseData(20, 0, Math.PI / 2).Returns(0.41421356237309515d);
+                    yield return new TestCaseData(20, 0, Math.PI).Returns(1.0d);
+                    yield return new TestCaseData(20, 0, Math.PI * 1.5).Returns(0.41421356237309509d);
+                    yield return new TestCaseData(20, 0, Math.PI * 2).Returns(double.NaN);
+                }
+            }
         }
     }
 }

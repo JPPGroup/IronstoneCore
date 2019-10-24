@@ -45,22 +45,27 @@ namespace Jpp.Ironstone.Core.Autocad
             Transaction acTrans = entity.Database.TransactionManager.TopTransaction;
             BlockTableRecord acBlkTblRec = (BlockTableRecord) acTrans.GetObject(entity.BlockId, OpenMode.ForWrite);
 
-            entity.Explode(acDbObjColl);
-            entity.Erase();
-
-            foreach (Entity acEnt in acDbObjColl)
+            if (entity is Polyline || entity is Polyline3d || entity is Polyline2d) //Only stable test with polylines - line, arc, etc appear unstable.
             {
-                acBlkTblRec.AppendEntity(acEnt);
-                acTrans.AddNewlyCreatedDBObject(acEnt, true);
+                entity.Explode(acDbObjColl);
+                entity.Erase();
+
+                foreach (Entity acEnt in acDbObjColl)
+                {
+                    acBlkTblRec.AppendEntity(acEnt);
+                    acTrans.AddNewlyCreatedDBObject(acEnt, true);
+                }
+
+                return acDbObjColl;
             }
+
+            acDbObjColl.Add(entity);
 
             return acDbObjColl;
         }
 
         public static Polyline ToPolyline(this Entity entity)
         {
-            if (entity == null) return null;
-
             Polyline polyline = new Polyline();
             Plane plane = new Plane(Point3d.Origin, Vector3d.ZAxis);
             double bulge = 0.0;
