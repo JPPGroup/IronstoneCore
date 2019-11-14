@@ -115,6 +115,7 @@
     <Compile Include="Autocad\DrawingObjects\AbstractDrawingObjectManager.cs" />
     <Compile Include="Autocad\DrawingObjects\IDrawingObjectManager.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\BlockDrawingObject.cs" />
+    <Compile Include="Autocad\LayerState.cs" />
     <Compile Include="ServiceInterfaces\ITemplatedObject.cs" />
     <Compile Include="ServiceInterfaces\ITemplateSource.cs" />
     <Compile Include="Autocad\DrawingObjects\PersistentObjectIdCollection.cs" />
@@ -190,6 +191,7 @@
     </Content>
     <None Include="IronstoneCoreBeta.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
