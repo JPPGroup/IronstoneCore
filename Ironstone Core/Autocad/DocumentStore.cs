@@ -101,6 +101,7 @@ namespace Jpp.Ironstone.Core.Autocad
                             {
                                 layer.UpgradeOpen();
                                 layer.IsLocked = false;
+                                layer.IsFrozen = false;
                             }
                         }
                     }
@@ -125,6 +126,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
                     layer.UpgradeOpen();
                     layer.IsLocked = revert.IsLocked;
+                    layer.IsFrozen = revert.IsFrozen;
                 }
 
                 acTrans.Commit();
@@ -170,7 +172,7 @@ namespace Jpp.Ironstone.Core.Autocad
             if (!AUTO_UNLOCK_LAYERS && layersToRevert.Count > 0)
             {
                 var layersList = string.Join(", ", layersToRevert.Select(l => l.Name).ToArray());
-                _log.Entry($"Required layers locked. \nPlease unlock the following layers; \n{layersList}");
+                _log.Entry($"Required layers either locked or frozen. \nPlease unlock/unfreeze the following layers; \n{layersList}");
                 return;
             }
             

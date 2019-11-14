@@ -17,6 +17,6 @@ namespace Jpp.Ironstone.Core.Autocad
             IsLocked = layer.IsLocked;
         }
 
-        public bool IsInvalid => IsLocked;
+        public bool IsInvalid => IsLocked || IsFrozen;
     }
 }
