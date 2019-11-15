@@ -109,9 +109,12 @@
     <Compile Include="ServiceInterfaces\Loggers\TelemetryLoggerTests.cs" />
     <Compile Include="ServiceInterfaces\ModuleLoaderTests.cs" />
     <Compile Include="ServiceInterfaces\ObjectModelTests.cs" />
+    <Compile Include="TestObjects\TestManagerForLayerSettings.cs" />
+    <Compile Include="TestObjects\TestDocumentStoreWithSettings.cs" />
     <Compile Include="TestObjects\TestDocumentStore.cs" />
     <Compile Include="TestObjects\TestDrawingObject.cs" />
     <Compile Include="TestObjects\TestDrawingObjectManager.cs" />
+    <Compile Include="TestObjects\TestLayersSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

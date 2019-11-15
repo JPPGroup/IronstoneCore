@@ -16,12 +16,13 @@ namespace Jpp.Ironstone.Core.Autocad
     /// </summary>
     public class DocumentStore : IDisposable
     {
-        private const bool AUTO_UNLOCK_LAYERS = false;
+        [XmlIgnore] public bool ShouldUnlockUnfreeze { get; }
+        [XmlIgnore] public bool ShouldSwitchOn { get;  }
 
         #region Constructor and Fields
 
         public event EventHandler<DocumentNameChangedEventArgs> DocumentNameChanged;
-
+        
         protected Document AcDoc;
         protected Database AcCurDb;
 
@@ -34,7 +35,7 @@ namespace Jpp.Ironstone.Core.Autocad
         /// <summary>
         /// Create a new document store
         /// </summary>
-        public DocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm)
+        public DocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm, IUserSettings settings)
         {
             AcDoc = doc;
             AcCurDb = doc.Database;
@@ -43,6 +44,9 @@ namespace Jpp.Ironstone.Core.Autocad
             _log = log;
             _layerManager = lm;
             _host = doc;
+
+            ShouldUnlockUnfreeze = bool.TryParse(settings.GetValue("layers-unlock-unfreeze"), out var unlockUnfreeze) && unlockUnfreeze;
+            ShouldSwitchOn = bool.TryParse(settings.GetValue("layers-switch-on"), out var switchOn) && switchOn;
 
             Managers = new List<IDrawingObjectManager>();
 
@@ -76,7 +80,7 @@ namespace Jpp.Ironstone.Core.Autocad
             return layers;
         }
 
-        private List<LayerState> ActivateLayers(bool shouldUnlock)
+        private List<LayerState> ActivateLayers()
         {
             var layersToRevert = new List<LayerState>();
             var layers = GetLayers();
@@ -92,16 +96,25 @@ namespace Jpp.Ironstone.Core.Autocad
                     {
                         var layer = AcCurDb.GetLayer(layerAttribute.Name);
                         var status = new LayerState(layer);
-                        
+
                         if (status.IsInvalid)
                         {
                             layersToRevert.Add(status);
 
-                            if (shouldUnlock)
+                            if (ShouldUnlockUnfreeze || ShouldSwitchOn)
                             {
                                 layer.UpgradeOpen();
-                                layer.IsLocked = false;
-                                layer.IsFrozen = false;
+
+                                if (ShouldUnlockUnfreeze)
+                                {
+                                    layer.IsLocked = false;
+                                    layer.IsFrozen = false;
+                                }
+
+                                if (ShouldSwitchOn)
+                                {
+                                    layer.IsOff = false;
+                                }
                             }
                         }
                     }
@@ -113,7 +126,7 @@ namespace Jpp.Ironstone.Core.Autocad
             return layersToRevert;
         }
 
-        private void RevertLayers(List<LayerState> layers)
+        private void RevertLayers(IReadOnlyCollection<LayerState> layers)
         {
             if (layers.Count == 0) return;
 
@@ -127,6 +140,7 @@ namespace Jpp.Ironstone.Core.Autocad
                     layer.UpgradeOpen();
                     layer.IsLocked = revert.IsLocked;
                     layer.IsFrozen = revert.IsFrozen;
+                    layer.IsOff = revert.IsOff;
                 }
 
                 acTrans.Commit();
@@ -167,15 +181,32 @@ namespace Jpp.Ironstone.Core.Autocad
 
         private void CommandEnded(string globalCommandName)
         {
-            var layersToRevert = ActivateLayers(AUTO_UNLOCK_LAYERS);
+            var layersToRevert = ActivateLayers();
 
-            if (!AUTO_UNLOCK_LAYERS && layersToRevert.Count > 0)
+            if (!ShouldUnlockUnfreeze || !ShouldSwitchOn)
             {
-                var layersList = string.Join(", ", layersToRevert.Select(l => l.Name).ToArray());
-                _log.Entry($"Required layers either locked or frozen. \nPlease unlock/unfreeze the following layers; \n{layersList}");
-                return;
+                var inactiveLayers = new List<string>();
+
+                if (!ShouldUnlockUnfreeze)
+                {
+                    var frozenLocked = layersToRevert.Where(l => l.IsFrozen || l.IsLocked).Select(l => l.Name).ToList();
+                    inactiveLayers = inactiveLayers.Union(frozenLocked).ToList();
+                }
+
+                if (!ShouldSwitchOn)
+                {
+                    var off = layersToRevert.Where(l => l.IsOff).Select(l => l.Name).ToList();
+                    inactiveLayers = inactiveLayers.Union(off).ToList();
+                }
+
+                if (inactiveLayers.Count > 0)
+                {
+                    var layersList = string.Join(", ", inactiveLayers.ToArray());
+                    _log.Entry($"Following layers need to be active; \n{layersList}");
+                    return;
+                }
             }
-            
+
             if (globalCommandName.ToLower().Contains("regen"))
             {
                 RegenerateManagers();

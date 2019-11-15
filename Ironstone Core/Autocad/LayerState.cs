@@ -8,6 +8,7 @@ namespace Jpp.Ironstone.Core.Autocad
         public bool IsOff { get;  }
         public bool IsFrozen { get; }
         public bool IsLocked { get; }
+        public bool IsInvalid => IsFrozen || IsLocked || IsOff;
 
         public LayerState(LayerTableRecord layer)
         {
@@ -17,6 +18,6 @@ namespace Jpp.Ironstone.Core.Autocad
             IsLocked = layer.IsLocked;
         }
 
-        public bool IsInvalid => IsLocked || IsFrozen;
+        
     }
 }
