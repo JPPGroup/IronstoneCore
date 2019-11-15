@@ -33,7 +33,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         public void VerifyStoreTypesLoaded()
         {
             int count = RunTest<int>(nameof(VerifyStoreTypesLoadedResident));
-            Assert.AreEqual(2, count);
+            Assert.AreEqual(4, count);
         }
 
         public int VerifyStoreTypesLoadedResident()
