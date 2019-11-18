@@ -19,11 +19,5 @@
         <TextBlock Grid.Row="1" HorizontalAlignment="Right">
             <Hyperlink x:Name="feedbackLink">Feedback</Hyperlink>
         </TextBlock>
-        
-        <!--<Button Grid.Row="1" Height="40" Width="40" HorizontalAlignment="Right" Foreground="White" Click="ButtonBase_OnClick">
-            <Path Data="M3.1000366,0L28.900024,0C30.600037,0,32,1.3000031,32,3L32,20C32,21.600006,30.600037,23,28.900024,23L21.600037,23 7.5,32 10.799988,22.899994 3.1000366,22.899994C1.4000244,22.899994,0,21.5,0,19.899994L0,3C0,1.3000031,1.4000244,0,3.1000366,0z"
-                  Stretch="Uniform" Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" 
-                  RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Center" />
-        </Button>-->
     </Grid>
 </ui:HostedUserControl>
