@@ -38,12 +38,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private ILogger _logger;
         private LayerManager _layerManager;
+        private readonly IUserSettings _settings;
         internal List<Type> _storesList;
         internal List<Type> _managersList;
 
-        public DataService(ILogger logger, LayerManager lm)
+        public DataService(ILogger logger, LayerManager lm, IUserSettings settings)
         {
             _layerManager = lm;
+            _settings = settings;
             _current = this;
             _logger = logger;
             _stores = new Dictionary<string, Dictionary<Type, DocumentStore>>();
@@ -193,7 +195,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 throw new ArgumentException();
             }
 
-            DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes(), _logger, _layerManager);
+            DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes(), _logger, _layerManager, _settings);
             ds.DocumentNameChanged += Store_DocumentNameChanged;
             ds.LoadWrapper();
             return ds;

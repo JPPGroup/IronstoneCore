@@ -16,10 +16,13 @@ namespace Jpp.Ironstone.Core.Autocad
     /// </summary>
     public class DocumentStore : IDisposable
     {
+        [XmlIgnore] public bool ShouldUnlockUnfreeze { get; }
+        [XmlIgnore] public bool ShouldSwitchOn { get;  }
+
         #region Constructor and Fields
 
         public event EventHandler<DocumentNameChangedEventArgs> DocumentNameChanged;
-
+        
         protected Document AcDoc;
         protected Database AcCurDb;
 
@@ -29,11 +32,10 @@ namespace Jpp.Ironstone.Core.Autocad
         private readonly LayerManager _layerManager;
         private readonly Document _host;
 
-
         /// <summary>
         /// Create a new document store
         /// </summary>
-        public DocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm)
+        public DocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm, IUserSettings settings)
         {
             AcDoc = doc;
             AcCurDb = doc.Database;
@@ -42,6 +44,9 @@ namespace Jpp.Ironstone.Core.Autocad
             _log = log;
             _layerManager = lm;
             _host = doc;
+
+            ShouldUnlockUnfreeze = bool.TryParse(settings.GetValue("layers-unlock-unfreeze"), out var unlockUnfreeze) && unlockUnfreeze;
+            ShouldSwitchOn = bool.TryParse(settings.GetValue("layers-switch-on"), out var switchOn) && switchOn;
 
             Managers = new List<IDrawingObjectManager>();
 
@@ -54,20 +59,94 @@ namespace Jpp.Ironstone.Core.Autocad
 
         private void PopulateLayers()
         {
-            Type type = this.GetType();
-            var layers =  type.GetCustomAttributes(typeof(LayerAttribute), true).ToList();
-
-            foreach (IDrawingObjectManager objManager in Managers)
-            {
-                layers.AddRange(objManager.GetRequiredLayers());
-            }
-
+            var layers = GetLayers();
             foreach (object layerObj in layers)
             {
                 LayerAttribute layer = layerObj as LayerAttribute;
                 _layerManager.CreateLayer(AcCurDb, layer.Name);
             }
         }
+
+        private List<object> GetLayers()
+        {
+            var type = GetType();
+            var layers = type.GetCustomAttributes(typeof(LayerAttribute), true).ToList();
+
+            foreach (var objManager in Managers)
+            {
+                layers.AddRange(objManager.GetRequiredLayers());
+            }
+
+            return layers;
+        }
+
+        private List<LayerState> ActivateLayers()
+        {
+            var layersToRevert = new List<LayerState>();
+            var layers = GetLayers();
+
+            if (layers.Count == 0) return layersToRevert;
+
+            //Need a transaction, not sure where else it could come from.
+            using (var acTrans = AcCurDb.TransactionManager.StartTransaction()) 
+            {
+                foreach (var layerObj in layers)
+                {
+                    if (layerObj is LayerAttribute layerAttribute)
+                    {
+                        var layer = AcCurDb.GetLayer(layerAttribute.Name);
+                        var status = new LayerState(layer);
+
+                        if (status.IsInvalid)
+                        {
+                            layersToRevert.Add(status);
+
+                            if (ShouldUnlockUnfreeze || ShouldSwitchOn)
+                            {
+                                layer.UpgradeOpen();
+
+                                if (ShouldUnlockUnfreeze)
+                                {
+                                    layer.IsLocked = false;
+                                    layer.IsFrozen = false;
+                                }
+
+                                if (ShouldSwitchOn)
+                                {
+                                    layer.IsOff = false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                acTrans.Commit();
+            }
+
+            return layersToRevert;
+        }
+
+        private void RevertLayers(IReadOnlyCollection<LayerState> layers)
+        {
+            if (layers.Count == 0) return;
+
+            //Need a transaction, not sure where else it could come from.
+            using (var acTrans = AcCurDb.TransactionManager.StartTransaction()) 
+            {
+                foreach (var revert in layers)
+                {
+                    var layer = AcCurDb.GetLayer(revert.Name);
+
+                    layer.UpgradeOpen();
+                    layer.IsLocked = revert.IsLocked;
+                    layer.IsFrozen = revert.IsFrozen;
+                    layer.IsOff = revert.IsOff;
+                }
+
+                acTrans.Commit();
+            }
+        }
+
         #endregion
 
         private void BeginSave(string fileName)
@@ -102,6 +181,32 @@ namespace Jpp.Ironstone.Core.Autocad
 
         private void CommandEnded(string globalCommandName)
         {
+            var layersToRevert = ActivateLayers();
+
+            if (!ShouldUnlockUnfreeze || !ShouldSwitchOn)
+            {
+                var inactiveLayers = new List<string>();
+
+                if (!ShouldUnlockUnfreeze)
+                {
+                    var frozenLocked = layersToRevert.Where(l => l.IsFrozen || l.IsLocked).Select(l => l.Name).ToList();
+                    inactiveLayers = inactiveLayers.Union(frozenLocked).ToList();
+                }
+
+                if (!ShouldSwitchOn)
+                {
+                    var off = layersToRevert.Where(l => l.IsOff).Select(l => l.Name).ToList();
+                    inactiveLayers = inactiveLayers.Union(off).ToList();
+                }
+
+                if (inactiveLayers.Count > 0)
+                {
+                    var layersList = string.Join(", ", inactiveLayers.ToArray());
+                    _log.Entry($"Following layers need to be active; \n{layersList}");
+                    return;
+                }
+            }
+
             if (globalCommandName.ToLower().Contains("regen"))
             {
                 RegenerateManagers();
@@ -110,6 +215,8 @@ namespace Jpp.Ironstone.Core.Autocad
             {
                 UpdateManagers();
             }
+
+            RevertLayers(layersToRevert);
         }
 
         #region Save and Load Methods

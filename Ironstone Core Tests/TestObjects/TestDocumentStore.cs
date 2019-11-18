@@ -9,6 +9,6 @@ namespace Jpp.Ironstone.Core.Tests.TestObjects
     public class TestDocumentStore : DocumentStore
     {
         public bool SaveTestProperty { get; set; }
-        public TestDocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm) : base(doc, managerTypes, log, lm) { }
+        public TestDocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm, IUserSettings settings) : base(doc, managerTypes, log, lm, settings) { }
     }
 }
