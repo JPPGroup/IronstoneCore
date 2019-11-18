@@ -78,11 +78,15 @@ namespace Jpp.Ironstone.Core.UI
             RibbonPanelSource source = new RibbonPanelSource { Title = "General" };
             RibbonRowPanel stack = new RibbonRowPanel();
 
-            //stack.Items.Add(_settingsButton);
             RibbonToggleButton aboutButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_AboutWindow_Name, Resources.About, RibbonItemSize.Standard, _container.Resolve<About>(), "10992236-c8f6-4732-b5e0-2d9194f07068");
+            RibbonButton feedbackButton = UIHelper.CreateButton(Resources.ExtensionApplication_UI_BtnFeedback, Resources.Feedback, RibbonItemSize.Standard, "Core_Feedback");
 
-            stack.Items.Add(new RibbonRowBreak());
-            stack.Items.Add(aboutButton);
+            RibbonRowPanel column = new RibbonRowPanel { IsTopJustified = true };
+            column.Items.Add(aboutButton);
+            column.Items.Add(new RibbonRowBreak());
+            column.Items.Add(feedbackButton);
+
+            stack.Items.Add(column);
 
             //Add the new tab section to the main tab
             source.Items.Add(stack);
