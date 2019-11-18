@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Media.Imaging;
+using Jpp.Ironstone.Core.UI.Views;
 using Orientation = System.Windows.Controls.Orientation;
 
 
@@ -131,10 +132,7 @@ namespace Jpp.Ironstone.Core.UI
                 DockEnabled = (DockSides)((int)DockSides.Left + (int)DockSides.Right)
             };
 
-            ElementHost viewHost = new ElementHost();
-            viewHost.AutoSize = true;
-            viewHost.Dock = DockStyle.Fill;
-            viewHost.Child = view;
+            ElementHost viewHost = BuildElementHost(view);
             paletteSet.Add(buttonText, viewHost);
             paletteSet.KeepFocus = false;
 
@@ -209,16 +207,9 @@ namespace Jpp.Ironstone.Core.UI
                 DockEnabled = (DockSides)((int)DockSides.Left + (int)DockSides.Right)
             };
 
-
             foreach (var view in views)
             {
-                var viewHost = new ElementHost
-                {
-                    AutoSize = true,
-                    Dock = DockStyle.Fill,
-                    Child = view.Value
-                };
-
+                var viewHost = BuildElementHost(view.Value);
                 paletteSet.Add(view.Key, viewHost);
             }
 
@@ -265,5 +256,14 @@ namespace Jpp.Ironstone.Core.UI
             return result;
         }
 
+        private static ElementHost BuildElementHost(UIElement viewValue)
+        {
+            return new ElementHost
+            {
+                AutoSize = true,
+                Dock = DockStyle.Fill,
+                Child = new FeedbackHost(viewValue)
+            };
+        }
     }
 }

@@ -96,5 +96,24 @@ namespace Jpp.Ironstone.Core.UI.Properties {
                 return ResourceManager.GetString("ExtensionApplication_IronstoneTab_Design_Name", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Feedback.
+        /// </summary>
+        internal static string ExtensionApplication_UI_BtnFeedback {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_UI_BtnFeedback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Feedback {
+            get {
+                object obj = ResourceManager.GetObject("Feedback", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
