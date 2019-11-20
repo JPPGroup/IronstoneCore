@@ -94,23 +94,39 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         }
 
         [Test]
-        public void VerifyLayerCreation()
+        public void VerifyLayerCreationWithTransaction()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyLayerCreationResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyLayerCreationResident), true));
         }
 
-        public bool VerifyLayerCreationResident()
+        [Test]
+        public void VerifyLayerCreationWithoutTransaction()
         {
-            using (Transaction trans = Application.DocumentManager.MdiActiveDocument.Database.TransactionManager.StartTransaction())
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyLayerCreationResident), false));
+        }
+
+        public bool VerifyLayerCreationResident(bool useTransaction)
+        {
+            if (useTransaction)
+            {
+                using (Transaction trans = Application.DocumentManager.MdiActiveDocument.Database.TransactionManager.StartTransaction())
+                {
+                    DataService ds = DataService.Current;
+                    ds.InvalidateStoreTypes();
+                    var store = ds.GetStore<TestDocumentStore>(Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
+                        .MdiActiveDocument.Name);
+
+                    trans.Commit();
+                }
+            }
+            else
             {
                 DataService ds = DataService.Current;
                 ds.InvalidateStoreTypes();
                 var store = ds.GetStore<TestDocumentStore>(Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
                     .MdiActiveDocument.Name);
-
-                trans.Commit();
             }
-
+            
             using (Transaction trans = Application.DocumentManager.MdiActiveDocument.Database.TransactionManager
                 .StartTransaction())
             {
