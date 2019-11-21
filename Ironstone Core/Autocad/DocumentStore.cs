@@ -62,7 +62,7 @@ namespace Jpp.Ironstone.Core.Autocad
             var layers = GetLayers();
             if (layers.Count == 0) return;
 
-            using (var _ = AcDoc.LockDocument())
+            using (AcDoc.LockDocument())
             {
                 using (var trans = AcCurDb.TransactionManager.StartTransaction())
                 {
