@@ -60,10 +60,22 @@ namespace Jpp.Ironstone.Core.Autocad
         private void PopulateLayers()
         {
             var layers = GetLayers();
-            foreach (object layerObj in layers)
+            if (layers.Count == 0) return;
+
+            using (AcDoc.LockDocument())
             {
-                LayerAttribute layer = layerObj as LayerAttribute;
-                _layerManager.CreateLayer(AcCurDb, layer.Name);
+                using (var trans = AcCurDb.TransactionManager.StartTransaction())
+                {
+                    foreach (object layerObj in layers)
+                    {
+                        if (layerObj is LayerAttribute layer)
+                        {
+                            _layerManager.CreateLayer(AcCurDb, layer.Name);
+                        }
+                    }
+
+                    trans.Commit();
+                }
             }
         }
 
