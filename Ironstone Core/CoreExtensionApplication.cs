@@ -177,6 +177,26 @@ namespace Jpp.Ironstone.Core
                 LoadConfiguration();
                 _logger = Container.Resolve<ILogger>();
                 _logger.LogEvent(Event.Message, "Application Startup");
+
+                _logger.Entry("Wiring up custom assembly resolve");
+                AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
+                {
+                    string toassname = resolveArgs.Name.Split(',')[0];
+                    if (!toassname.Contains("Ironstone")) return null;
+
+                    _logger.Entry($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
+                    Assembly[] asmblies = AppDomain.CurrentDomain.GetAssemblies();
+                    foreach (Assembly ass in asmblies)
+                    {
+                        if (ass.FullName.Split(',')[0] == toassname)
+                        {
+                            return ass;
+                        }
+                    }
+
+                    return null;
+                };
+
                 _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
 
                 _authentication = Container.Resolve<IAuthentication>();
@@ -184,8 +204,6 @@ namespace Jpp.Ironstone.Core
                 IDataService dataService = Container.Resolve<IDataService>();
 
                 Update();
-
-                dataService.CreateStoresFromAppDocumentManager();
             }
             catch (System.Exception e)
             {

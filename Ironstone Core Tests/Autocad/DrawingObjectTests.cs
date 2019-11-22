@@ -210,5 +210,24 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                        null;
             }
         }
+
+        [Test]
+        public void VerifyCreateActiveObjectInvalid()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyCreateActiveObjectInvalidResident)));
+        }
+
+        public bool VerifyCreateActiveObjectInvalidResident()
+        {
+            try
+            {
+                var obj = new TestDrawingObject { BaseObjectPtr = long.MaxValue };
+                return !obj.CreateActiveObject();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }

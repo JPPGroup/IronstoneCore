@@ -82,16 +82,25 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public virtual void ActivateObjects()
         {
+            List<T> toBeRemoved = new List<T>();
+
             //TODO: Trace usage paths to confirm transaction is needed
             using (Transaction acTrans = HostDocument.Database.TransactionManager.StartTransaction())
             {
                 foreach (T managedObject in ManagedObjects)
                 {
-                    managedObject.CreateActiveObject();
+                    if (!managedObject.CreateActiveObject()) toBeRemoved.Add(managedObject);
                 }
 
                 acTrans.Commit();
             }
+
+            foreach (T removeObj in toBeRemoved)
+            {
+                ManagedObjects.Remove(removeObj);
+            }
+
+            SetActiveObjects();
         }
 
         /// <summary>

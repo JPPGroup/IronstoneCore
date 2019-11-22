@@ -14,13 +14,15 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         private readonly Dictionary<string, Module> _loadedModules;
         private readonly IAuthentication _authentication;
         private readonly ILogger _logger;
+        private readonly IDataService _dataService;
 
         public string BinPath { get; set; }
         public string DataPath { get; set; }
 
-        public ModuleLoader(IAuthentication authentication, ILogger logger)
+        public ModuleLoader(IAuthentication authentication, IDataService dataService, ILogger logger)
         {
             _authentication = authentication;
+            _dataService = dataService;
             _logger = logger;
             
             BinPath = Assembly.GetExecutingAssembly().Location;
@@ -96,6 +98,9 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     }
                 }
             }
+
+            //Once modules loaded, create any required stores for documents that might already open.
+            _dataService.CreateStoresFromAppDocumentManager();
         }
 
         public void ProcessManifest()
