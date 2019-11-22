@@ -2,9 +2,9 @@ IronstoneStructures,true
 IronstoneHighways,true
 IronstoneDocumentManagement,true
 IronstoneDrainage,true
+IronstoneHousing,true
 IronstoneDraughter,false
 IronstoneGeotechnical,false
-IronstoneHousing,false
 IronstonePlanning,false
 IronstoneStructuralMembers,false
 IronstoneSurfaces,false
