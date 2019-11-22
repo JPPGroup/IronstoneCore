@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
@@ -15,27 +11,50 @@ namespace Jpp.Ironstone.Core.Autocad
             Transaction acTrans = obj.Database.TransactionManager.TopTransaction;
 
             //TODO: Is this the right place, add more types?
-
-            if (obj is Polyline)
+            switch (obj)
             {
-                Polyline pl = obj as Polyline;
-                pl.Elevation = 0;
-            }
-            if (obj is Polyline2d)
-            {
-                Polyline2d pl = obj as Polyline2d;
-                pl.Elevation = 0;
-            }
-            if (obj is Polyline3d)
-            {
-                Polyline3d pl3d = obj as Polyline3d;
-                foreach (ObjectId id in pl3d)
+                case Polyline polyline:
                 {
-                    PolylineVertex3d plv3d = acTrans.GetObject(id, OpenMode.ForWrite) as PolylineVertex3d;
-                    Point3d p3d = plv3d.Position;
-                    plv3d.Position = new Point3d(p3d.X, p3d.Y, 0);
+                    polyline.Elevation = 0;
+                    break;
                 }
+                case Polyline2d polyline2d:
+                {
+                    polyline2d.Elevation = 0;
+                    break;
+                }
+                case Polyline3d polyline3d:
+                {
+                    foreach (ObjectId id in polyline3d)
+                    {
+                        PolylineVertex3d plv3d = (PolylineVertex3d) acTrans.GetObject(id, OpenMode.ForWrite);
+                        Point3d p3d = plv3d.Position;
+                        plv3d.Position = new Point3d(p3d.X, p3d.Y, 0);
+                    }
+
+                    break;
+                }
+                default:
+                    throw new NotImplementedException();
             }
+        }
+
+        public static DBObjectCollection ExplodeAndErase(this Entity entity)
+        {
+            DBObjectCollection acDbObjColl = new DBObjectCollection();
+            Transaction acTrans = entity.Database.TransactionManager.TopTransaction;
+            BlockTableRecord acBlkTblRec = (BlockTableRecord) acTrans.GetObject(entity.BlockId, OpenMode.ForWrite);
+
+            entity.Explode(acDbObjColl);
+            entity.Erase();
+
+            foreach (Entity acEnt in acDbObjColl)
+            {
+                acBlkTblRec.AppendEntity(acEnt);
+                acTrans.AddNewlyCreatedDBObject(acEnt, true);
+            }
+
+            return acDbObjColl;
         }
     }
 }

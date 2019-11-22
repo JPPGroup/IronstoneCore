@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.EditorInput;
 using Jpp.Ironstone.Core.Autocad;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -17,6 +18,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         /// Stores that are currently loaded into memory
         /// </summary>
         internal Dictionary<string, Dictionary<Type, DocumentStore>> _stores;
+
+        internal List<ITemplateSource> _templateSources;
 
         private bool _storeTypesInvalidated = true;
 
@@ -34,14 +37,19 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         private static DataService _current;
 
         private ILogger _logger;
+        private LayerManager _layerManager;
+        private readonly IUserSettings _settings;
         internal List<Type> _storesList;
         internal List<Type> _managersList;
 
-        public DataService(ILogger logger)
+        public DataService(ILogger logger, LayerManager lm, IUserSettings settings)
         {
+            _layerManager = lm;
+            _settings = settings;
             _current = this;
             _logger = logger;
             _stores = new Dictionary<string, Dictionary<Type, DocumentStore>>();
+            _templateSources = new List<ITemplateSource>();
 
             //Add the document hooks
             Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.DocumentCreated += DocumentManagerOnDocumentCreated;
@@ -74,7 +82,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             {
                 _logger.Entry("Document does not exist.\n", Severity.Error);
             }
-            
         }
 
         public T GetStore<T>(string ID) where T : DocumentStore
@@ -105,6 +112,24 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             return (T)_stores[ID][typeof(T)];
         }
 
+        public ITemplateSource GetTemplateSource(Guid id)
+        {
+            foreach (ITemplateSource templateSource in _templateSources)
+            {
+                if (templateSource.Contains(id))
+                {
+                    return templateSource;
+                }
+            }
+
+            throw new ArgumentOutOfRangeException(nameof(id), "Template Id not found in available sources");
+        }
+
+        public void RegisterSource(ITemplateSource source)
+        {
+            _templateSources.Add(source);
+        }
+
         private void DocumentManagerOnDocumentCreated(object sender, DocumentCollectionEventArgs e)
         {
             if (_stores.ContainsKey(e.Document.Name))
@@ -117,9 +142,37 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
         }
 
+        public void RegisterAppKey(Document document)
+        {
+            using (Transaction tr = document.TransactionManager.StartTransaction())
+            {
+
+                RegAppTable rat = (RegAppTable)tr.GetObject(document.Database.RegAppTableId, OpenMode.ForRead, false);
+
+                if (!rat.Has(Constants.REG_APP_NAME))
+                {
+                    using (document.LockDocument())
+                    {
+                        rat.UpgradeOpen();
+                        RegAppTableRecord ratr = new RegAppTableRecord
+                        {
+                            Name = Constants.REG_APP_NAME
+                        };
+
+                        rat.Add(ratr);
+                        tr.AddNewlyCreatedDBObject(ratr, true);
+
+                        tr.Commit();
+                    }
+                }
+            }
+        }
+
         private void CreateStoresOnDocument(Document document)
         {
-            if(_storeTypesInvalidated)
+            RegisterAppKey(document);
+
+            if (_storeTypesInvalidated)
                 PopulateStoreTypes();
 
             Dictionary<Type, DocumentStore> storeContainer = new Dictionary<Type, DocumentStore>();
@@ -129,10 +182,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
 
             _stores.Add(document.Name, storeContainer);
-
-            document.Database.BeginSave += (o, args) => SaveStores(document.Name);
-            document.CommandEnded += (o, args) => CommandEnded(document.Name, args.GlobalCommandName);
-            document.CommandCancelled += (o, args) => CommandEnded(document.Name, args.GlobalCommandName);
         }
 
         private object CreateDocumentStore(Type T, Document doc)
@@ -146,9 +195,19 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 throw new ArgumentException();
             }
 
-            DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes(), _logger);
+            DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes(), _logger, _layerManager, _settings);
+            ds.DocumentNameChanged += Store_DocumentNameChanged;
             ds.LoadWrapper();
             return ds;
+        }
+
+        private void Store_DocumentNameChanged(object sender, DocumentNameChangedEventArgs e)
+        {
+            if (!_stores.ContainsKey(e.OldName)) return;
+
+            Dictionary<Type, DocumentStore> storesDictionary = _stores[e.OldName];
+            _stores.Add(e.NewName, storesDictionary);
+            _stores.Remove(e.OldName);
         }
 
         public void PopulateStoreTypes()
@@ -182,30 +241,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             _storeTypesInvalidated = true;
         }
 
-        private void SaveStores(string ID)
-        {
-            foreach (DocumentStore documentStore in _stores[ID].Values)
-            {
-                documentStore.SaveWrapper();
-            }
-        }
-
-        private void CommandEnded(string DocName, string GlobalCommandName)
-        {
-            foreach (DocumentStore documentStore in _stores[DocName].Values)
-            {
-                //TODO: Check this works
-                if (GlobalCommandName.ToLower().Contains("regen"))
-                {
-                    documentStore.RegenerateManagers();
-                }
-                else
-                {
-                    documentStore.UpdateManagers();
-                }
-            }
-        }
-
         public Type[] GetManagerTypes()
         {
             return _managersList.ToArray();
@@ -223,6 +258,5 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             return null;
         }
-
     }
 }

@@ -18,6 +18,7 @@ namespace Jpp.Ironstone.Core
         public bool EnableObjectModelUpdate;
         public bool EnableModuleUpdate;
         public bool LoadAppDirectory;
+        public string NetworkUserSettingsPath;
 
         public string AppData
         {
@@ -56,6 +57,7 @@ namespace Jpp.Ironstone.Core
             InstallerUrl = "https://ironstone.blob.core.windows.net/ironstone/IronstoneCore.xml";
             BaseUrl = "https://ironstone.blob.core.windows.net/ironstone/";
             ObjectModelUrl = "https://ironstone.blob.core.windows.net/ironstone/IronstoneObjectModel.xml";
+            NetworkUserSettingsPath = "N:\\Consulting\\Library\\Ironstone\\Config.json";
 
         }
 

@@ -19,7 +19,7 @@ namespace Jpp.Ironstone.Core.UI.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -76,6 +76,43 @@ namespace Jpp.Ironstone.Core.UI.Properties {
         internal static string ExtensionApplication_AboutWindow_Name {
             get {
                 return ResourceManager.GetString("ExtensionApplication_AboutWindow_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ironstone Concept.
+        /// </summary>
+        internal static string ExtensionApplication_IronstoneTab_Concept_Name {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_IronstoneTab_Concept_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ironstone Design.
+        /// </summary>
+        internal static string ExtensionApplication_IronstoneTab_Design_Name {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_IronstoneTab_Design_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Feedback.
+        /// </summary>
+        internal static string ExtensionApplication_UI_BtnFeedback {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_UI_BtnFeedback", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Feedback {
+            get {
+                object obj = ResourceManager.GetObject("Feedback", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

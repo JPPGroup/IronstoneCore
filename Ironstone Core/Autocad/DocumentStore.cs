@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
@@ -15,29 +16,220 @@ namespace Jpp.Ironstone.Core.Autocad
     /// </summary>
     public class DocumentStore : IDisposable
     {
+        [XmlIgnore] public bool ShouldUnlockUnfreeze { get; }
+        [XmlIgnore] public bool ShouldSwitchOn { get;  }
+
         #region Constructor and Fields
 
+        public event EventHandler<DocumentNameChangedEventArgs> DocumentNameChanged;
+        
         protected Document AcDoc;
         protected Database AcCurDb;
 
         protected List<IDrawingObjectManager> Managers;
         private readonly Type[] _managerTypes;
         private readonly ILogger _log;
+        private readonly LayerManager _layerManager;
+        private readonly Document _host;
 
         /// <summary>
         /// Create a new document store
         /// </summary>
-        public DocumentStore(Document doc, Type[] managerTypes, ILogger log)
+        public DocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm, IUserSettings settings)
         {
             AcDoc = doc;
             AcCurDb = doc.Database;
 
             _managerTypes = managerTypes;
             _log = log;
+            _layerManager = lm;
+            _host = doc;
+
+            ShouldUnlockUnfreeze = bool.TryParse(settings.GetValue("layers-unlock-unfreeze"), out var unlockUnfreeze) && unlockUnfreeze;
+            ShouldSwitchOn = bool.TryParse(settings.GetValue("layers-switch-on"), out var switchOn) && switchOn;
 
             Managers = new List<IDrawingObjectManager>();
+
+            _host.Database.BeginSave += (o, args) => BeginSave(args.FileName);
+            _host.CommandEnded += (o, args) => CommandEnded(args.GlobalCommandName);
+            _host.CommandCancelled += (o, args) => CommandEnded(args.GlobalCommandName);
+
+            PopulateLayers();
         }
+
+        private void PopulateLayers()
+        {
+            var layers = GetLayers();
+            if (layers.Count == 0) return;
+
+            using (AcDoc.LockDocument())
+            {
+                using (var trans = AcCurDb.TransactionManager.StartTransaction())
+                {
+                    foreach (object layerObj in layers)
+                    {
+                        if (layerObj is LayerAttribute layer)
+                        {
+                            _layerManager.CreateLayer(AcCurDb, layer.Name);
+                        }
+                    }
+
+                    trans.Commit();
+                }
+            }
+        }
+
+        private List<object> GetLayers()
+        {
+            var type = GetType();
+            var layers = type.GetCustomAttributes(typeof(LayerAttribute), true).ToList();
+
+            foreach (var objManager in Managers)
+            {
+                layers.AddRange(objManager.GetRequiredLayers());
+            }
+
+            return layers;
+        }
+
+        private List<LayerState> ActivateLayers()
+        {
+            var layersToRevert = new List<LayerState>();
+            var layers = GetLayers();
+
+            if (layers.Count == 0) return layersToRevert;
+
+            //Need a transaction, not sure where else it could come from.
+            using (var acTrans = AcCurDb.TransactionManager.StartTransaction()) 
+            {
+                foreach (var layerObj in layers)
+                {
+                    if (layerObj is LayerAttribute layerAttribute)
+                    {
+                        var layer = AcCurDb.GetLayer(layerAttribute.Name);
+                        var status = new LayerState(layer);
+
+                        if (status.IsInvalid)
+                        {
+                            layersToRevert.Add(status);
+
+                            if (ShouldUnlockUnfreeze || ShouldSwitchOn)
+                            {
+                                layer.UpgradeOpen();
+
+                                if (ShouldUnlockUnfreeze)
+                                {
+                                    layer.IsLocked = false;
+                                    layer.IsFrozen = false;
+                                }
+
+                                if (ShouldSwitchOn)
+                                {
+                                    layer.IsOff = false;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                acTrans.Commit();
+            }
+
+            return layersToRevert;
+        }
+
+        private void RevertLayers(IReadOnlyCollection<LayerState> layers)
+        {
+            if (layers.Count == 0) return;
+
+            //Need a transaction, not sure where else it could come from.
+            using (var acTrans = AcCurDb.TransactionManager.StartTransaction()) 
+            {
+                foreach (var revert in layers)
+                {
+                    var layer = AcCurDb.GetLayer(revert.Name);
+
+                    layer.UpgradeOpen();
+                    layer.IsLocked = revert.IsLocked;
+                    layer.IsFrozen = revert.IsFrozen;
+                    layer.IsOff = revert.IsOff;
+                }
+
+                acTrans.Commit();
+            }
+        }
+
         #endregion
+
+        private void BeginSave(string fileName)
+        {
+            SaveWrapper();
+
+            if (_host.Name == fileName) return;
+            var hostDoc = _host.Name;
+
+            // ReSharper disable once ConvertToLocalFunction
+            DatabaseIOEventHandler handler = null;
+            handler = (sender, args) =>
+            {
+                _host.Database.SaveComplete -= handler;
+                DocumentNameChangeOnSave(hostDoc, fileName);
+            };
+
+            _host.Database.SaveComplete += handler;
+        }
+
+        private void DocumentNameChangeOnSave(string oldName, string newName)
+        {
+            DocumentNameChangedEventArgs args = new DocumentNameChangedEventArgs { OldName = oldName, NewName = newName };
+            OnDocumentNameChanged(args);
+        }
+
+        protected virtual void OnDocumentNameChanged(DocumentNameChangedEventArgs e)
+        {
+            EventHandler<DocumentNameChangedEventArgs> handler = DocumentNameChanged;
+            handler?.Invoke(this, e);
+        }
+
+        private void CommandEnded(string globalCommandName)
+        {
+            var layersToRevert = ActivateLayers();
+
+            if (!ShouldUnlockUnfreeze || !ShouldSwitchOn)
+            {
+                var inactiveLayers = new List<string>();
+
+                if (!ShouldUnlockUnfreeze)
+                {
+                    var frozenLocked = layersToRevert.Where(l => l.IsFrozen || l.IsLocked).Select(l => l.Name).ToList();
+                    inactiveLayers = inactiveLayers.Union(frozenLocked).ToList();
+                }
+
+                if (!ShouldSwitchOn)
+                {
+                    var off = layersToRevert.Where(l => l.IsOff).Select(l => l.Name).ToList();
+                    inactiveLayers = inactiveLayers.Union(off).ToList();
+                }
+
+                if (inactiveLayers.Count > 0)
+                {
+                    var layersList = string.Join(", ", inactiveLayers.ToArray());
+                    _log.Entry($"Following layers need to be active; \n{layersList}");
+                    return;
+                }
+            }
+
+            if (globalCommandName.ToLower().Contains("regen"))
+            {
+                RegenerateManagers();
+            }
+            else
+            {
+                UpdateManagers();
+            }
+
+            RevertLayers(layersToRevert);
+        }
 
         #region Save and Load Methods
         /// <summary>
@@ -105,6 +297,7 @@ namespace Jpp.Ironstone.Core.Autocad
                             Managers.Add(drawingObjectManager);
                         }
                         Load();
+                        PopulateLayers();
                         tr.Commit();
                     }
                 }
@@ -257,34 +450,17 @@ namespace Jpp.Ironstone.Core.Autocad
 
             foundManager = (T)Activator.CreateInstance(typeof(T), AcDoc, _log);
             Managers.Add(foundManager);
+            PopulateLayers();
 
             return foundManager;
 
         }
         #endregion
+    }
 
-        /*public static void LoadStores(Document doc)
-        {
-            //Get all document stores and load
-            List<Type> storesList = new List<Type>();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (Assembly assembly in assemblies)
-            {
-                try
-                {
-                    storesList.AddRange(assembly.GetTypes().Where(t => typeof(DocumentStore).IsAssignableFrom(t)));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-
-            foreach (Type type in storesList)
-            {
-                //Load docstore to generate managers
-                doc.GetDocumentStore(type);
-            }
-        }*/
+    public class DocumentNameChangedEventArgs : EventArgs
+    {
+        public string OldName { get; set; }
+        public string NewName { get; set; }
     }
 }

@@ -1,14 +1,17 @@
-﻿using System;
+﻿using Autodesk.AutoCAD.Runtime;
+using Autodesk.AutoCAD.Windows;
+using Autodesk.Windows;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Media.Imaging;
-using Autodesk.AutoCAD.Windows;
-using Autodesk.Windows;
+using Jpp.Ironstone.Core.UI.Views;
 using Orientation = System.Windows.Controls.Orientation;
 
 
@@ -19,6 +22,20 @@ namespace Jpp.Ironstone.Core.UI
     /// </summary>
     public static class UIHelper
     {
+        /// <summary>
+        /// Gets the command global name from a given method
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="method"></param>
+        /// <returns>Global command name</returns>
+        public static string GetCommandGlobalName(Type type, string method)
+        {
+            var rtMethod = type.GetRuntimeMethod(method, Array.Empty<Type>());
+            var attribute = rtMethod.GetCustomAttribute<CommandMethodAttribute>();
+
+            return attribute.GlobalName;
+        }
+
         /// <summary>
         /// Convert resource image to format useable by autocad
         /// </summary>
@@ -115,10 +132,7 @@ namespace Jpp.Ironstone.Core.UI
                 DockEnabled = (DockSides)((int)DockSides.Left + (int)DockSides.Right)
             };
 
-            ElementHost viewHost = new ElementHost();
-            viewHost.AutoSize = true;
-            viewHost.Dock = DockStyle.Fill;
-            viewHost.Child = view;
+            ElementHost viewHost = BuildElementHost(view);
             paletteSet.Add(buttonText, viewHost);
             paletteSet.KeepFocus = false;
 
@@ -193,16 +207,9 @@ namespace Jpp.Ironstone.Core.UI
                 DockEnabled = (DockSides)((int)DockSides.Left + (int)DockSides.Right)
             };
 
-
             foreach (var view in views)
             {
-                var viewHost = new ElementHost
-                {
-                    AutoSize = true,
-                    Dock = DockStyle.Fill,
-                    Child = view.Value
-                };
-
+                var viewHost = BuildElementHost(view.Value);
                 paletteSet.Add(view.Key, viewHost);
             }
 
@@ -249,5 +256,14 @@ namespace Jpp.Ironstone.Core.UI
             return result;
         }
 
+        private static ElementHost BuildElementHost(UIElement viewValue)
+        {
+            return new ElementHost
+            {
+                AutoSize = true,
+                Dock = DockStyle.Fill,
+                Child = new FeedbackHost(viewValue)
+            };
+        }
     }
 }

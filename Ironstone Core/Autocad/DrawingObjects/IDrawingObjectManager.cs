@@ -36,5 +36,7 @@ namespace Jpp.Ironstone.Core.Autocad
         /// <param name="doc">The host document</param>
         /// <param name="log"></param>
         void SetDependencies(Document doc, ILogger log);
+
+        object[] GetRequiredLayers();
     }
 }

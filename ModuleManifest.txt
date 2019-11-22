@@ -1,4 +1,11 @@
-IronstoneStructures
-IronstoneHighways
-IronstoneDocumentManagement
-IronstoneDrainage
+IronstoneStructures,true
+IronstoneHighways,true
+IronstoneDocumentManagement,true
+IronstoneDrainage,true
+IronstoneDraughter,false
+IronstoneGeotechnical,false
+IronstoneHousing,false
+IronstonePlanning,false
+IronstoneStructuralMembers,false
+IronstoneSurfaces,false
+IronstoneVisualiser,false

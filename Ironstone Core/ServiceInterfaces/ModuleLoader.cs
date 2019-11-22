@@ -113,22 +113,27 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             {
                 try
                 {
-                    List<string> manifest = new List<string>();
+                    Dictionary<string, bool> manifest = new Dictionary<string, bool>();
                     using (TextReader reader = File.OpenText(moduleFile))
                     {
                         while (reader.Peek() != -1)
                         {
                             string m = reader.ReadLine();
-                            manifest.Add(m);
+                            if (m == null) continue;
+
+                            string[] values = m.Split(',');
+                            manifest.Add(values[0], bool.Parse(values[1]));
                         }
                     }
 
                     string[] existingModules = Directory.GetFiles(DataPath);
 
-                    foreach (string s in manifest)
+                    foreach (KeyValuePair<string, bool> module in manifest)
                     {
+                        if (!module.Value) continue;
+                        
                         bool found = false;
-                        string fileName = s + ".dll";
+                        string fileName = module.Key + ".dll";
                         string filePath = DataPath + "\\" + fileName;
 
                         /*
@@ -149,7 +154,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
                         if (!found)
                         {
-                            if (_authentication.VerifyLicense(s))
+                            if (_authentication.VerifyLicense(module.Key))
                             {
                                 using (var client = new WebClient())
                                 {
@@ -160,7 +165,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                                     }
                                     catch (System.Exception e)
                                     {
-                                        _logger.Entry($"Unable to download module {s} from {downloadPath}", Severity.Error);
+                                        _logger.Entry($"Unable to download module {module.Key} from {downloadPath}", Severity.Error);
                                         _logger.LogException(e);
                                     }
                                 }

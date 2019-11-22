@@ -1,18 +1,20 @@
 ﻿using System;
+using System.Diagnostics;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Jpp.Ironstone.Core.UI;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
+using Exception = Autodesk.AutoCAD.BoundaryRepresentation.Exception;
 
 [assembly: CommandClass(typeof(Commands))]
 namespace Jpp.Ironstone.Core.UI
 {
-    public class Commands
+    public static class Commands
     {
-        private bool _handled;
+        private static bool _handled;
 
         [CommandMethod("DEBUG_SHOW_HANDLE")]
-        public void SetShowHandle()
+        public static void SetShowHandle()
         {
             CoreUIExtensionApplication.Current.Logger.LogCommand(typeof(Commands), nameof(SetShowHandle));
 
@@ -45,6 +47,30 @@ namespace Jpp.Ironstone.Core.UI
             {
                 CoreUIExtensionApplication.Current.Logger.LogException(e);
                 throw;
+            }
+        }
+
+        [CommandMethod("Core_Feedback")]
+        public static void OpenFeedbackPage()
+        {
+            CoreUIExtensionApplication.Current.Logger.LogCommand(typeof(Commands), nameof(OpenFeedbackPage));
+
+            try
+            {
+                var process = new Process
+                {
+                    StartInfo =
+                    {
+                        UseShellExecute = true, // true is the default, but it is important not to set it to false
+                        FileName = "https://jppuk.atlassian.net/servicedesk/customer/portals"
+                    }
+                };
+
+                process.Start();
+            }
+            catch (Exception e)
+            {
+                CoreUIExtensionApplication.Current.Logger.LogException(e);
             }
         }
 

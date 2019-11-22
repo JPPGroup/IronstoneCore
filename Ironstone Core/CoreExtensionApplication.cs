@@ -9,6 +9,7 @@ using Autodesk.Civil.ApplicationServices;
 using Jpp.AutoUpdate;
 using Jpp.AutoUpdate.Classes;
 using Jpp.Ironstone.Core;
+using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
@@ -31,6 +32,7 @@ namespace Jpp.Ironstone.Core
 
         public static CoreExtensionApplication _current;
 
+        [Obsolete("Configuration should be resolved via dependency injection")]
         public Configuration Configuration { get; set; }
             
         /// <summary>
@@ -159,6 +161,7 @@ namespace Jpp.Ironstone.Core
         {
             //Unity registration
             Container= new UnityContainer();
+
             //TODO: Add code here for choosing log type
             Container.RegisterType<ILogger, CollectionLogger>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAuthentication, DinkeyAuthentication>(new ContainerControlledLifetimeManager());
@@ -166,6 +169,8 @@ namespace Jpp.Ironstone.Core
             Container.RegisterType<IModuleLoader, ModuleLoader>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ObjectModel, ObjectModel>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<IUserSettings, StandardUserSettings>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<LayerManager>(new ContainerControlledLifetimeManager());
             
             try
             {
@@ -191,7 +196,6 @@ namespace Jpp.Ironstone.Core
 
                     return null;
                 };
-
 
                 _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
 
@@ -234,6 +238,8 @@ namespace Jpp.Ironstone.Core
                 Type to = Type.GetType(Configuration.ContainerResolvers.Values.ElementAt(i));
                 Container.RegisterType(from, to, new ContainerControlledLifetimeManager());
             }
+
+            Container.RegisterInstance<Configuration>(Configuration, new ContainerControlledLifetimeManager());
         }
 
         #endregion
