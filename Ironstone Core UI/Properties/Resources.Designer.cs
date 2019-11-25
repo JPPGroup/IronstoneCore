@@ -98,6 +98,15 @@ namespace Jpp.Ironstone.Core.UI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Review.
+        /// </summary>
+        internal static string ExtensionApplication_ReviewWindow_Name {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_ReviewWindow_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Feedback.
         /// </summary>
         internal static string ExtensionApplication_UI_BtnFeedback {
@@ -112,6 +121,36 @@ namespace Jpp.Ironstone.Core.UI.Properties {
         internal static System.Drawing.Bitmap Feedback {
             get {
                 object obj = ResourceManager.GetObject("Feedback", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Next {
+            get {
+                object obj = ResourceManager.GetObject("Next", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Review {
+            get {
+                object obj = ResourceManager.GetObject("Review", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Verify {
+            get {
+                object obj = ResourceManager.GetObject("Verify", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
+using System.Windows;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Jpp.Ironstone.Core.ServiceInterfaces;
@@ -37,6 +35,11 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public override double Rotation { get; set; }
         public override void Erase()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Rectangle GetBoundingBox()
         {
             throw new NotImplementedException();
         }

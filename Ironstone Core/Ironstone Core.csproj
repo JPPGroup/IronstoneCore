@@ -1,4 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">  
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">  
   <PropertyGroup>    
     <RootNamespace>Jpp.Ironstone.Core</RootNamespace>
     <AssemblyName>IronstoneCore</AssemblyName>
@@ -77,6 +78,9 @@
     </PackageReference>
     <PackageReference Include="Unity">
       <Version>5.9.7</Version>
+    </PackageReference>
+	<PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>2.9.8</Version>
     </PackageReference>
   </ItemGroup>  
   <ItemGroup>

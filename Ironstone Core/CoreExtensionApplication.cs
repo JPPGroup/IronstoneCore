@@ -195,7 +195,8 @@ namespace Jpp.Ironstone.Core
             Container.RegisterType<ObjectModel, ObjectModel>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IUserSettings, StandardUserSettings>(new ContainerControlledLifetimeManager());
             Container.RegisterType<LayerManager>(new ContainerControlledLifetimeManager());
-            
+            Container.RegisterType<IReviewManager, ReviewManager>(new ContainerControlledLifetimeManager());
+
             try
             {
                 LoadConfiguration();

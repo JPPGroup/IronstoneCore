@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
@@ -32,6 +33,11 @@ namespace Jpp.Ironstone.Core.Tests.TestObjects
         public override void Erase()
         {
             //Do nothing...
+        }
+
+        public override Rectangle GetBoundingBox()
+        {
+            throw new NotImplementedException();
         }
 
         public static TestDrawingObject CreateActiveObject(Guid id)

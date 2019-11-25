@@ -112,6 +112,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             return (T)_stores[ID][typeof(T)];
         }
 
+        public IEnumerable<DocumentStore> GetExistingStores(string ID)
+        {
+            return _stores[ID].Values;
+        }
+
         public ITemplateSource GetTemplateSource(Guid id)
         {
             foreach (ITemplateSource templateSource in _templateSources)
@@ -192,7 +197,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             if (!_storesList.Contains(T))
             {
                 _logger.Entry("Store type not recognised.\n", Severity.Crash);
-                throw new ArgumentException();
+                throw new ArgumentException("Store type not recognised.");
             }
 
             DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes(), _logger, _layerManager, _settings);

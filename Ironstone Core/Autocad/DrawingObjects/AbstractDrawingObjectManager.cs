@@ -165,5 +165,10 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             _activeObjects = ManagedObjects.Where(obj => !obj.Erased).ToList().AsReadOnly();
         }
+
+        public IEnumerable<DrawingObject> GetAllDrawingObjects()
+        {
+            return ManagedObjects;
+        }
     }
 }

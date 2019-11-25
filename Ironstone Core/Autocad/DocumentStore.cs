@@ -26,7 +26,7 @@ namespace Jpp.Ironstone.Core.Autocad
         protected Document AcDoc;
         protected Database AcCurDb;
 
-        protected List<IDrawingObjectManager> Managers;
+        public List<IDrawingObjectManager> Managers { get; private set; }
         private readonly Type[] _managerTypes;
         private readonly ILogger _log;
         private readonly LayerManager _layerManager;

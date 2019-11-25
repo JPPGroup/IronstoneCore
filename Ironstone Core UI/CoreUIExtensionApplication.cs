@@ -55,6 +55,7 @@ namespace Jpp.Ironstone.Core.UI
 
             _container.RegisterType<About>();
             _container.RegisterType<AboutViewModel>();
+            _container.RegisterType<Review>();
             Logger = _container.Resolve<ILogger>();
         }
 
@@ -166,13 +167,15 @@ namespace Jpp.Ironstone.Core.UI
 
             RibbonToggleButton aboutButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_AboutWindow_Name, Resources.About, RibbonItemSize.Standard, _container.Resolve<About>(), "10992236-c8f6-4732-b5e0-2d9194f07068");
             RibbonButton feedbackButton = UIHelper.CreateButton(Resources.ExtensionApplication_UI_BtnFeedback, Resources.Feedback, RibbonItemSize.Standard, "Core_Feedback");
+            RibbonToggleButton reviewButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_ReviewWindow_Name, Resources.Review, RibbonItemSize.Large, _container.Resolve<Review>(), "18cd4414-8fc8-4978-9e97-ae3915e29e07");
 
             RibbonRowPanel column = new RibbonRowPanel { IsTopJustified = true };
             column.Items.Add(aboutButton);
             column.Items.Add(new RibbonRowBreak());
             column.Items.Add(feedbackButton);
-
+            
             stack.Items.Add(column);
+            stack.Items.Add(reviewButton);
 
             //Add the new tab section to the main tab
             source.Items.Add(stack);

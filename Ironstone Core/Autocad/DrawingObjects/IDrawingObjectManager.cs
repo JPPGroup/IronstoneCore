@@ -1,4 +1,5 @@
-﻿using Autodesk.AutoCAD.ApplicationServices;
+﻿using System.Collections.Generic;
+using Autodesk.AutoCAD.ApplicationServices;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Autocad
@@ -38,5 +39,7 @@ namespace Jpp.Ironstone.Core.Autocad
         void SetDependencies(Document doc, ILogger log);
 
         object[] GetRequiredLayers();
+
+        IEnumerable<DrawingObject> GetAllDrawingObjects();
     }
 }

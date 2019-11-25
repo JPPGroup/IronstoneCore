@@ -16,6 +16,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         T GetStore<T>(string ID) where T : DocumentStore;
 
+        IEnumerable<DocumentStore> GetExistingStores(string ID);
+
         ITemplateSource GetTemplateSource(Guid id);
 
         void RegisterSource(ITemplateSource source);

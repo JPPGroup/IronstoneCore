@@ -3,11 +3,11 @@
 namespace Jpp.Ironstone.Core.UI.Views
 {
     /// <summary>
-    /// Interaction logic for About.xaml
+    /// Interaction logic for Review.xaml
     /// </summary>
-    public partial class About : HostedUserControl
+    public partial class Review : HostedUserControl
     {
-        public About(AboutViewModel viewModel)
+        public Review(ReviewViewModel viewModel)
         {
             InitializeComponent();
 
@@ -16,6 +16,7 @@ namespace Jpp.Ironstone.Core.UI.Views
 
         public override void Show()
         {
+            ((ReviewViewModel)this.DataContext).Refresh();
         }
 
         public override void Hide()
