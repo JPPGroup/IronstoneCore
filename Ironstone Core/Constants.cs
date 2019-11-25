@@ -5,5 +5,11 @@
         public const string IRONSTONE_CONCEPT_TAB_ID = "IRONSTONE_CONCEPT";
         public const string IRONSTONE_TAB_ID = "IRONSTONE_DESIGN";
         public const string REG_APP_NAME = "JPPI";
+
+        /// <summary>
+        /// All valid document extensions, used as part of re-wiring the stores on SaveCompleted.
+        /// NB: All extensions in lower case.
+        /// </summary>
+        public static readonly string[] VALID_DOCUMENT_EXTENSIONS = { ".dwg", ".dwt", ".dxf" };
     }
 }
