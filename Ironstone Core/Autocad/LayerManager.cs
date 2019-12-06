@@ -40,5 +40,17 @@ namespace Jpp.Ironstone.Core.Autocad
 
             targetDatabase.RegisterLayer(newLayerInfo);
         }
+
+        public string GetLayerName(string name)
+        {
+            if (_settings.GetValue($"{name}.name") != null)
+            {
+                return _settings.GetValue($"{name}.name");
+            }
+            else
+            {
+                throw new ArgumentNullException("Layer not found");
+            }
+        }
     }
 }

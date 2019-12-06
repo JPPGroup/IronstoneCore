@@ -32,6 +32,11 @@ namespace Jpp.Ironstone.Core.Autocad
         private readonly LayerManager _layerManager;
         private readonly Document _host;
 
+        public LayerManager LayerManager
+        {
+            get { return _layerManager; }
+        }
+
         /// <summary>
         /// Create a new document store
         /// </summary>
