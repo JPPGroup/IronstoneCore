@@ -62,6 +62,9 @@
       <HintPath>..\packages\Jpp.Ironstone.C3dApi.2019.0.0.1\lib\net47\AeccDbMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="AspectInjector.Broker, Version=2.2.5.0, Culture=neutral, PublicKeyToken=a29e12442a3d3609, processorArchitecture=MSIL">
+      <HintPath>..\packages\AspectInjector.2.2.5\lib\netstandard2.0\AspectInjector.Broker.dll</HintPath>
+    </Reference>
     <Reference Include="AutoUpdate, Version=1.0.15.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoUpdate.1.0.15\lib\net47\AutoUpdate.dll</HintPath>
     </Reference>
@@ -116,6 +119,7 @@
     <Compile Include="Autocad\DrawingObjects\IDrawingObjectManager.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\BlockDrawingObject.cs" />
     <Compile Include="Autocad\LayerState.cs" />
+    <Compile Include="IronstoneCommandAttribute.cs" />
     <Compile Include="ServiceInterfaces\ITemplatedObject.cs" />
     <Compile Include="ServiceInterfaces\ITemplateSource.cs" />
     <Compile Include="Autocad\DrawingObjects\PersistentObjectIdCollection.cs" />
@@ -191,7 +195,12 @@
     </Content>
     <None Include="IronstoneCoreBeta.xml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\AspectInjector.Analyzer.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\AspectInjector.Broker.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\AspectInjector.Rules.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\FluentIL.Common.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
@@ -203,7 +212,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Jpp.Common.Tooling.Protection.0.3.0\build\Jpp.Common.Tooling.Protection.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Jpp.Common.Tooling.Protection.0.3.0\build\Jpp.Common.Tooling.Protection.targets'))" />
     <Error Condition="!Exists('..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets'))" />
+    <Error Condition="!Exists('..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets'))" />
   </Target>
   <Import Project="..\packages\Jpp.Common.Tooling.Protection.0.3.0\build\Jpp.Common.Tooling.Protection.targets" Condition="Exists('..\packages\Jpp.Common.Tooling.Protection.0.3.0\build\Jpp.Common.Tooling.Protection.targets')" />
   <Import Project="..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets" Condition="Exists('..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets')" />
+  <Import Project="..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets" Condition="Exists('..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets')" />
 </Project>
