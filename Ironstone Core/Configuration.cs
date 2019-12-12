@@ -1,5 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Jpp.Common;
 using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
@@ -67,8 +70,8 @@ namespace Jpp.Ironstone.Core
             LoadAppDirectory = false;
             ContainerResolvers.Add(typeof(IAuthentication).FullName, typeof(PassDummyAuth).FullName);
             LogFileRelative = "UnitTestsIronstone.Log";
-            NetworkUserSettingsPath = "BaseConfig.json";
-            NetworkUserSettingsPath = "UserConfig.json";
+            NetworkUserSettingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "BaseConfig.json");
+            UserSettingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "UserConfig.json");
         }
     }
 }

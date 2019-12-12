@@ -15,21 +15,21 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         {
             Assert.Multiple(() =>
             {
-                Assert.IsTrue(RunTest<bool>(nameof(VerifyBaseValueResident)));
-                Assert.IsTrue(RunTest<bool>(nameof(VerifyTopUserResident)));
+                StringAssert.AreEqualIgnoringCase("N:\\Consulting\\Library\\Ironstone\\Details", RunTest<string>(nameof(VerifyBaseValueResident)));
+                StringAssert.AreEqualIgnoringCase("false", RunTest<string>(nameof(VerifyTopUserResident)));
             });
         }
 
-        public bool VerifyBaseValueResident()
+        public string VerifyBaseValueResident()
         {
             IUserSettings settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
-            return settings.GetValue("standarddetaillibrary.location").Equals("N:\\Consulting\\Library\\Ironstone\\Details");
+            return settings.GetValue("standarddetaillibrary.location");
         }
 
-        public bool VerifyTopUserResident()
+        public string VerifyTopUserResident()
         {
             IUserSettings settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
-            return settings.GetValue("standarddetaillibrary.cachedisabled").Equals("false");
+            return settings.GetValue("standarddetaillibrary.cachedisabled");
         }
 
         [Test]

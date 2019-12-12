@@ -6,8 +6,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     public class StandardUserSettings : IUserSettings
     {
-        private ILogger _logger;
-        private JObject _jObject;
+        private readonly ILogger _logger;
+        private readonly JObject _jObject;
 
         public StandardUserSettings(ILogger logger, Configuration configuration)
         {
@@ -20,12 +20,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             if (File.Exists(path))
             {
-                string json;
                 JObject newData;
 
                 using (StreamReader sr = File.OpenText(path))
                 {
-                    json = sr.ReadToEnd();
+                    string json = sr.ReadToEnd();
                     try
                     {
                         newData = JObject.Parse(json);
