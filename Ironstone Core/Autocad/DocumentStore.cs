@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using Jpp.Ironstone.Core.ServiceInterfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
-using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.DatabaseServices;
-using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -164,6 +164,14 @@ namespace Jpp.Ironstone.Core.Autocad
         private void BeginSave(string fileName)
         {
             SaveWrapper();
+
+            //check if file extension is valid, used to ignore auto-save file
+            var extension = Path.GetExtension(fileName);
+            if (string.IsNullOrEmpty(extension) || !Constants.VALID_DOCUMENT_EXTENSIONS.Contains(extension.ToLower()))
+            {
+                _log.Entry($"Assumed AutoSave. Filename: {fileName}", Severity.Information);
+                return;
+            }
 
             if (_host.Name == fileName) return;
             var hostDoc = _host.Name;
