@@ -14,11 +14,14 @@ namespace Jpp.Ironstone.Core.UI
 
         private IUnityContainer _container;
 
+        private RibbonTab _designTab, _conceptTab;
+
         public void CreateUI()
         {
             //Create the main UI
-            RibbonTab ironstoneTab = CreateTabs();
-            CreateCoreMenu(ironstoneTab);
+            CreateTabs();
+            CreateCoreMenu(_designTab);
+            CreateCoreMenu(_conceptTab);
         }
 
         public void Initialize()
@@ -45,27 +48,25 @@ namespace Jpp.Ironstone.Core.UI
         /// Creates the JPP tabs and adds it to the ribbon
         /// </summary>
         /// <returns>The main design tab</returns>
-        public RibbonTab CreateTabs()
+        public void CreateTabs()
         {
             RibbonControl rc = ComponentManager.Ribbon;
-            RibbonTab designTab = new RibbonTab
+            _designTab = new RibbonTab
             {
                 Name = Resources.ExtensionApplication_IronstoneTab_Design_Name,
                 Title = Resources.ExtensionApplication_IronstoneTab_Design_Name,
                 Id = Constants.IRONSTONE_TAB_ID
             };
 
-            RibbonTab conceptTab = new RibbonTab
+            _conceptTab = new RibbonTab
             {
                 Name = Resources.ExtensionApplication_IronstoneTab_Concept_Name,
                 Title = Resources.ExtensionApplication_IronstoneTab_Concept_Name,
                 Id = Constants.IRONSTONE_CONCEPT_TAB_ID
             };
-
-            rc.Tabs.Add(designTab);
-            rc.Tabs.Add(conceptTab);
-
-            return designTab;
+            
+            rc.Tabs.Add(_conceptTab);
+            rc.Tabs.Add(_designTab);
         }
 
         /// <summary>
