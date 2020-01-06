@@ -55,6 +55,86 @@
          "ExpiryWarning": null,
          "Features": 0,
          "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneVisualiser",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneSurfaces",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneStructuralMembers",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstonePlanning",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneHousing",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneGeotechnical",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneDraughter",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneDrainage",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
       }
    ],
 
