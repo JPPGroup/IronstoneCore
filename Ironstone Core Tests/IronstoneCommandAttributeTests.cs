@@ -1,19 +1,20 @@
 ﻿using System.IO;
 using System.Reflection;
 using Autodesk.AutoCAD.Runtime;
+using Jpp.Ironstone.Core.Properties;
 using NUnit.Framework;
 
 namespace Jpp.Ironstone.Core.Tests
 {
     [TestFixture]
-    class IronstoneCommandAttributeTests : IronstoneTestFixture
+    class Civil3DCommandAttributeTests : IronstoneTestFixture
     {
-        public IronstoneCommandAttributeTests() : base(Assembly.GetExecutingAssembly(), typeof(IronstoneCommandAttributeTests)) { }
+        public Civil3DCommandAttributeTests() : base(Assembly.GetExecutingAssembly(), typeof(Civil3DCommandAttributeTests)) { }
 
         [Test]
-        public void LoggerCalled()
+        public void Civil3DFailed()
         {
-            bool result = RunTest<bool>(nameof(LoggerCalledResident));
+            bool result = RunTest<bool>(nameof(Civil3DFailedResident));
 
             Configuration config = new Configuration();
             config.TestSettings();
@@ -24,12 +25,13 @@ namespace Jpp.Ironstone.Core.Tests
                 contents = tr.ReadToEnd();
             }
 
-            StringAssert.Contains("LoggerCalledResident", contents);
+            StringAssert.Contains(Resources.Civil3DAttribute_Inform_Not, contents);
         }
 
         [IronstoneCommand]
-        [CommandMethod("LoggerCalledResident")]
-        public bool LoggerCalledResident()
+        [Civil3D]
+        [CommandMethod("Civil3DFailedResident")]
+        public bool Civil3DFailedResident()
         {
             return true;
         }

@@ -119,6 +119,7 @@
     <Compile Include="Autocad\DrawingObjects\IDrawingObjectManager.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\BlockDrawingObject.cs" />
     <Compile Include="Autocad\LayerState.cs" />
+    <Compile Include="Civil3DAttribute.cs" />
     <Compile Include="IronstoneCommandAttribute.cs" />
     <Compile Include="ServiceInterfaces\ITemplatedObject.cs" />
     <Compile Include="ServiceInterfaces\ITemplateSource.cs" />

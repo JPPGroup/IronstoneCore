@@ -101,6 +101,7 @@
     <Compile Include="Autocad\DocumentStoreTests.cs" />
     <Compile Include="Autocad\DrawingObjectManagerTests.cs" />
     <Compile Include="Autocad\DrawingObjectTests.cs" />
+    <Compile Include="Civil3DAttributeTests.cs" />
     <Compile Include="IronstoneCommandAttributeTests.cs" />
     <Compile Include="IronstoneTestFixture.cs" />
     <Compile Include="CoreExtensionApplicationTests.cs" />
