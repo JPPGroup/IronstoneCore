@@ -48,7 +48,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="AcTestFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\packages\AcTestFramework.2.1.43\lib\net472\AcTestFramework.dll</HintPath>
+      <HintPath>..\packages\AcTestFramework.2.2.44\lib\net472\AcTestFramework.dll</HintPath>
     </Reference>
     <Reference Include="AspectInjector.Broker, Version=2.2.5.0, Culture=neutral, PublicKeyToken=a29e12442a3d3609, processorArchitecture=MSIL">
       <HintPath>..\packages\AspectInjector.2.2.5\lib\netstandard2.0\AspectInjector.Broker.dll</HintPath>

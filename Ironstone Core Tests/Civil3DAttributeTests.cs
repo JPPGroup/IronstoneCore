@@ -1,8 +1,5 @@
 ﻿using System.IO;
 using System.Reflection;
-using Autodesk.AutoCAD.ApplicationServices.Core;
-using Autodesk.AutoCAD.Runtime;
-using Jpp.Ironstone.Core.Properties;
 using NUnit.Framework;
 
 namespace Jpp.Ironstone.Core.Tests
@@ -29,13 +26,18 @@ namespace Jpp.Ironstone.Core.Tests
             // TODO: Review referencing the resource string directly
             StringAssert.Contains("Command is not available unless running in Civil 3D", contents);
         }
-
-        [IronstoneCommand]
-        [Civil3D]
-        [CommandMethod("Civil3DFailedResident")]
+        
         public bool Civil3DFailedResident()
         {
-            return true;
+            bool ran = false;
+            Civil3DFailedResidentInner(ref ran);
+            return ran;
+        }
+
+        [Civil3D]
+        public void Civil3DFailedResidentInner(ref bool ran)
+        {
+            ran = true;
         }
     }
 }

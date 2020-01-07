@@ -76,8 +76,7 @@ namespace Jpp.Ironstone.Core
                 if (_civil3D != null) return _civil3D.Value;
                 try
                 {
-                    //StatusBar testBar = Autodesk.AutoCAD.ApplicationServices.Application.StatusBar;
-                    CivilDocument unused = CivilApplication.ActiveDocument;
+                    Civil3DTest();
                     _civil3D = true;
                 }
                 catch (System.Exception)
@@ -87,6 +86,12 @@ namespace Jpp.Ironstone.Core
 
                 return _civil3D.Value;
             }
+        }
+
+        private static void Civil3DTest()
+        {
+            //StatusBar testBar = Autodesk.AutoCAD.ApplicationServices.Application.StatusBar;
+            CivilDocument unused = CivilApplication.ActiveDocument;
         }
 
         public UnityContainer Container { get; set; }
