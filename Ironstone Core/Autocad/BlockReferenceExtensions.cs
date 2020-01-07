@@ -6,6 +6,7 @@ namespace Jpp.Ironstone.Core.Autocad
 {
     public static class BlockReferenceExtensions
     {
+        // TODO: Consider moving to block reference object once implemented.
         public static string EffectiveName(this BlockReference block)
         {
             if (block == null)

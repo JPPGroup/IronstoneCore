@@ -21,11 +21,15 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         [Test]
         public void VerifyDynamicBlockReferenceName()
         {
-            var result = RunTest<bool>(nameof(VerifyDynamicBlockReferenceNameResident));
-            Assert.IsTrue(result);
+            var result = RunTest<string>(nameof(VerifyDynamicBlockReferenceNameResident));
+            Assert.Multiple(() =>
+            {
+                Assert.IsNotNull(result);
+                Assert.AreEqual(result, LevelBlockName);
+            });
         }
 
-        public static bool VerifyDynamicBlockReferenceNameResident()
+        public static string VerifyDynamicBlockReferenceNameResident()
         {
             var acDoc = Application.DocumentManager.MdiActiveDocument;
             var acCurDb = acDoc.Database;
@@ -38,9 +42,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                 acTrans.Commit();
             }
 
-            if (block == null) return false;
-
-            return block.EffectiveName() == LevelBlockName;
+            return block?.EffectiveName();
         }
 
         private static BlockReference CreateDynamicBlockReference(Database database)
