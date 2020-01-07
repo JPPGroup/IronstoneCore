@@ -98,6 +98,7 @@
     <Compile Include="Autocad\DocumentStoreTests.cs" />
     <Compile Include="Autocad\DrawingObjectManagerTests.cs" />
     <Compile Include="Autocad\DrawingObjectTests.cs" />
+    <Compile Include="Autocad\BlockReferenceExtensionsTests.cs" />
     <Compile Include="IronstoneTestFixture.cs" />
     <Compile Include="CoreExtensionApplicationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
