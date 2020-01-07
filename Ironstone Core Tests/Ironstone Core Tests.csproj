@@ -36,15 +36,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="accoremgd, Version=23.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.0.6\lib\net47\accoremgd.dll</HintPath>
+      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.0.7\lib\net47\accoremgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Acdbmgd, Version=23.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.0.6\lib\net47\Acdbmgd.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.0.7\lib\net47\Acdbmgd.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="acdbmgdbrep, Version=23.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.0.6\lib\net47\acdbmgdbrep.dll</HintPath>
+      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.0.7\lib\net47\acdbmgdbrep.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AcTestFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
