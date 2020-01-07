@@ -1,13 +1,12 @@
 ﻿using AspectInjector.Broker;
 using System;
-using Autodesk.AutoCAD.ApplicationServices.Core;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Unity;
 
 namespace Jpp.Ironstone.Core
 {
-    [Injection(typeof(IronstoneCommandAspect))]
+    [Injection(typeof(Civil3DAspect))]
     [AttributeUsage(AttributeTargets.Method)]
     class Civil3DAttribute : Attribute
     {

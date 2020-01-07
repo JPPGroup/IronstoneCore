@@ -1,20 +1,20 @@
 ﻿using System.IO;
 using System.Reflection;
 using Autodesk.AutoCAD.Runtime;
-using Jpp.Ironstone.Core.Properties;
 using NUnit.Framework;
 
 namespace Jpp.Ironstone.Core.Tests
 {
     [TestFixture]
-    class Civil3DCommandAttributeTests : IronstoneTestFixture
+    // TODO: Add a test for whne civil 3d is running to check this works ok. Need Civil 3d test environment to implement 
+    class IronstoneCommandAttributeTests : IronstoneTestFixture
     {
-        public Civil3DCommandAttributeTests() : base(Assembly.GetExecutingAssembly(), typeof(Civil3DCommandAttributeTests)) { }
+        public IronstoneCommandAttributeTests() : base(Assembly.GetExecutingAssembly(), typeof(IronstoneCommandAttributeTests)) { }
 
         [Test]
-        public void Civil3DFailed()
+        public void LoggerCalled()
         {
-            bool result = RunTest<bool>(nameof(Civil3DFailedResident));
+            bool result = RunTest<bool>(nameof(LoggerCalledResident));
 
             Configuration config = new Configuration();
             config.TestSettings();
@@ -25,13 +25,12 @@ namespace Jpp.Ironstone.Core.Tests
                 contents = tr.ReadToEnd();
             }
 
-            StringAssert.Contains(Resources.Civil3DAttribute_Inform_Not, contents);
+            StringAssert.Contains("LoggerCalledResident", contents);
         }
 
         [IronstoneCommand]
-        [Civil3D]
-        [CommandMethod("Civil3DFailedResident")]
-        public bool Civil3DFailedResident()
+        [CommandMethod("LoggerCalledResident")]
+        public bool LoggerCalledResident()
         {
             return true;
         }
