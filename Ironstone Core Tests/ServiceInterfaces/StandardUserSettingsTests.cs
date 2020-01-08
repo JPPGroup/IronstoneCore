@@ -1,4 +1,5 @@
-﻿using Jpp.Ironstone.Core.ServiceInterfaces;
+﻿using System;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 using NUnit.Framework;
 using System.Reflection;
 using Unity;
@@ -11,6 +12,12 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         public StandardUserSettingsTests() : base(Assembly.GetExecutingAssembly(), typeof(StandardUserSettingsTests)) { }
 
         [Test]
+        public void VerifyCast()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyCastResident)));
+        }
+
+        [Test]
         public void VerifyOverwrite()
         {
             Assert.Multiple(() =>
@@ -20,15 +27,28 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             });
         }
 
+        public bool VerifyCastResident()
+        {
+            try
+            {
+                StandardUserSettings settings = (StandardUserSettings)CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+                return true;
+            }
+            catch (InvalidCastException)
+            {
+                return false;
+            }
+        }
+
         public string VerifyBaseValueResident()
         {
-            IUserSettings settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            StandardUserSettings settings = (StandardUserSettings) CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
             return settings.GetValue("standarddetaillibrary.location");
         }
 
         public string VerifyTopUserResident()
         {
-            IUserSettings settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            StandardUserSettings settings = (StandardUserSettings)CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
             return settings.GetValue("standarddetaillibrary.cachedisabled");
         }
 
@@ -40,8 +60,20 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 
         public bool VerifyMissingResident()
         {
-            IUserSettings settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
-            return string.IsNullOrEmpty(settings.GetValue("junk.data"));
+            StandardUserSettings settings = (StandardUserSettings)CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            return settings.GetValue("junk.data") == null;
+        }
+
+        [Test]
+        public void VerifySameLoadedInstance()
+        {
+            Assert.IsTrue(RunTest<bool>(nameof(VerifySameLoadedInstanceResident)));
+        }
+
+        public bool VerifySameLoadedInstanceResident()
+        {
+            StandardUserSettings settings = (StandardUserSettings)CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            return settings.GetValue("junk.data") == null;
         }
     }
 }
