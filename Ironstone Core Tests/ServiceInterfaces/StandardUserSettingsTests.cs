@@ -17,16 +17,6 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             Assert.IsTrue(RunTest<bool>(nameof(VerifyCastResident)));
         }
 
-        [Test]
-        public void VerifyOverwrite()
-        {
-            Assert.Multiple(() =>
-            {
-                StringAssert.AreEqualIgnoringCase("N:\\Consulting\\Library\\Ironstone\\Details", RunTest<string>(nameof(VerifyBaseValueResident)));
-                StringAssert.AreEqualIgnoringCase("false", RunTest<string>(nameof(VerifyTopUserResident)));
-            });
-        }
-
         public bool VerifyCastResident()
         {
             try
@@ -40,16 +30,19 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             }
         }
 
-        public string VerifyBaseValueResident()
-        {
-            StandardUserSettings settings = (StandardUserSettings) CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
-            return settings.GetValue("standarddetaillibrary.location");
+        [TestCase("standarddetaillibrary.location", ExpectedResult="n:\\consulting\\library\\ironstone\\details")] //Test base setting
+        [TestCase("standarddetaillibrary.cachedisabled", ExpectedResult = "false")] //Test overwrite
+        [TestCase("standarDDetailliBrary.loCation", ExpectedResult = "n:\\consulting\\library\\ironstone\\details")] //Test mixed case
+        [TestCase("STANDARDDETAILLIBRARY.LOCATION", ExpectedResult = "n:\\consulting\\library\\ironstone\\details")] //Test upper case
+        public string VerifyOverwrite(string key)
+        { 
+            return RunTest<string>(nameof(GetSettingResident), key).ToLower();
         }
 
-        public string VerifyTopUserResident()
+        public string GetSettingResident(string key)
         {
-            StandardUserSettings settings = (StandardUserSettings)CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
-            return settings.GetValue("standarddetaillibrary.cachedisabled");
+            StandardUserSettings settings = (StandardUserSettings) CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            return settings.GetValue(key);
         }
 
         [Test]
@@ -73,7 +66,10 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         public bool VerifySameLoadedInstanceResident()
         {
             StandardUserSettings settings = (StandardUserSettings)CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
-            return settings.GetValue("junk.data") == null;
+            Configuration config = CoreExtensionApplication._current.Container.Resolve<Configuration>();
+            IUserSettings newSettings = settings.LoadFrom(config.NetworkUserSettingsPath);
+
+            return object.ReferenceEquals(settings, newSettings);
         }
     }
 }
