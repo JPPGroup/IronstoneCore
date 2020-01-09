@@ -54,6 +54,9 @@
       <HintPath>..\packages\Jpp.Ironstone.UiApi.2019.0.0.1\lib\net47\AdWindows.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="AspectInjector.Broker, Version=2.2.5.0, Culture=neutral, PublicKeyToken=a29e12442a3d3609, processorArchitecture=MSIL">
+      <HintPath>..\packages\AspectInjector.2.2.5\lib\netstandard2.0\AspectInjector.Broker.dll</HintPath>
+    </Reference>
     <Reference Include="AutoUpdate, Version=1.0.15.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoUpdate.1.0.15\lib\net47\AutoUpdate.dll</HintPath>
     </Reference>
@@ -163,6 +166,12 @@
   <ItemGroup>
     <None Include="Resources\Feedback.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\AspectInjector.Analyzer.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\AspectInjector.Broker.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\AspectInjector.Rules.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\FluentIL.Common.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
@@ -174,5 +183,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Jpp.Common.Tooling.Signing.0.3.0\build\Jpp.Common.Tooling.Signing.targets'))" />
+    <Error Condition="!Exists('..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets'))" />
   </Target>
+  <Import Project="..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets" Condition="Exists('..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets')" />
 </Project>

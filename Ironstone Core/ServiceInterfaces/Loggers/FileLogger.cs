@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using NLog;
-using Exception = System.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
@@ -12,7 +11,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public FileLogger(string path)
         {
-            var config = new NLog.Config.LoggingConfiguration();
+            var config = LogManager.Configuration ?? new NLog.Config.LoggingConfiguration();
             var logfile = new NLog.Targets.FileTarget
             {
                 Name= "logfile",
@@ -22,11 +21,13 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
                 MaxArchiveFiles = 10
             };
 
-            config.AddRule(LogLevel.Trace, LogLevel.Fatal, logfile);
+            config.AddTarget(logfile);
+
+            config.AddRule(LogLevel.Trace, LogLevel.Fatal, "logfile", "Ironstone");
 
             LogManager.Configuration = config;
 
-            _logger = LogManager.GetCurrentClassLogger();
+            _logger = LogManager.GetLogger("Ironstone");
         }
 
         public void Dispose()
@@ -68,7 +69,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public override void LogException(Exception exception)
         {
-            //_logger.Error(exception, Process.Id.ToString);
             _logger.Error(exception);
         }
 

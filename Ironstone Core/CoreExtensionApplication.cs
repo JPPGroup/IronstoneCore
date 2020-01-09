@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -68,7 +67,6 @@ namespace Jpp.Ironstone.Core
         /// <summary>
         /// Returns true if currently running under Civil 3D
         /// </summary>
-        // ReSharper disable once UnusedMember.Global
         public static bool Civil3D
         {
             get
@@ -76,8 +74,7 @@ namespace Jpp.Ironstone.Core
                 if (_civil3D != null) return _civil3D.Value;
                 try
                 {
-                    //StatusBar testBar = Autodesk.AutoCAD.ApplicationServices.Application.StatusBar;
-                    CivilDocument unused = CivilApplication.ActiveDocument;
+                    Civil3DTest();
                     _civil3D = true;
                 }
                 catch (System.Exception)
@@ -87,6 +84,11 @@ namespace Jpp.Ironstone.Core
 
                 return _civil3D.Value;
             }
+        }
+
+        private static void Civil3DTest()
+        {
+            CivilDocument unused = CivilApplication.ActiveDocument;
         }
 
         public UnityContainer Container { get; set; }

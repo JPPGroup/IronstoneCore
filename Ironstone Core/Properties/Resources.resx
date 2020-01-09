@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Civil3DAttribute_Inform_Not" xml:space="preserve">
+    <value>Command is not available unless running in Civil 3D</value>
+  </data>
   <data name="ExtensionApplication_Inform_LoadedMain" xml:space="preserve">
     <value>Core loaded successfully.</value>
   </data>
   <data name="ExtensionApplication_Inform_LoadingMain" xml:space="preserve">
     <value>Core extension loading begun...</value>
+  </data>
+  <data name="LogCommand_Inform_Not" xml:space="preserve">
+    <value>Method is not a valid command method</value>
   </data>
 </root>

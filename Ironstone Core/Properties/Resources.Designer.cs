@@ -19,7 +19,7 @@ namespace Jpp.Ironstone.Core.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -61,6 +61,15 @@ namespace Jpp.Ironstone.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command is not available unless running in Civil 3D.
+        /// </summary>
+        internal static string Civil3DAttribute_Inform_Not {
+            get {
+                return ResourceManager.GetString("Civil3DAttribute_Inform_Not", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Core loaded successfully..
         /// </summary>
         internal static string ExtensionApplication_Inform_LoadedMain {
@@ -75,6 +84,15 @@ namespace Jpp.Ironstone.Core.Properties {
         internal static string ExtensionApplication_Inform_LoadingMain {
             get {
                 return ResourceManager.GetString("ExtensionApplication_Inform_LoadingMain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Method is not a valid command method.
+        /// </summary>
+        internal static string LogCommand_Inform_Not {
+            get {
+                return ResourceManager.GetString("LogCommand_Inform_Not", resourceCulture);
             }
         }
     }

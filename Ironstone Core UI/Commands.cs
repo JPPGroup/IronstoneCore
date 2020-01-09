@@ -14,10 +14,9 @@ namespace Jpp.Ironstone.Core.UI
         private static bool _handled;
 
         [CommandMethod("DEBUG_SHOW_HANDLE")]
+        [IronstoneCommand]
         public static void SetShowHandle()
         {
-            CoreUIExtensionApplication.Current.Logger.LogCommand(typeof(Commands), nameof(SetShowHandle));
-
             try
             {
                 var ed = Application.DocumentManager.MdiActiveDocument.Editor;
@@ -51,10 +50,9 @@ namespace Jpp.Ironstone.Core.UI
         }
 
         [CommandMethod("Core_Feedback")]
+        [IronstoneCommand]
         public static void OpenFeedbackPage()
         {
-            CoreUIExtensionApplication.Current.Logger.LogCommand(typeof(Commands), nameof(OpenFeedbackPage));
-
             try
             {
                 var process = new Process
