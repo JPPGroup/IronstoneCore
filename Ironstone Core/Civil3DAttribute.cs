@@ -8,7 +8,7 @@ namespace Jpp.Ironstone.Core
 {
     [Injection(typeof(Civil3DAspect))]
     [AttributeUsage(AttributeTargets.Method)]
-    class Civil3DAttribute : Attribute
+    public class Civil3DAttribute : Attribute
     {
     }
 
@@ -22,8 +22,7 @@ namespace Jpp.Ironstone.Core
         }
 
         [Advice(Kind.Around, Targets = Target.Method)]
-        public object HandleMethod([Argument(Source.Name)] string name,
-            [Argument(Source.Arguments)] object[] arguments,
+        public object HandleMethod([Argument(Source.Arguments)] object[] arguments,
             [Argument(Source.Target)] Func<object[], object> method)
         {
             if (CoreExtensionApplication.Civil3D)
@@ -49,14 +48,9 @@ namespace Jpp.Ironstone.Core
             }
 
             //Realise this is an Anti-Pattern but this is better than remembering to set properties on the factory at runtime
-            ILogger logger = CoreExtensionApplication._current.Container.Resolve<ILogger>();
+            Civil3DAspect aspect = CoreExtensionApplication._current.Container.Resolve<Civil3DAspect>();
 
-            if (logger == null)
-            {
-                throw new ArgumentException($"Logger is null");
-            }
-
-            return new Civil3DAspect(logger);
+            return aspect;
         }
     }
 }

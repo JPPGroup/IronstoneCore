@@ -37,14 +37,8 @@ namespace Jpp.Ironstone.Core
             }
 
             //Realise this is an Anti-Pattern but this is better than remembering to set properties on the factory at runtime
-            ILogger logger = CoreExtensionApplication._current.Container.Resolve<ILogger>();
-
-            if (logger == null)
-            {
-                throw new ArgumentException($"Logger is null");
-            }
-
-            return new IronstoneCommandAspect(logger);
+            IronstoneCommandAspect aspect = CoreExtensionApplication._current.Container.Resolve<IronstoneCommandAspect>();
+            return aspect;
         }
     }
 }

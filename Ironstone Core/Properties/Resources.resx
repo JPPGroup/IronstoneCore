@@ -126,4 +126,7 @@
   <data name="ExtensionApplication_Inform_LoadingMain" xml:space="preserve">
     <value>Core extension loading begun...</value>
   </data>
+  <data name="LogCommand_Inform_Not" xml:space="preserve">
+    <value>Method is not a valid command method</value>
+  </data>
 </root>

@@ -1,6 +1,7 @@
 ﻿using Autodesk.AutoCAD.Runtime;
 using System;
 using System.Reflection;
+using Jpp.Ironstone.Core.Properties;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
@@ -15,8 +16,15 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
         {
             var rtMethod = type.GetRuntimeMethod(method, new Type[] { });
             var attribute = rtMethod.GetCustomAttribute<CommandMethodAttribute>();
-
-            LogEvent(Event.Command, attribute.GlobalName);
+            
+            if (attribute != null)
+            {
+                LogEvent(Event.Command, attribute.GlobalName);
+            }
+            else
+            {
+                LogEvent(Event.Message, Resources.LogCommand_Inform_Not);
+            }
         }
 
         public abstract void Entry(string message, Severity sev);

@@ -5,6 +5,7 @@ using NUnit.Framework;
 namespace Jpp.Ironstone.Core.Tests
 {
     [TestFixture]
+    // TODO: Add a test for when civil 3d is running to check this works ok. Need Civil 3d test environment to implement 
     class Civil3DCommandAttributeTests : IronstoneTestFixture
     {
         public Civil3DCommandAttributeTests() : base(Assembly.GetExecutingAssembly(), typeof(Civil3DCommandAttributeTests)) { }
@@ -23,8 +24,12 @@ namespace Jpp.Ironstone.Core.Tests
                 contents = tr.ReadToEnd();
             }
 
-            // TODO: Review referencing the resource string directly
-            StringAssert.Contains("Command is not available unless running in Civil 3D", contents);
+            Assert.Multiple(() =>
+            {
+                // TODO: Review referencing the resource string directly
+                StringAssert.Contains("Command is not available unless running in Civil 3D", contents);
+                Assert.IsFalse(result, "Method should not run");
+            });
         }
         
         public bool Civil3DFailedResident()

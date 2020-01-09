@@ -6,15 +6,17 @@ using NUnit.Framework;
 namespace Jpp.Ironstone.Core.Tests
 {
     [TestFixture]
-    // TODO: Add a test for whne civil 3d is running to check this works ok. Need Civil 3d test environment to implement 
     class IronstoneCommandAttributeTests : IronstoneTestFixture
     {
         public IronstoneCommandAttributeTests() : base(Assembly.GetExecutingAssembly(), typeof(IronstoneCommandAttributeTests)) { }
 
-        [Test]
-        public void LoggerCalled()
+        [TestCase(nameof(LoggerCalled_WithAttribute_WithCommandResident), ExpectedResult = true)]
+        [TestCase(nameof(LoggerCalled_WithAttribute_WithoutCommand_Resident), ExpectedResult = false)]
+        [TestCase(nameof(LoggerCalled_WithoutAttribute_WithoutCommand_Resident), ExpectedResult = false)]
+        [TestCase(nameof(LoggerCalled_WithoutAttribute_WithCommand_Resident), ExpectedResult = false)]
+        public bool LoggerCalled(string commandName)
         {
-            bool result = RunTest<bool>(nameof(LoggerCalledResident));
+            bool result = RunTest<bool>(commandName);
 
             Configuration config = new Configuration();
             config.TestSettings();
@@ -25,12 +27,29 @@ namespace Jpp.Ironstone.Core.Tests
                 contents = tr.ReadToEnd();
             }
 
-            StringAssert.Contains("LoggerCalledResident", contents);
+            return result && contents.Contains(commandName);
         }
 
         [IronstoneCommand]
-        [CommandMethod("LoggerCalledResident")]
-        public bool LoggerCalledResident()
+        [CommandMethod("LoggerCalled_WithAttribute_WithCommandResident")]
+        public bool LoggerCalled_WithAttribute_WithCommandResident()
+        {
+            return true;
+        }
+
+        [IronstoneCommand]
+        public bool LoggerCalled_WithAttribute_WithoutCommand_Resident()
+        {
+            return true;
+        }
+
+        [CommandMethod("LoggerCalled_WithoutAttribute_WithCommand_Resident")]
+        public bool LoggerCalled_WithoutAttribute_WithCommand_Resident()
+        {
+            return true;
+        }
+
+        public bool LoggerCalled_WithoutAttribute_WithoutCommand_Resident()
         {
             return true;
         }

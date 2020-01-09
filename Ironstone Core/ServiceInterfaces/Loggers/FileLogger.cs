@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using NLog;
-using Exception = System.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 {
@@ -65,7 +64,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Loggers
 
         public override void LogEvent(Event eventType, string eventParameters)
         {
-            _logger.Error($"{Process.Id}:{eventType}:{eventParameters}");
+            _logger.Trace($"{Process.Id}:{eventType}:{eventParameters}");
         }
 
         public override void LogException(Exception exception)

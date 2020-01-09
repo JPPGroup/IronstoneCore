@@ -86,5 +86,14 @@ namespace Jpp.Ironstone.Core.Properties {
                 return ResourceManager.GetString("ExtensionApplication_Inform_LoadingMain", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Method is not a valid command method.
+        /// </summary>
+        internal static string LogCommand_Inform_Not {
+            get {
+                return ResourceManager.GetString("LogCommand_Inform_Not", resourceCulture);
+            }
+        }
     }
 }
