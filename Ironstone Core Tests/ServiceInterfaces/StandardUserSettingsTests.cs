@@ -12,12 +12,12 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         public StandardUserSettingsTests() : base(Assembly.GetExecutingAssembly(), typeof(StandardUserSettingsTests)) { }
 
         [Test]
-        public void VerifyCast()
+        public void VerifyConcreteResolve()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyCastResident)));
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyConcreteResolveResident)));
         }
 
-        public bool VerifyCastResident()
+        public bool VerifyConcreteResolveResident()
         {
             try
             {
@@ -45,6 +45,29 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             return settings.GetValue(key);
         }
 
+
+
+        [Test]
+        public void VerifyRootCastFailure()
+        {
+            Assert.True(RunTest<bool>(nameof(VerifyRootCastFailureResident)));
+        }
+
+        public bool VerifyRootCastFailureResident()
+        {
+            StandardUserSettings settings = (StandardUserSettings)CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            try
+            {
+                settings.GetValue("standarddetaillibrary");
+            }
+            catch (InvalidCastException)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         [Test]
         public void VerifyMissing()
         {
@@ -70,6 +93,33 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             IUserSettings newSettings = settings.LoadFrom(config.NetworkUserSettingsPath);
 
             return object.ReferenceEquals(settings, newSettings);
+        }
+
+        [TestCase("standarddetaillibrary.cachedisabled", ExpectedResult = CastResult.CastSucceeded)]
+        [TestCase("standarddetaillibrary.location", ExpectedResult = CastResult.CastFailed)]
+        public CastResult VerifyCast(string key)
+        {
+            return RunTest<CastResult>(nameof(VerifyCastResident), key);
+        }
+
+        public CastResult VerifyCastResident(string key)
+        {
+            StandardUserSettings settings = (StandardUserSettings)CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            try
+            {
+                settings.GetValue<bool>(key);
+                return CastResult.CastSucceeded;
+            }
+            catch (FormatException)
+            {
+                return CastResult.CastFailed;
+            }
+        }
+
+        public enum CastResult
+        {
+            CastSucceeded,
+            CastFailed
         }
     }
 }
