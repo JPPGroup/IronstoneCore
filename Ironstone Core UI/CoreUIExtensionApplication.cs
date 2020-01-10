@@ -1,9 +1,14 @@
-﻿using Autodesk.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.Windows;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.UI.Properties;
 using Jpp.Ironstone.Core.UI.ViewModels;
 using Jpp.Ironstone.Core.UI.Views;
 using Unity;
+using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.UI
 {
@@ -15,6 +20,8 @@ namespace Jpp.Ironstone.Core.UI
         private IUnityContainer _container;
 
         private RibbonTab _designTab, _conceptTab;
+        private List<Tuple<RibbonTab, Func<bool>>> _contextTabs;
+        private List<RibbonTab> _toActivate;
 
         public void CreateUI()
         {
@@ -28,6 +35,47 @@ namespace Jpp.Ironstone.Core.UI
         {
             Current = this;
             CoreExtensionApplication._current.RegisterExtension(this);
+            _contextTabs = new List<Tuple<RibbonTab, Func<bool>>>();
+            _toActivate = new List<RibbonTab>();
+
+            Application.DocumentManager.DocumentCreated += delegate(object sender, DocumentCollectionEventArgs args)
+            {
+                args.Document.ImpliedSelectionChanged += DocumentOnImpliedSelectionChanged;
+            };
+
+            Application.Idle += ApplicationOnIdle;
+        }
+
+        private void ApplicationOnIdle(object sender, EventArgs e)
+        {
+            foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
+            {
+                contextTab.Item1.IsVisible = false;
+            }
+
+            if (_toActivate.Any())
+            {
+
+                foreach (RibbonTab ribbonTab in _toActivate)
+                {
+                    ribbonTab.IsVisible = true;
+                }
+
+                _toActivate.Last().IsActive = true;
+            }
+        }
+
+        private void DocumentOnImpliedSelectionChanged(object sender, EventArgs e)
+        {
+            _toActivate.Clear();
+
+            foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
+            {
+                if (contextTab.Item2())
+                {
+                    _toActivate.Add(contextTab.Item1);
+                }
+            }
         }
 
         public void InjectContainer(IUnityContainer container)
@@ -44,11 +92,16 @@ namespace Jpp.Ironstone.Core.UI
             
         }
 
+        public void RegisterConceptTab(RibbonTab contextualTab, Func<bool> filter)
+        {
+            _contextTabs.Add(new Tuple<RibbonTab, Func<bool>>(contextualTab, filter));
+        }
+
         /// <summary>
         /// Creates the JPP tabs and adds it to the ribbon
         /// </summary>
         /// <returns>The main design tab</returns>
-        public void CreateTabs()
+        private void CreateTabs()
         {
             RibbonControl rc = ComponentManager.Ribbon;
             _designTab = new RibbonTab
@@ -73,7 +126,7 @@ namespace Jpp.Ironstone.Core.UI
         /// Add the core elements of the ui
         /// </summary>
         /// <param name="ironstoneTab">The tab to add the ui elements to</param>
-        public void CreateCoreMenu(RibbonTab ironstoneTab)
+        private void CreateCoreMenu(RibbonTab ironstoneTab)
         {
             RibbonPanel panel = new RibbonPanel();
             RibbonPanelSource source = new RibbonPanelSource { Title = "General" };
