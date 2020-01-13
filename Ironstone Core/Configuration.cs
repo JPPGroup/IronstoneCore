@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using Jpp.Common;
 using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
@@ -15,6 +16,7 @@ namespace Jpp.Ironstone.Core
         public bool EnableModuleUpdate;
         public bool LoadAppDirectory;
         public string NetworkUserSettingsPath;
+        public string UserSettingsPath;
 
         public string AppData
         {
@@ -54,6 +56,7 @@ namespace Jpp.Ironstone.Core
             BaseUrl = "https://ironstone.blob.core.windows.net/ironstone/";
             ObjectModelUrl = "https://ironstone.blob.core.windows.net/ironstone/IronstoneObjectModel.xml";
             NetworkUserSettingsPath = "N:\\Consulting\\Library\\Ironstone\\Config.json";
+            UserSettingsPath = Path.Combine(AppData, "Config.json");
 
         }
 
@@ -65,6 +68,8 @@ namespace Jpp.Ironstone.Core
             LoadAppDirectory = false;
             ContainerResolvers.Add(typeof(IAuthentication).FullName, typeof(PassDummyAuth).FullName);
             LogFileRelative = "UnitTestsIronstone.Log";
+            NetworkUserSettingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "BaseConfig.json");
+            UserSettingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "UserConfig.json");
         }
     }
 }

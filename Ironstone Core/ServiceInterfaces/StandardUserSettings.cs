@@ -1,59 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NLog.Layouts;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     public class StandardUserSettings : IUserSettings
     {
-        private ILogger _logger;
-        private Dictionary<string, string> _settings;
+        private readonly ILogger _logger;
+        private readonly JObject _jObject;
 
         public StandardUserSettings(ILogger logger, Configuration configuration)
         {
             _logger = logger;
-
-            _settings = new Dictionary<string, string>();
-            this.LoadFrom(configuration.NetworkUserSettingsPath).LoadFrom(configuration.AppData + "Config.json");
+            _jObject = new JObject();
+            this.LoadFrom(configuration.NetworkUserSettingsPath).LoadFrom(configuration.UserSettingsPath);
         }
 
         public IUserSettings LoadFrom(string path)
         {
             if (File.Exists(path))
             {
-                string json;
-
-                using (StreamReader sr = File.OpenText(path))
+                JObject newData;
+                try
                 {
-                    json = sr.ReadToEnd();
-                    try
+                    using (StreamReader sr = File.OpenText(path))
                     {
-                        JToken.Parse(json);
+                        string json = sr.ReadToEnd().ToLower();
+                        try
+                        {
+                            newData = JObject.Parse(json);
+                        }
+                        catch (JsonReaderException ex)
+                        {
+                            _logger.Entry($"Invalid settings file found at path {path}", Severity.Error);
+                            _logger.LogException(ex);
+                            return this;
+                        }
                     }
-                    catch (JsonReaderException ex)
+
+                    JsonMergeSettings mergeSettings = new JsonMergeSettings()
                     {
-                        _logger.Entry($"Invalid settings file found at path {path}", Severity.Error);
-                        return this;
-                    }
+                        MergeArrayHandling = MergeArrayHandling.Union
+                    };
+
+                    _jObject.Merge(newData, mergeSettings);
                 }
-
-                var importedSettings = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-                foreach (KeyValuePair<string, string> s in importedSettings)
+                catch (UnauthorizedAccessException)
                 {
-                    if (_settings.ContainsKey(s.Key))
-                    {
-                        _settings[s.Key] = s.Value;
-                    }
-                    else
-                    {
-                        _settings.Add(s.Key, s.Value);
-                    }
+                    _logger.Entry($"Access denied to settings file at path {path}", Severity.Error);
                 }
             }
             else
@@ -64,16 +59,40 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             return this;
         }
 
+        public T? GetValue<T>(string key) where T : struct
+        {
+            var root = GetNode(key);
+
+            // If this cast fails, this will fail and throw an exception. Considered intentional; if setting is found
+            // but unable to cast, then that setting is invalid. No default value should be assumed.
+            return root?.Value<T>();
+        }
+
         public string GetValue(string key)
         {
-            if (_settings.ContainsKey(key))
+            var root = GetNode(key);
+
+            // If this cast fails (i.e. calling a setting group rather a setting) this will fail and throw an exception
+            // Considered intentional so that changing a setting to a group down the line will not change a failure silently
+            // to a default value.
+            return root?.Value<string>();
+        }
+
+        private JToken GetNode(string key)
+        {
+            string[] path = key.ToLower().Split('.');
+            JToken root = _jObject;
+            foreach (string s in path)
             {
-                return _settings[key];
+                root = root[s];
+                if (root == null)
+                {
+                    _logger.Entry($"Invalid settings path {key}. Key {s} not found.", Severity.Warning);
+                    return null;
+                }
             }
-            else
-            {
-                return null;
-            }
+
+            return root;
         }
     }
 }
