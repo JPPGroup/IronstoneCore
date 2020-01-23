@@ -38,16 +38,49 @@ namespace Jpp.Ironstone.Core.UI
             _contextTabs = new List<Tuple<RibbonTab, Func<bool>>>();
             _toActivate = new List<RibbonTab>();
 
+            foreach (Document document in Application.DocumentManager)
+            {
+                document.ImpliedSelectionChanged += DocumentOnImpliedSelectionChanged;
+            }
+
             Application.DocumentManager.DocumentCreated += delegate(object sender, DocumentCollectionEventArgs args)
             {
                 args.Document.ImpliedSelectionChanged += DocumentOnImpliedSelectionChanged;
             };
-
-            Application.Idle += ApplicationOnIdle;
         }
 
+        public void InjectContainer(IUnityContainer container)
+        {
+            _container = container;
+
+            _container.RegisterType<About>();
+            _container.RegisterType<AboutViewModel>();
+            Logger = _container.Resolve<ILogger>();
+        }
+
+        public void Terminate()
+        {
+            
+        }
+
+        /// <summary>
+        /// Add a contextual tab with activation delegate. No properties specific to being contextual need to be set
+        /// </summary>
+        /// <param name="contextualTab">Reference to contextual tab</param>
+        /// <param name="filter">Boolean delegate that controls when tab is set active. Called whenever selection changes.</param>
+        public void RegisterConceptTab(RibbonTab contextualTab, Func<bool> filter)
+        {
+            _contextTabs.Add(new Tuple<RibbonTab, Func<bool>>(contextualTab, filter));
+            contextualTab.IsVisible = false;
+            contextualTab.IsContextualTab = true;
+            ComponentManager.Ribbon.Tabs.Add(contextualTab);
+        }
+
+        // Triggered when idle to display tab. Immediately unregisters event for efficiency
         private void ApplicationOnIdle(object sender, EventArgs e)
         {
+            Application.Idle -= ApplicationOnIdle;
+
             foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
             {
                 contextTab.Item1.IsVisible = false;
@@ -67,6 +100,7 @@ namespace Jpp.Ironstone.Core.UI
 
         private void DocumentOnImpliedSelectionChanged(object sender, EventArgs e)
         {
+            // Remove all active tabs
             _toActivate.Clear();
 
             foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
@@ -76,25 +110,8 @@ namespace Jpp.Ironstone.Core.UI
                     _toActivate.Add(contextTab.Item1);
                 }
             }
-        }
 
-        public void InjectContainer(IUnityContainer container)
-        {
-            _container = container;
-
-            _container.RegisterType<About>();
-            _container.RegisterType<AboutViewModel>();
-            Logger = _container.Resolve<ILogger>();
-        }
-
-        public void Terminate()
-        {
-            
-        }
-
-        public void RegisterConceptTab(RibbonTab contextualTab, Func<bool> filter)
-        {
-            _contextTabs.Add(new Tuple<RibbonTab, Func<bool>>(contextualTab, filter));
+            Application.Idle += ApplicationOnIdle;
         }
 
         /// <summary>
