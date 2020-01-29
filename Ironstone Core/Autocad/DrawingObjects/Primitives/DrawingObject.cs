@@ -5,15 +5,16 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
     public abstract class DrawingObject
     {
-        private DBObject _activeObject;
-        private Database _database;
-
+        protected DBObject _activeObject;
+        protected Database _database { get; private set; }
+        
         public string DatabaseName
         {
             get { return _database.Filename; }
@@ -54,11 +55,24 @@ namespace Jpp.Ironstone.Core.Autocad
             {
                 if (BaseObjectPtr == value.Handle.Value) return;
 
+                long oldHandle = BaseObjectPtr;
+                BaseObjectPtr = value.Handle.Value;
+                if (!VerifyBaseObject())
+                {
+                    BaseObjectPtr = oldHandle;
+                    throw new ArgumentException($"Invalid base type");
+                }
+                
                 //Remove event handles from previous object, change pointer and activate new object.
                 UnhookActiveObject();
                 BaseObjectPtr = value.Handle.Value;
                 CreateActiveObject();
             }
+        }
+
+        protected virtual bool VerifyBaseObject()
+        {
+            return true;
         }
 
         private void UnhookActiveObject()
@@ -223,5 +237,14 @@ namespace Jpp.Ironstone.Core.Autocad
         }
 
         public abstract void Erase();
+
+        public void SetLayer(string name)
+        {
+            Transaction acTrans = _database.TransactionManager.TopTransaction;
+            Entity ent = (Entity)acTrans.GetObject(BaseObject, OpenMode.ForWrite);
+
+            //TODO: Verify that databasename is equivalent to doc name
+            ent.Layer = DataService.Current.GetStore<DocumentStore>(DatabaseName).LayerManager.GetLayerName(name);
+        }
     }
 }
