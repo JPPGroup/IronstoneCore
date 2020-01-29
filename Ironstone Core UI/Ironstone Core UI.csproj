@@ -55,11 +55,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="AecBaseMgd, Version=8.1.48.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\ironstone-housing\packages\Jpp.Ironstone.C3dApi.2019.0.1.0\lib\net47\AecBaseMgd.dll</HintPath>
+      <HintPath>..\packages\Jpp.Ironstone.C3dApi.2019.0.1.1\lib\net47\AecBaseMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AeccDbMgd, Version=13.0.613.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>..\..\ironstone-housing\packages\Jpp.Ironstone.C3dApi.2019.0.1.0\lib\net47\AeccDbMgd.dll</HintPath>
+      <HintPath>..\packages\Jpp.Ironstone.C3dApi.2019.0.1.1\lib\net47\AeccDbMgd.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AspectInjector.Broker, Version=2.2.5.0, Culture=neutral, PublicKeyToken=a29e12442a3d3609, processorArchitecture=MSIL">
