@@ -17,6 +17,11 @@ namespace Jpp.Ironstone.Core.Tests.TestObjects
 
             return null;
         }
+
+        public T? GetValue<T>(string key) where T : struct
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class TestLayersDisabledSettings : IUserSettings
@@ -32,6 +37,11 @@ namespace Jpp.Ironstone.Core.Tests.TestObjects
             if (key == "layers-switch-on") return false.ToString();
 
             return null;
+        }
+
+        public T? GetValue<T>(string key) where T : struct
+        {
+            throw new NotImplementedException();
         }
     }
 }

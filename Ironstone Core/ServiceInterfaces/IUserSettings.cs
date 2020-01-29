@@ -11,5 +11,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         IUserSettings LoadFrom(string path);
 
         string GetValue(string key);
+
+        T? GetValue<T>(string key) where T : struct;
     }
 }

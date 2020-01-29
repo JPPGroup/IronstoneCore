@@ -88,6 +88,15 @@ namespace Jpp.Ironstone.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Command is experimental and not currently enabled..
+        /// </summary>
+        internal static string LogCommand_Inform_Experimental {
+            get {
+                return ResourceManager.GetString("LogCommand_Inform_Experimental", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Method is not a valid command method.
         /// </summary>
         internal static string LogCommand_Inform_Not {
