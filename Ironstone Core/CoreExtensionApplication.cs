@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.ApplicationServices.Core;
+using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.Civil.ApplicationServices;
 using Jpp.AutoUpdate;
@@ -91,6 +96,11 @@ namespace Jpp.Ironstone.Core
             CivilDocument unused = CivilApplication.ActiveDocument;
         }
 
+        /// <summary>
+        /// Event fired when a civil 3d drawing is opened in other products. Default behaviour is to log a warning only.
+        /// </summary>
+        public event EventHandler<Document> Civil3DTagWarning;
+
         public UnityContainer Container { get; set; }
 
         #endregion
@@ -110,6 +120,8 @@ namespace Jpp.Ironstone.Core
         private ILogger _logger;
         private IAuthentication _authentication;
         private ObjectModel _objectModel;
+        private List<IIronstoneExtensionApplication> _extensions;
+        private bool _uiCreated;
         #endregion
 
         #region Autocad Extension Lifecycle
@@ -123,10 +135,9 @@ namespace Jpp.Ironstone.Core
 
             //If not running in console only, detect if ribbon is currently loaded, and if not wait until the application is Idle.
             //Throws an error if try to add to the menu with the ribbon unloaded
-            if (CoreConsole)
-                InitExtension();
-            else
-            {
+            InitExtension();
+            if (!CoreConsole)
+            { 
                 Autodesk.AutoCAD.ApplicationServices.Core.Application.Idle += Application_Idle;
             }
         }
@@ -149,7 +160,15 @@ namespace Jpp.Ironstone.Core
             //Unhook the event handler to prevent multiple calls
             Autodesk.AutoCAD.ApplicationServices.Core.Application.Idle -= Application_Idle;
             //Call the initialize method now the application is loaded
-            InitExtension();
+            if (!CoreConsole)
+            {
+                foreach (IIronstoneExtensionApplication ironstoneExtensionApplication in _extensions)
+                {
+                    ironstoneExtensionApplication.CreateUI();
+                }
+            }
+
+            _uiCreated = true;
         }
 
         #endregion
@@ -161,6 +180,9 @@ namespace Jpp.Ironstone.Core
         /// </summary>
         public void InitExtension()
         {
+            _extensions = new List<IIronstoneExtensionApplication>();
+            _uiCreated = false;
+
             //Unity registration
             Container= new UnityContainer();
 
@@ -213,6 +235,30 @@ namespace Jpp.Ironstone.Core
             }
 
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
+
+            // If not running in civil 3d, hook into document creation events to monitor for civil3d drawings being opened
+            if (!Civil3D)
+            {
+                foreach (Document doc in Application.DocumentManager)
+                {
+                    CheckDocument(doc);
+                }
+                Application.DocumentManager.DocumentCreated += DocumentManagerOnDocumentCreated;
+            }
+        }
+
+        private void DocumentManagerOnDocumentCreated(object sender, DocumentCollectionEventArgs e)
+        {
+            CheckDocument(e.Document);
+        }
+
+        private void CheckDocument(Document doc)
+        {
+            if (CheckDrawingForCivil3D(doc))
+            {
+                _logger.Entry("Civil3D features will not function in this drawing. Proceed at own risk.", Severity.Warning);
+                Civil3DTagWarning?.Invoke(this, doc);
+            }
         }
 
         private void LoadConfiguration()
@@ -289,15 +335,18 @@ namespace Jpp.Ironstone.Core
 
         public void RegisterExtension(IIronstoneExtensionApplication extension)
         {
+            if (_uiCreated)
+            {
+                _logger.Entry("Extensions registration attempted after UI has been loaded", Severity.Error);
+                return;
+            }
+
             _logger.Entry($"{extension.GetType().ToString()} registration started", Severity.Debug);
             DataService.Current.InvalidateStoreTypes();
             try
             {
                 extension.InjectContainer(_current.Container);
-                if (!CoreConsole)
-                {
-                    extension.CreateUI();
-                }
+                _extensions.Add(extension);
 
                 _logger.Entry($"{extension.GetType().ToString()} registration completed", Severity.Debug);
             }
@@ -311,5 +360,63 @@ namespace Jpp.Ironstone.Core
         public string CompanyAttribute { get; } = "JPP Consulting";
         public string AppTitle { get; } = "JPP Ironstone";
         public Version InstalledVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version;
+
+        #region Civil3D Flag
+
+        public void MarkCurrentDrawingAsCivil3D()
+        {
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            using (Transaction trans = doc.TransactionManager.StartTransaction())
+            {
+                Transaction tr = doc.TransactionManager.TopTransaction;
+
+                // Find the NOD in the database
+                DBDictionary nod = (DBDictionary) tr.GetObject(doc.Database.NamedObjectsDictionaryId, OpenMode.ForWrite);
+
+                // We use Xrecord class to store data in Dictionaries
+                Xrecord plotXRecord = new Xrecord();
+                ResultBuffer rb = new ResultBuffer();
+
+                TypedValue tv = new TypedValue((int)DxfCode.Bool, true);
+                rb.Add(tv);
+                plotXRecord.Data = rb;
+
+                // Create the entry in the Named Object Dictionary
+                string id = this.GetType().FullName + "Civil3DRequired";
+                nod.SetAt(id, plotXRecord);
+                tr.AddNewlyCreatedDBObject(plotXRecord, true);
+                trans.Commit();
+            }
+        }
+
+        internal bool CheckDrawingForCivil3D(Document doc)
+        {
+            using (Transaction trans = doc.TransactionManager.StartTransaction())
+            {
+                // Find the NOD in the database
+                DBDictionary nod = (DBDictionary)trans.GetObject(doc.Database.NamedObjectsDictionaryId, OpenMode.ForRead);
+                string id = this.GetType().FullName + "Civil3DRequired";
+
+                if (nod.Contains(id))
+                {
+                    ObjectId objId = nod.GetAt(id);
+                    Xrecord XRecord = (Xrecord)trans.GetObject(objId, OpenMode.ForRead);
+                    foreach (TypedValue value in XRecord.Data)
+                    {
+                        if (value.TypeCode == (short) DxfCode.Bool)
+                        {
+                            bool castValue = Convert.ToInt32(value.Value) != 0;
+                            if (castValue)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+        #endregion
     }
 }

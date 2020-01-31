@@ -6,15 +6,15 @@ using Jpp.Ironstone.Core.Mocking;
 
 namespace Jpp.Ironstone.Core.Tests
 {
-    public abstract class IronstoneTestFixture : CoreConsoleTestFixture
+    public abstract class IronstoneAutocadTestFixture : AutoCadTestFixture
     {
         private const string CORE_LIBRARY = "IronstoneCore.dll";
         
 
-        protected IronstoneTestFixture(Assembly fixtureAssembly, Type fixtureType) : base(
-            new CoreConsoleFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY)) {}//fixtureAssembly, fixtureType, CORE_LIBRARY, DEBUG) { }
-        protected IronstoneTestFixture(Assembly fixtureAssembly, Type fixtureType, string drawingFile) : base(
-            new CoreConsoleFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) {DrawingFile = drawingFile})
+        protected IronstoneAutocadTestFixture(Assembly fixtureAssembly, Type fixtureType) : base(
+            new AutoCadFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY)) {}//fixtureAssembly, fixtureType, CORE_LIBRARY, DEBUG) { }
+        protected IronstoneAutocadTestFixture(Assembly fixtureAssembly, Type fixtureType, string drawingFile) : base(
+            new AutoCadFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) {DrawingFile = drawingFile})
         { }// : base(fixtureAssembly, fixtureType, drawingFile, CORE_LIBRARY, DEBUG) { }
 
         public override void Setup()

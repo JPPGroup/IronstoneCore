@@ -1,5 +1,6 @@
 ﻿using AspectInjector.Broker;
 using System;
+using System.Linq;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Unity;
@@ -10,6 +11,12 @@ namespace Jpp.Ironstone.Core
     [AttributeUsage(AttributeTargets.Method)]
     public class Civil3DAttribute : Attribute
     {
+        public bool TagDrawing { get; }
+
+        public Civil3DAttribute(bool tagDrawing = true)
+        {
+            TagDrawing = tagDrawing;
+        }
     }
 
     [Aspect(Scope.Global, Factory = typeof(Civil3DAspectFactory))]
@@ -23,11 +30,15 @@ namespace Jpp.Ironstone.Core
 
         [Advice(Kind.Around, Targets = Target.Method)]
         public object HandleMethod([Argument(Source.Arguments)] object[] arguments,
-            [Argument(Source.Target)] Func<object[], object> method)
+            [Argument(Source.Target)] Func<object[], object> method, [Argument(Source.Triggers)] Attribute[] triggers)
         {
+            bool tagDrawing = triggers.OfType<Civil3DAttribute>().Any(x => x.TagDrawing);
+
             if (CoreExtensionApplication.Civil3D)
             {
                 var result = method(arguments);
+                if(tagDrawing)
+                    CoreExtensionApplication._current.MarkCurrentDrawingAsCivil3D();
                 return result;
             }
             else

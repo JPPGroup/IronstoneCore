@@ -1,20 +1,21 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Jpp.AcTestFramework;
 using Jpp.Ironstone.Core.Mocking;
 
 namespace Jpp.Ironstone.Core.Tests
 {
-    public abstract class IronstoneTestFixture : CoreConsoleTestFixture
+    public abstract class IronstoneCivilTestFixture : Civil3dTestFixture
     {
         private const string CORE_LIBRARY = "IronstoneCore.dll";
-        
 
-        protected IronstoneTestFixture(Assembly fixtureAssembly, Type fixtureType) : base(
-            new CoreConsoleFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY)) {}//fixtureAssembly, fixtureType, CORE_LIBRARY, DEBUG) { }
-        protected IronstoneTestFixture(Assembly fixtureAssembly, Type fixtureType, string drawingFile) : base(
-            new CoreConsoleFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) {DrawingFile = drawingFile})
+
+        protected IronstoneCivilTestFixture(Assembly fixtureAssembly, Type fixtureType) : base(
+            new Civil3dFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) { ClientTimeout = 30000 }) {}//fixtureAssembly, fixtureType, CORE_LIBRARY, DEBUG) { }
+        protected IronstoneCivilTestFixture(Assembly fixtureAssembly, Type fixtureType, string drawingFile) : base(
+            new Civil3dFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) {DrawingFile = drawingFile, ClientTimeout = 30000 })
         { }// : base(fixtureAssembly, fixtureType, drawingFile, CORE_LIBRARY, DEBUG) { }
 
         public override void Setup()
@@ -22,6 +23,7 @@ namespace Jpp.Ironstone.Core.Tests
             var config = new Configuration();
             config.TestSettings();
             ConfigurationHelper.CreateConfiguration(config);
+
 
             if (File.Exists(config.LogFile))
             {

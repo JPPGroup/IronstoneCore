@@ -2,7 +2,7 @@
 using System.Reflection;
 using NUnit.Framework;
 
-namespace Jpp.Ironstone.Core.Tests
+namespace Jpp.Ironstone.Core.Tests.Attributes
 {
     [TestFixture]
     // TODO: Add a test for when civil 3d is running to check this works ok. Need Civil 3d test environment to implement 
