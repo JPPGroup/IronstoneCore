@@ -15,6 +15,7 @@ namespace Jpp.Ironstone.Core.Autocad
         protected DBObject _activeObject;
         protected Database _database { get; private set; }
         
+        [Obsolete]
         public string DatabaseName
         {
             get { return _database.Filename; }
@@ -33,6 +34,29 @@ namespace Jpp.Ironstone.Core.Autocad
 
                 //TODO: Review this and try to deal with database changing name
                 _database = Application.DocumentManager.MdiActiveDocument.Database;
+            }
+        }
+
+        protected Document _document { get; private set; }
+
+        public string DocumentName
+        {
+            get { return _document.Name; }
+            set
+            {
+                DocumentCollection docs = Application.DocumentManager;
+
+                foreach (Document doc in docs)
+                {
+                    if (doc.Name.Equals(value))
+                    {
+                        _document = doc;
+                        return;
+                    }
+                }
+
+                //TODO: Review this and try to deal with database changing name
+                _document = Application.DocumentManager.MdiActiveDocument;
             }
         }
 
@@ -229,11 +253,18 @@ namespace Jpp.Ironstone.Core.Autocad
         protected DrawingObject()
         {
             _database = Application.DocumentManager.MdiActiveDocument.Database;
+            _document = Application.DocumentManager.MdiActiveDocument;
         }
 
+        [Obsolete]
         protected DrawingObject(Database database)
         {
             _database = database;
+        }
+
+        protected DrawingObject(Document document)
+        {
+            _document = document;
         }
 
         public abstract void Erase();
@@ -242,9 +273,9 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             Transaction acTrans = _database.TransactionManager.TopTransaction;
             Entity ent = (Entity)acTrans.GetObject(BaseObject, OpenMode.ForWrite);
-
-            //TODO: Verify that databasename is equivalent to doc name
-            ent.Layer = DataService.Current.GetStore<DocumentStore>(DatabaseName).LayerManager.GetLayerName(name);
+            
+            string layerName = DataService.Current.GetStore<DocumentStore>(DocumentName).LayerManager.GetLayerName(name);
+            ent.Layer = layerName;
         }
     }
 }

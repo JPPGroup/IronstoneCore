@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 
@@ -49,6 +45,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             else
             {
+                // TODO: Consider if this should cause an exception or if it should just log an error and set to layer 0
                 throw new ArgumentNullException("Layer not found");
             }
         }
