@@ -41,7 +41,7 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
 
         protected override void ObjectModified(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            // TODO: Implement
         }
 
         protected override void ObjectErased(object sender, ObjectErasedEventArgs e)
