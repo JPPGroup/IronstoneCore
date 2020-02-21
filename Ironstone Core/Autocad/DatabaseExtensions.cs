@@ -20,22 +20,23 @@ namespace Jpp.Ironstone.Core.Autocad
             return modelSpace;
         }
 
+        /// <summary>
+        /// Get layout identified by name from the specified database
+        /// </summary>
+        /// <param name="currentDatabase">Database layout is in</param>
+        /// <param name="Name">Case-insensitive layout name</param>
+        /// <returns>The request layout if found, otherwise null</returns>
         public static Layout GetLayout(this Database currentDatabase, string Name)
         {
             Transaction acTrans = currentDatabase.TransactionManager.TopTransaction;
             if (acTrans == null)
                 throw new TransactionException("No top transaction");
-
-            //DBDictionary lays = acTrans.GetObject(currentDatabase.LayoutDictionaryId, OpenMode.ForRead) as DBDictionary;
+            
             LayoutManager acLayoutMgr = LayoutManager.Current;
             ObjectId layoutId = acLayoutMgr.GetLayoutId(Name);
 
-            /*// Step through and list each named layout and Model
-            foreach (DBDictionaryEntry item in lays)
-                {
-                    item.k
-                }
-            }*/
+            if (layoutId.IsNull)
+                return null;
 
             return acTrans.GetObject(layoutId, OpenMode.ForRead) as Layout;
         }
@@ -186,7 +187,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        public static List<BlockTableRecord> GetAllBlocks(this Database currentDatabase)
+        internal static List<BlockTableRecord> GetAllBlockDefinitions(this Database currentDatabase)
         {
             Transaction acTrans = currentDatabase.TransactionManager.TopTransaction;
             List<BlockTableRecord> result = new List<BlockTableRecord>();
@@ -198,6 +199,43 @@ namespace Jpp.Ironstone.Core.Autocad
                 if (!btRecord.IsLayout)
                 {
                     result.Add(btRecord);
+                }
+            }
+
+            return result;
+        }
+
+        internal static List<BlockReference> GetAllBlockReferences(this Database currentDatabase)
+        {
+            Transaction acTrans = currentDatabase.TransactionManager.TopTransaction;
+            List<BlockReference> result = new List<BlockReference>();
+
+            foreach (BlockTableRecord btRecord in GetAllBlockDefinitions(currentDatabase))
+            {
+                var ids = btRecord.GetBlockReferenceIds(true, true);
+                int cnt = ids.Count;
+
+                for (int i = 0; i < cnt; i++)
+                {
+                    result.Add((BlockReference) acTrans.GetObject(ids[i], OpenMode.ForRead, false, false));
+                }
+
+                if (btRecord.IsDynamicBlock)
+                {
+                    BlockTableRecord btr2 = null;
+                    var blockIds = btRecord.GetAnonymousBlockIds();
+                    cnt = blockIds.Count;
+                    for (int i = 0; i < cnt; i++)
+                    {
+                        btr2 = (BlockTableRecord) acTrans.GetObject(blockIds[i],
+                            OpenMode.ForRead, false, false);
+                        ids = btr2.GetBlockReferenceIds(true, true);
+                        int cnt2 = ids.Count;
+                        for (int j = 0; j < cnt2; j++)
+                        {
+                            result.Add((BlockReference) acTrans.GetObject(ids[j], OpenMode.ForRead, false, false));
+                        }
+                    }
                 }
             }
 

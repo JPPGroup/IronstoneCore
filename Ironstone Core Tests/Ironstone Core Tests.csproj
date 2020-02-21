@@ -62,8 +62,8 @@
       <HintPath>..\packages\Jpp.Ironstone.UiApi.2019.0.1.1\lib\net47\AdWindows.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="AspectInjector.Broker, Version=2.2.5.0, Culture=neutral, PublicKeyToken=a29e12442a3d3609, processorArchitecture=MSIL">
-      <HintPath>..\packages\AspectInjector.2.2.5\lib\netstandard2.0\AspectInjector.Broker.dll</HintPath>
+    <Reference Include="AspectInjector.Broker, Version=2.3.1.0, Culture=neutral, PublicKeyToken=a29e12442a3d3609, processorArchitecture=MSIL">
+      <HintPath>..\packages\AspectInjector.2.3.1\lib\netstandard2.0\AspectInjector.Broker.dll</HintPath>
     </Reference>
     <Reference Include="Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.0.1.5\lib\netstandard2.0\Common.dll</HintPath>
@@ -112,6 +112,7 @@
     <Compile Include="Attributes\Civil3DTagTestFail.cs" />
     <Compile Include="Attributes\Civil3DTagLoadCivil.cs" />
     <Compile Include="Attributes\Civil3DTagTestPass.cs" />
+    <Compile Include="Autocad\DrawingObjects\Primitives\BlockRefDrawingObjectTests.cs" />
     <Compile Include="Autocad\EntityExtensionTests.cs" />
     <Compile Include="Autocad\ArcExtensionTests.cs" />
     <Compile Include="Autocad\DocumentStoreTests.cs" />
@@ -119,6 +120,8 @@
     <Compile Include="Autocad\DrawingObjectTests.cs" />
     <Compile Include="Attributes\IronstoneCommandAttributeTests.cs" />
     <Compile Include="Attributes\Civil3DAttributeTests.cs" />
+    <Compile Include="Autocad\DatabaseExtensionTests.cs" />
+    <Compile Include="Autocad\LayoutExtensionsTests.cs" />
     <Compile Include="IronstoneCivilTestFixture.cs" />
     <Compile Include="IronstoneAutocadTestFixture.cs" />
     <Compile Include="IronstoneTestFixture.cs" />
@@ -133,6 +136,7 @@
     <Compile Include="ServiceInterfaces\ModuleLoaderTests.cs" />
     <Compile Include="ServiceInterfaces\ObjectModelTests.cs" />
     <Compile Include="ServiceInterfaces\StandardUserSettingsTests.cs" />
+    <Compile Include="TestObjects\TestBlockRefDrawingObject.cs" />
     <Compile Include="TestObjects\TestManagerForLayerSettings.cs" />
     <Compile Include="TestObjects\TestDocumentStoreWithSettings.cs" />
     <Compile Include="TestObjects\TestDocumentStore.cs" />
@@ -143,6 +147,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Civil3dTagged.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="CivilTemplate.dwg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="UserConfig.json">
@@ -161,10 +168,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\AspectInjector.Analyzer.dll" />
-    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\AspectInjector.Broker.dll" />
-    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\AspectInjector.Rules.dll" />
-    <Analyzer Include="..\packages\AspectInjector.2.2.5\analyzers\dotnet\cs\FluentIL.Common.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.3.1\analyzers\dotnet\cs\AspectInjector.Analyzer.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.3.1\analyzers\dotnet\cs\AspectInjector.Broker.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.3.1\analyzers\dotnet\cs\AspectInjector.Rules.dll" />
+    <Analyzer Include="..\packages\AspectInjector.2.3.1\analyzers\dotnet\cs\FluentIL.Common.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -172,7 +179,7 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\NUnit.3.11.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.3.11.0\build\NUnit.props'))" />
-    <Error Condition="!Exists('..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets'))" />
+    <Error Condition="!Exists('..\packages\AspectInjector.2.3.1\build\netstandard2.0\AspectInjector.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AspectInjector.2.3.1\build\netstandard2.0\AspectInjector.targets'))" />
   </Target>
-  <Import Project="..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets" Condition="Exists('..\packages\AspectInjector.2.2.5\build\netstandard2.0\AspectInjector.targets')" />
+  <Import Project="..\packages\AspectInjector.2.3.1\build\netstandard2.0\AspectInjector.targets" Condition="Exists('..\packages\AspectInjector.2.3.1\build\netstandard2.0\AspectInjector.targets')" />
 </Project>

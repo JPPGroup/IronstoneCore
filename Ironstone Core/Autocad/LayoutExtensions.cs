@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Runtime;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
     public static class LayoutExtensions
     {
-        public static void GetBlock(this Layout currentLayout)
+        public static List<BlockReference> GetBlockReferences(this Layout currentLayout)
         {
             Transaction acTrans = currentLayout.Database.TransactionManager.TopTransaction;
             if (acTrans == null)
@@ -18,32 +15,18 @@ namespace Jpp.Ironstone.Core.Autocad
             BlockTableRecord btr =
                 acTrans.GetObject(currentLayout.BlockTableRecordId, OpenMode.ForRead) as BlockTableRecord;
 
-            var ids = btr.GetBlockReferenceIds(true, false);
+            RXClass blockRef = RXClass.GetClass(typeof(BlockReference));
+            List<BlockReference> collection = new List<BlockReference>();
 
-            /*    int cnt = ids.Count;
-                for (int i = 0; i < cnt; i++)
+            foreach (ObjectId obj in btr)
+            {
+                if (obj.ObjectClass.IsDerivedFrom(blockRef))
                 {
-                    yield return (BlockReference)
-                        tr.GetObject(ids[i], mode, false, false);
+                    collection.Add((BlockReference) acTrans.GetObject(obj, OpenMode.ForRead));
                 }
-                if (btr.IsDynamicBlock)
-                {
-                    BlockTableRecord btr2 = null;
-                    var blockIds = btr.GetAnonymousBlockIds();
-                    cnt = blockIds.Count;
-                    for (int i = 0; i < cnt; i++)
-                    {
-                        btr2 = (BlockTableRecord)tr.GetObject(blockIds[i],
-                            OpenMode.ForRead, false, false);
-                        ids = btr2.GetBlockReferenceIds(directOnly, true);
-                        int cnt2 = ids.Count;
-                        for (int j = 0; j < cnt2; j++)
-                        {
-                            yield return (BlockReference)
-                                tr.GetObject(ids[j], mode, false, false);
-                        }
-                    }
-                }*/
+            }
+
+            return collection;
         }
     }
 }
