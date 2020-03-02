@@ -36,16 +36,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="accoremgd, Version=23.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.0.7\lib\net47\accoremgd.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.1.1\lib\net47\accoremgd.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Acdbmgd, Version=23.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.0.7\lib\net47\Acdbmgd.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.1.1\lib\net47\Acdbmgd.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="acdbmgdbrep, Version=23.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.0.7\lib\net47\acdbmgdbrep.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Jpp.Ironstone.BaseApi.2019.0.1.1\lib\net47\acdbmgdbrep.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="acmgd, Version=23.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Jpp.Ironstone.UiApi.2019.0.1.1\lib\net47\acmgd.dll</HintPath>
