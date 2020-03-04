@@ -206,42 +206,50 @@ namespace Jpp.Ironstone.Core.Autocad
 
         private void CommandEnded(string globalCommandName)
         {
-            var layersToRevert = ActivateLayers();
-
-            if (!ShouldUnlockUnfreeze || !ShouldSwitchOn)
+            try
             {
-                var inactiveLayers = new List<string>();
+                var layersToRevert = ActivateLayers();
 
-                if (!ShouldUnlockUnfreeze)
+                if (!ShouldUnlockUnfreeze || !ShouldSwitchOn)
                 {
-                    var frozenLocked = layersToRevert.Where(l => l.IsFrozen || l.IsLocked).Select(l => l.Name).ToList();
-                    inactiveLayers = inactiveLayers.Union(frozenLocked).ToList();
+                    var inactiveLayers = new List<string>();
+
+                    if (!ShouldUnlockUnfreeze)
+                    {
+                        var frozenLocked = layersToRevert.Where(l => l.IsFrozen || l.IsLocked).Select(l => l.Name).ToList();
+                        inactiveLayers = inactiveLayers.Union(frozenLocked).ToList();
+                    }
+
+                    if (!ShouldSwitchOn)
+                    {
+                        var off = layersToRevert.Where(l => l.IsOff).Select(l => l.Name).ToList();
+                        inactiveLayers = inactiveLayers.Union(off).ToList();
+                    }
+
+                    if (inactiveLayers.Count > 0)
+                    {
+                        var layersList = string.Join(", ", inactiveLayers.ToArray());
+                        _log.Entry($"Following layers need to be active; \n{layersList}");
+                        return;
+                    }
                 }
 
-                if (!ShouldSwitchOn)
+                if (globalCommandName.ToLower().Contains("regen"))
                 {
-                    var off = layersToRevert.Where(l => l.IsOff).Select(l => l.Name).ToList();
-                    inactiveLayers = inactiveLayers.Union(off).ToList();
+                    RegenerateManagers();
+                }
+                else
+                {
+                    UpdateManagers();
                 }
 
-                if (inactiveLayers.Count > 0)
-                {
-                    var layersList = string.Join(", ", inactiveLayers.ToArray());
-                    _log.Entry($"Following layers need to be active; \n{layersList}");
-                    return;
-                }
+                RevertLayers(layersToRevert);
             }
-
-            if (globalCommandName.ToLower().Contains("regen"))
+            catch (Exception e)
             {
-                RegenerateManagers();
+                _log.Entry($"Unexpected error in command ended event: {e.Message}", Severity.Error);
             }
-            else
-            {
-                UpdateManagers();
-            }
-
-            RevertLayers(layersToRevert);
+            
         }
 
         #region Save and Load Methods

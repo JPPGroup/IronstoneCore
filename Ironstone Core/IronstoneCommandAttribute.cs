@@ -25,6 +25,21 @@ namespace Jpp.Ironstone.Core
         {
             _logger.LogCommand(type, name);
         }
+
+        [Advice(Kind.Around, Targets = Target.Method)]
+        public object HandleMethod([Argument(Source.Arguments)] object[] arguments,
+            [Argument(Source.Target)] Func<object[], object> method, [Argument(Source.Triggers)] Attribute[] triggers)
+        {
+            try
+            {
+                return method(arguments);
+            }
+            catch (Exception e)
+            {
+                _logger.Entry($"Unknown exception: {e.Message}", Severity.Crash);
+                return null;
+            }
+        }
     }
 
     public static class IronstoneCommandAspectFactory

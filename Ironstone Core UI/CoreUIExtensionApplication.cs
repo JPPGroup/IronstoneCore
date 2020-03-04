@@ -79,39 +79,54 @@ namespace Jpp.Ironstone.Core.UI
         // Triggered when idle to display tab. Immediately unregisters event for efficiency
         private void ApplicationOnIdle(object sender, EventArgs e)
         {
-            Application.Idle -= ApplicationOnIdle;
-
-            foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
+            try
             {
-                contextTab.Item1.IsVisible = false;
-            }
+                Application.Idle -= ApplicationOnIdle;
 
-            if (_toActivate.Any())
-            {
-
-                foreach (RibbonTab ribbonTab in _toActivate)
+                foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
                 {
-                    ribbonTab.IsVisible = true;
+                    contextTab.Item1.IsVisible = false;
                 }
 
-                _toActivate.Last().IsActive = true;
+                if (_toActivate.Any())
+                {
+
+                    foreach (RibbonTab ribbonTab in _toActivate)
+                    {
+                        ribbonTab.IsVisible = true;
+                    }
+
+                    _toActivate.Last().IsActive = true;
+                }
             }
+            catch (Exception exception)
+            {
+                Logger.Entry($"Unexpected error caught in idle event: {exception.Message}", Severity.Error);
+            }
+            
         }
 
         private void DocumentOnImpliedSelectionChanged(object sender, EventArgs e)
         {
-            // Remove all active tabs
-            _toActivate.Clear();
-
-            foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
+            try
             {
-                if (contextTab.Item2())
-                {
-                    _toActivate.Add(contextTab.Item1);
-                }
-            }
+                // Remove all active tabs
+                _toActivate.Clear();
 
-            Application.Idle += ApplicationOnIdle;
+                foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
+                {
+                    if (contextTab.Item2())
+                    {
+                        _toActivate.Add(contextTab.Item1);
+                    }
+                }
+
+                Application.Idle += ApplicationOnIdle;
+            }
+            catch (Exception exception)
+            {
+                Logger.Entry($"Unexpected error caught in selection changed event: {exception.Message}", Severity.Error);
+            }
         }
 
         /// <summary>
