@@ -124,6 +124,7 @@
     <Compile Include="Autocad\DrawingObjects\Primitives\BlockDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\ClosedPolylineDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\CurveDrawingObject.cs" />
+    <Compile Include="Autocad\DrawingObjects\Primitives\HatchDrawingObject.cs" />
     <Compile Include="Autocad\DrawingObjects\Primitives\PolylineDrawingObject.cs" />
     <Compile Include="Autocad\LayerState.cs" />
     <Compile Include="Civil3DAttribute.cs" />

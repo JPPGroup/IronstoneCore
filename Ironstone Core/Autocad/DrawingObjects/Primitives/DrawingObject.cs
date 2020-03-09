@@ -135,6 +135,10 @@ namespace Jpp.Ironstone.Core.Autocad
 
         private void ActiveObject_Modified(object sender, EventArgs e)
         {
+            foreach (DrawingObject subObject in SubObjects.Values)
+            {
+                subObject.ParentUpdated(this);
+            }
             ObjectModified(sender, e);
             DirtyModified = true;
         }
@@ -250,10 +254,13 @@ namespace Jpp.Ironstone.Core.Autocad
         public bool DirtyAdded { get; set; }
         public bool DirtyRemoved { get; set; }
 
+        protected Dictionary<string, DrawingObject> SubObjects { get; set; }
+
         protected DrawingObject()
         {
             _database = Application.DocumentManager.MdiActiveDocument.Database;
             _document = Application.DocumentManager.MdiActiveDocument;
+            SubObjects = new Dictionary<string, DrawingObject>();
         }
 
         [Obsolete]
@@ -276,6 +283,10 @@ namespace Jpp.Ironstone.Core.Autocad
             
             string layerName = DataService.Current.GetStore<DocumentStore>(DocumentName).LayerManager.GetLayerName(name);
             ent.Layer = layerName;
+        }
+
+        public virtual void ParentUpdated(DrawingObject parent)
+        {
         }
     }
 }
