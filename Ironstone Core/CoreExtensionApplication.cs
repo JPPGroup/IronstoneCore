@@ -207,6 +207,7 @@ namespace Jpp.Ironstone.Core
                 {
                     string toassname = resolveArgs.Name.Split(',')[0];
                     if (!toassname.Contains("Ironstone")) return null;
+                    if (!toassname.Contains("resources")) return null;
 
                     _logger.Entry($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
                     Assembly[] asmblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -235,7 +236,7 @@ namespace Jpp.Ironstone.Core
             }
 
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
-
+            
             // If not running in civil 3d, hook into document creation events to monitor for civil3d drawings being opened
             if (!Civil3D)
             {

@@ -24,5 +24,13 @@ namespace Jpp.Ironstone.Core.Tests.Attributes
 
             Assert.IsTrue(contents.Contains("Civil3D features will not function in this drawing. Proceed at own risk"));
         }
+
+        [Test]
+        public void VerifyLibraryNotPresent()
+        {
+            bool exists = File.Exists(Path.Combine(Assembly.GetExecutingAssembly().Location, "AeccDbMgd.dll"));
+
+            Assert.IsTrue(!exists);
+        }
     }
 }
