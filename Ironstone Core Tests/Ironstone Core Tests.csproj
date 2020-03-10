@@ -1,75 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1F8281CB-B208-45D3-A8CA-CDED34C48636}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+<Project Sdk="Microsoft.NET.Sdk"> 
+  <PropertyGroup>    
     <RootNamespace>Jpp.Ironstone.Core.Tests</RootNamespace>
     <AssemblyName>IronstoneCoreTests</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Attributes\Civil3DTagLoadCoreConsole.cs" />
-    <Compile Include="Attributes\Civil3DTagTestFail.cs" />
-    <Compile Include="Attributes\Civil3DTagLoadCivil.cs" />
-    <Compile Include="Attributes\Civil3DTagTestPass.cs" />
-    <Compile Include="Autocad\DrawingObjects\Primitives\BlockRefDrawingObjectTests.cs" />
-    <Compile Include="Autocad\EntityExtensionTests.cs" />
-    <Compile Include="Autocad\ArcExtensionTests.cs" />
-    <Compile Include="Autocad\DocumentStoreTests.cs" />
-    <Compile Include="Autocad\DrawingObjectManagerTests.cs" />
-    <Compile Include="Autocad\DrawingObjectTests.cs" />
-    <Compile Include="Attributes\IronstoneCommandAttributeTests.cs" />
-    <Compile Include="Attributes\Civil3DAttributeTests.cs" />
-    <Compile Include="Autocad\DatabaseExtensionTests.cs" />
-    <Compile Include="Autocad\LayoutExtensionsTests.cs" />
-    <Compile Include="IronstoneCivilTestFixture.cs" />
-    <Compile Include="IronstoneAutocadTestFixture.cs" />
-    <Compile Include="IronstoneTestFixture.cs" />
-    <Compile Include="CoreExtensionApplicationTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServiceInterfaces\Authentication\DinkeyAuthenticationTests.cs" />
-    <Compile Include="ServiceInterfaces\DataServiceTests.cs" />
-    <Compile Include="ServiceInterfaces\Loggers\FileLoggerTests.cs" />
-    <Compile Include="ServiceInterfaces\Loggers\MockTelemetryChannel.cs" />
-    <Compile Include="ServiceInterfaces\Loggers\TelemetryClientTestData.cs" />
-    <Compile Include="ServiceInterfaces\Loggers\TelemetryLoggerTests.cs" />
-    <Compile Include="ServiceInterfaces\ModuleLoaderTests.cs" />
-    <Compile Include="ServiceInterfaces\ObjectModelTests.cs" />
-    <Compile Include="ServiceInterfaces\StandardUserSettingsTests.cs" />
-    <Compile Include="TestObjects\TestBlockRefDrawingObject.cs" />
-    <Compile Include="TestObjects\TestManagerForLayerSettings.cs" />
-    <Compile Include="TestObjects\TestDocumentStoreWithSettings.cs" />
-    <Compile Include="TestObjects\TestDocumentStore.cs" />
-    <Compile Include="TestObjects\TestDrawingObject.cs" />
-    <Compile Include="TestObjects\TestDrawingObjectManager.cs" />
-    <Compile Include="TestObjects\TestLayersSettings.cs" />
-  </ItemGroup>
+    <TargetFramework>net472</TargetFramework>
+    <Platforms>x64</Platforms>
+    <Configurations>Debug;Release;DebugLocal;ReleaseLocal</Configurations>    
+  </PropertyGroup>       
   <ItemGroup>
     <PackageReference Include="AcTestFramework">
       <Version>2.4.47</Version>
@@ -103,37 +40,43 @@
     <PackageReference Include="NUnit">
       <Version>3.11.0</Version>
     </PackageReference>
-    <PackageReference Include="System.Diagnostics.DiagnosticSource">
-      <Version>4.5.1</Version>
-    </PackageReference>
-    <PackageReference Include="System.ValueTuple">
-      <Version>4.5.0</Version>
-    </PackageReference>
     <PackageReference Include="Unity">
       <Version>5.9.7</Version>
     </PackageReference>
-  </ItemGroup>
+  </ItemGroup>       
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Civil3dTagged.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="CivilTemplate.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="UserConfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Blank.dwg" />
-    <None Include="BaseConfig.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+    <ProjectReference Include="..\Ironstone Core\Ironstone Core.csproj" />
+  </ItemGroup>       
   <ItemGroup>
-    <ProjectReference Include="..\Ironstone Core\Ironstone Core.csproj">
-      <Project>{a3bfa507-a2c4-4c33-943b-6083133ee63c}</Project>
-      <Name>Ironstone Core</Name>
-    </ProjectReference>
+    <None Update="BaseConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Test Drawings\Blank.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Test Drawings\Civil3dTagged.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Test Drawings\CivilTemplate.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Test Drawings\EntityExtensionTests1.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Test Drawings\EntityExtensionTests2.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Test Drawings\EntityExtensionTests3.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Test Drawings\EntityExtensionTests4.dwg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="UserConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>       
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

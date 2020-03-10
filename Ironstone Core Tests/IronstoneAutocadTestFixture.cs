@@ -12,9 +12,9 @@ namespace Jpp.Ironstone.Core.Tests
         
 
         protected IronstoneAutocadTestFixture(Assembly fixtureAssembly, Type fixtureType) : base(
-            new AutoCadFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY)) {}//fixtureAssembly, fixtureType, CORE_LIBRARY, DEBUG) { }
+            new AutoCadFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) { ClientTimeout = 45000 }) { }//fixtureAssembly, fixtureType, CORE_LIBRARY, DEBUG) { }
         protected IronstoneAutocadTestFixture(Assembly fixtureAssembly, Type fixtureType, string drawingFile) : base(
-            new AutoCadFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) {DrawingFile = drawingFile})
+            new AutoCadFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) { ClientTimeout = 45000, DrawingFile = drawingFile})
         { }// : base(fixtureAssembly, fixtureType, drawingFile, CORE_LIBRARY, DEBUG) { }
 
         public override void Setup()

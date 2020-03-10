@@ -7,7 +7,7 @@ namespace Jpp.Ironstone.Core.Tests.Attributes
     class Civil3DTagLoadCivil : IronstoneCivilTestFixture
     {
         public Civil3DTagLoadCivil() : base(Assembly.GetExecutingAssembly(), typeof(Civil3DTagLoadCivil), 
-            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Civil3dTagged.dwg") { }
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Test Drawings\\Civil3dTagged.dwg") { }
 
 
         [Test]

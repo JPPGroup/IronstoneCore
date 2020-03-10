@@ -37,7 +37,7 @@ namespace Jpp.Ironstone.Core.Tests.Attributes
         [Test]
         public void VerifyDrawingCanOpen()
         {
-            string dwgPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Civil3dTagged.dwg";
+            string dwgPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Test Drawings\\Civil3dTagged.dwg";
 
             Assert.IsTrue(!RunTest<bool>(nameof(VerifyTagEvent), dwgPath), "Event was called");
         }

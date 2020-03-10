@@ -15,7 +15,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad.DrawingObjects.Primitives
     class BlockRefDrawingObjectTests : IronstoneTestFixture
     {
         public BlockRefDrawingObjectTests() : base(Assembly.GetExecutingAssembly(), typeof(BlockRefDrawingObjectTests),
-            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CivilTemplate.dwg")
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Test Drawings\\CivilTemplate.dwg")
         { }
 
         [Test]

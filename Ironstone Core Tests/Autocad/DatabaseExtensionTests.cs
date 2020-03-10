@@ -13,7 +13,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
     class DatabaseExtensionTests : IronstoneTestFixture
     {
         public DatabaseExtensionTests() : base(Assembly.GetExecutingAssembly(), typeof(DatabaseExtensionTests),
-            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\CivilTemplate.dwg")
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Test Drawings\\CivilTemplate.dwg")
         { }
 
         [Test]

@@ -13,9 +13,9 @@ namespace Jpp.Ironstone.Core.Tests
 
 
         protected IronstoneCivilTestFixture(Assembly fixtureAssembly, Type fixtureType) : base(
-            new Civil3dFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) { ClientTimeout = 30000 }) {}//fixtureAssembly, fixtureType, CORE_LIBRARY, DEBUG) { }
+            new Civil3dFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) { ClientTimeout = 45000 }) {}//fixtureAssembly, fixtureType, CORE_LIBRARY, DEBUG) { }
         protected IronstoneCivilTestFixture(Assembly fixtureAssembly, Type fixtureType, string drawingFile) : base(
-            new Civil3dFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) {DrawingFile = drawingFile, ClientTimeout = 30000 })
+            new Civil3dFixtureArguments(fixtureAssembly, fixtureType, CORE_LIBRARY) {DrawingFile = drawingFile, ClientTimeout = 45000 })
         { }// : base(fixtureAssembly, fixtureType, drawingFile, CORE_LIBRARY, DEBUG) { }
 
         public override void Setup()
