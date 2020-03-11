@@ -23,6 +23,12 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>  
   <ItemGroup>
+    <None Remove="Resources\BaseConfig.json" />
+  </ItemGroup>  
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\BaseConfig.json" />
+  </ItemGroup>  
+  <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="PresentationCore" />
     <Reference Include="System" />

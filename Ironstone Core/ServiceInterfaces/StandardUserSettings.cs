@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using Jpp.Ironstone.Core.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -14,47 +17,56 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             _logger = logger;
             _jObject = new JObject();
-            this.LoadFrom(configuration.NetworkUserSettingsPath).LoadFrom(configuration.UserSettingsPath);
+
+            this.LoadStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("Jpp.Ironstone.Core.Resources.BaseConfig.json"))
+                .LoadFrom(configuration.NetworkUserSettingsPath).LoadFrom(configuration.UserSettingsPath);
         }
 
         public IUserSettings LoadFrom(string path)
         {
             if (File.Exists(path))
             {
-                JObject newData;
                 try
                 {
-                    using (StreamReader sr = File.OpenText(path))
+                    using (Stream stream = File.Open(path, FileMode.Open))
                     {
-                        string json = sr.ReadToEnd().ToLower();
-                        try
-                        {
-                            newData = JObject.Parse(json);
-                        }
-                        catch (JsonReaderException ex)
-                        {
-                            _logger.Entry($"Invalid settings file found at path {path}", Severity.Error);
-                            _logger.LogException(ex);
-                            return this;
-                        }
+                        return LoadStream(stream);
                     }
-
-                    JsonMergeSettings mergeSettings = new JsonMergeSettings()
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    };
-
-                    _jObject.Merge(newData, mergeSettings);
                 }
                 catch (UnauthorizedAccessException)
                 {
                     _logger.Entry($"Access denied to settings file at path {path}", Severity.Error);
+                    return this;
+                }
+                catch (JsonReaderException ex)
+                {
+                    _logger.Entry($"Invalid settings file found at path {path}", Severity.Error);
+                    _logger.LogException(ex);
+                    return this;
                 }
             }
             else
             {
                 _logger.Entry($"No settings file found at path {path}", Severity.Warning);
+                return this;
             }
+        }
+
+        public IUserSettings LoadStream(Stream stream)
+        {
+            JObject newData;
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                string json = sr.ReadToEnd().ToLower();
+                newData = JObject.Parse(json);
+            }
+
+            JsonMergeSettings mergeSettings = new JsonMergeSettings()
+            {
+                MergeArrayHandling = MergeArrayHandling.Union
+            };
+
+            _jObject.Merge(newData, mergeSettings);
 
             return this;
         }
