@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using Jpp.Ironstone.Core.Properties;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -88,6 +86,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             // Considered intentional so that changing a setting to a group down the line will not change a failure silently
             // to a default value.
             return root?.Value<string>();
+        }
+
+        public T GetObject<T>(string key) where T : class
+        {
+            var root = GetNode(key);
+            return root.ToObject<T>();
         }
 
         private JToken GetNode(string key)

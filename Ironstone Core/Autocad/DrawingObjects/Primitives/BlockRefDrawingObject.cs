@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Geometry;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
-    public abstract class BlockRefDrawingObject : DrawingObject
+    public class BlockRefDrawingObject : DrawingObject
     {
         protected BlockRefDrawingObject() : base()
-        { }
+        {
+            _properties = new Dictionary<string, object>();
+        }
 
         private Dictionary<string, object> _properties;
 
@@ -75,6 +78,9 @@ namespace Jpp.Ironstone.Core.Autocad
             if(!_properties.ContainsKey(name))
                 GetProperties();
 
+            if (!_properties.ContainsKey(name))
+                return default(T);
+
             return (T) _properties[name];
         }
 
@@ -82,6 +88,23 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             UpdateCachedFields();
             GetProperties();
+        }
+
+        protected override void ObjectErased(object sender, ObjectErasedEventArgs e)
+        {
+            
+        }
+
+        public override Point3d Location { get; set; }
+        public override void Generate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override double Rotation { get; set; }
+        public override void Erase()
+        {
+            throw new NotImplementedException();
         }
 
         private void UpdateCachedFields()
