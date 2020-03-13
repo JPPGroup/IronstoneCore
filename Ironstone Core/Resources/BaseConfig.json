@@ -6,6 +6,7 @@
 	"JPP_Foundations_TreeRings_Existing": {
 		"linetype": "1MM-HIDDEN"
 	},
+	"defaultTemplateFile": "embedded",
 	"structures": {
 		"foundations": {
 			// Default color bands to be used for hatching foundation depth in concept drawings
