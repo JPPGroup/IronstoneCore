@@ -6,7 +6,17 @@
     <TargetFramework>net472</TargetFramework>
     <Platforms>x64</Platforms>
     <Configurations>Debug;Release;DebugLocal;ReleaseLocal</Configurations>    
-  </PropertyGroup>       
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <AspectInjectorEnabled>false</AspectInjectorEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLocal|x64'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <AspectInjectorEnabled>false</AspectInjectorEnabled>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AcTestFramework">
       <Version>2.4.47</Version>

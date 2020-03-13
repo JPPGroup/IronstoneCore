@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
@@ -54,6 +55,9 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
             throw new NotImplementedException();
         }
 
-        
+        public override Rectangle GetBoundingBox()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

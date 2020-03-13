@@ -9,6 +9,7 @@ using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.Tests.TestObjects;
 using NUnit.Framework;
 using Unity;
+using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 {

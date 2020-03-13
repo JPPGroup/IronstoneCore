@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -38,7 +37,7 @@ namespace Jpp.Ironstone.Core
 
         [Obsolete("Configuration should be resolved via dependency injection")]
         public Configuration Configuration { get; set; }
-            
+
         /// <summary>
         /// Returns true if currently running under the Core Console
         /// </summary>
@@ -189,7 +188,6 @@ namespace Jpp.Ironstone.Core
             //TODO: Add code here for choosing log type
             Container.RegisterType<ILogger, CollectionLogger>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IAuthentication, DinkeyAuthentication>(new ContainerControlledLifetimeManager());
-            //Container.RegisterType<IAuthentication, PassDummyAuth>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IModuleLoader, ModuleLoader>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
             Container.RegisterType<ObjectModel, ObjectModel>(new ContainerControlledLifetimeManager());

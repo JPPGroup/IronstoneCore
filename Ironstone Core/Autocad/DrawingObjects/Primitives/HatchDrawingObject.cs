@@ -1,5 +1,5 @@
 ﻿using System;
-using Autodesk.AutoCAD.Colors;
+using System.Drawing;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
@@ -37,7 +37,12 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
             
         }
 
-        public Color Color
+        public override Rectangle GetBoundingBox()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Autodesk.AutoCAD.Colors.Color Color
         {
             get
             {
