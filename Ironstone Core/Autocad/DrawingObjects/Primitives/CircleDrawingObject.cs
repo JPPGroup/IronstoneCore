@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -39,6 +40,12 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             get { return 0; }
             set { return; }
+        }
+
+        public override Rectangle GetBoundingBox()
+        {
+            // TODO: Implement this properly based on the diameter
+            return new Rectangle(0, 0, 10, 10);
         }
     }
 }

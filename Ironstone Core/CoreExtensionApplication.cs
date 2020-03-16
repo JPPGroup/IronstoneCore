@@ -194,6 +194,8 @@ namespace Jpp.Ironstone.Core
             Container.RegisterType<IUserSettings, StandardUserSettings>(new ContainerControlledLifetimeManager());
             Container.RegisterType<LayerManager>(new ContainerControlledLifetimeManager());
             Container.RegisterType<IReviewManager, ReviewManager>(new ContainerControlledLifetimeManager());
+            Container.AddExtension(new Diagnostic());
+            
 
             try
             {
@@ -206,7 +208,7 @@ namespace Jpp.Ironstone.Core
                 {
                     string toassname = resolveArgs.Name.Split(',')[0];
                     if (!toassname.Contains("Ironstone")) return null;
-                    if (!toassname.Contains("resources")) return null;
+                    if (toassname.Contains("resources")) return null;
 
                     _logger.Entry($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
                     Assembly[] asmblies = AppDomain.CurrentDomain.GetAssemblies();

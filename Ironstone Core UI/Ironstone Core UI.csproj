@@ -17,14 +17,19 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <AspectInjectorEnabled>false</AspectInjectorEnabled>
   </PropertyGroup>  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLocal|x64'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <AspectInjectorEnabled>false</AspectInjectorEnabled>
   </PropertyGroup>  
   <ItemGroup>
+    <None Remove="AutocadStyleResourceDictionary.xaml" />
+    <None Remove="AutocadWindowStyleResourceDictionary.xaml" />
     <None Remove="Views\About.xaml" />
     <None Remove="Views\FeedbackHost.xaml" />
+    <None Remove="Views\Review.xaml" />
     <None Remove="Views\SurfaceSelect.xaml" />
     <None Remove="Views\SurfaceSelectWindow.xaml" />
   </ItemGroup>  
@@ -52,9 +57,6 @@
     <PackageReference Include="AspectInjector">
       <Version>2.3.1</Version>
     </PackageReference>
-    <PackageReference Include="Common">
-      <Version>0.1.5</Version>
-    </PackageReference>    
     <PackageReference Include="Jpp.Ironstone.BaseApi.2019">
       <Version>0.1.1</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
@@ -73,17 +75,23 @@
     <PackageReference Include="System.Windows.Interactivity.WPF">
       <Version>2.0.20525</Version>
     </PackageReference>
-    <PackageReference Include="Unity">
-      <Version>5.9.7</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="AutocadStyleResourceDictionary.xaml" />
+    <Page Include="AutocadWindowStyleResourceDictionary.xaml" />
     <Page Include="Views\About.xaml" />
     <Page Include="Views\FeedbackHost.xaml" />
+    <Page Include="Views\Review.xaml" />
     <Page Include="Views\SurfaceSelect.xaml" />
     <Page Include="Views\SurfaceSelectWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ironstone Core\Ironstone Core.csproj" />
   </ItemGroup>
+  <ItemGroup Condition=" $(Configuration.Contains('Local')) == false">
+    <PackageReference Include="Jpp.Common" Version="0.3.7" />
+  </ItemGroup>  
+  <ItemGroup Condition=" $(Configuration.Contains('Local')) ">
+    <ProjectReference Include="..\..\Common\src\Common\Common.csproj" />
+  </ItemGroup>  
 </Project>
