@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -208,7 +209,16 @@ namespace Jpp.Ironstone.Core
                 {
                     string toassname = resolveArgs.Name.Split(',')[0];
                     if (!toassname.Contains("Ironstone")) return null;
-                    if (toassname.Contains("resources")) return null;
+                    if (toassname.Contains("resources"))
+                    {
+                        _logger.Entry($"Localized resource for {CultureInfo.CurrentCulture} not found.", Severity.Information);
+                        return null;
+                    }
+                    if (toassname.Contains("XmlSerializer"))
+                    {
+                        _logger.Entry($"Serialization library {toassname} not pregenerated", Severity.Debug);
+                        return null;
+                    }
 
                     _logger.Entry($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
                     Assembly[] asmblies = AppDomain.CurrentDomain.GetAssemblies();

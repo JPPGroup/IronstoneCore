@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 
@@ -32,8 +33,13 @@ namespace Jpp.Ironstone.Core.Autocad
             if (acTrans == null)
                 throw new TransactionException("No top transaction");
             
+            Database old = Application.DocumentManager.MdiActiveDocument.Database;
+            HostApplicationServices.WorkingDatabase = currentDatabase;
+
             LayoutManager acLayoutMgr = LayoutManager.Current;
             ObjectId layoutId = acLayoutMgr.GetLayoutId(Name);
+
+            HostApplicationServices.WorkingDatabase = old;
 
             if (layoutId.IsNull)
                 return null;
