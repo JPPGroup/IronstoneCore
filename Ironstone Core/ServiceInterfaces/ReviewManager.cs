@@ -95,7 +95,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             if (!collection.ContainsKey(id))
                 throw new ArgumentOutOfRangeException("Object id not recognised as one being managed");
 
-            ViewHelper.FocusBoundingInModel(collection[id].GetBoundingBox());
+            // TODO: FIX THIS!!!!
+            //ViewHelper.FocusBoundingInModel(collection[id].GetBoundingBox());
         }
     }
 }

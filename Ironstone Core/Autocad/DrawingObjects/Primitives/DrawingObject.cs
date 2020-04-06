@@ -281,7 +281,12 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public abstract void Erase();
 
-        public abstract Rectangle GetBoundingBox();
+        public virtual Extents3d GetBoundingBox()
+        {
+            Transaction trans = _database.TransactionManager.TopTransaction;
+            Entity ent = (Entity) trans.GetObject(this.BaseObject, OpenMode.ForRead);
+            return ent.GeometricExtents;
+        }
 
         public void SetLayer(string name)
         {

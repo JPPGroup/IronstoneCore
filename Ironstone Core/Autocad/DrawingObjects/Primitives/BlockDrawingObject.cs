@@ -39,11 +39,6 @@ namespace Jpp.Ironstone.Core.Autocad
             throw new NotImplementedException();
         }
 
-        public override Rectangle GetBoundingBox()
-        {
-            throw new NotImplementedException();
-        }
-
         public Guid TemplateID { get; set; }
         public void UpdateFromTemplate(ITemplateSource source)
         {

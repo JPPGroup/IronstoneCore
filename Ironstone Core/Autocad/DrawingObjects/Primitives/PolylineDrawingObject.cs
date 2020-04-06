@@ -54,10 +54,5 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
         {
             throw new NotImplementedException();
         }
-
-        public override Rectangle GetBoundingBox()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

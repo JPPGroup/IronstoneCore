@@ -35,11 +35,6 @@ namespace Jpp.Ironstone.Core.Tests.TestObjects
             //Do nothing...
         }
 
-        public override Rectangle GetBoundingBox()
-        {
-            throw new NotImplementedException();
-        }
-
         public static TestDrawingObject CreateActiveObject(Guid id)
         {
             var obj = CreateNonActiveObject(id);

@@ -115,10 +115,5 @@ namespace Jpp.Ironstone.Core.Autocad
 
             _cachedBlockName = obj.IsDynamicBlock ? ((BlockTableRecord)obj.DynamicBlockTableRecord.GetObject(OpenMode.ForRead)).Name : obj.Name;
         }
-
-        public override Rectangle GetBoundingBox()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

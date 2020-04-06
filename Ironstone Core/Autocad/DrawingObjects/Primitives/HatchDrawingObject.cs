@@ -37,11 +37,6 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
             
         }
 
-        public override Rectangle GetBoundingBox()
-        {
-            throw new NotImplementedException();
-        }
-
         public Autodesk.AutoCAD.Colors.Color Color
         {
             get
