@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Windows;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -135,7 +137,13 @@ namespace Jpp.Ironstone.Core.Autocad
 
         private void ActiveObject_Modified(object sender, EventArgs e)
         {
+            foreach (DrawingObject subObject in SubObjects.Values)
+            {
+                subObject.ParentUpdated(this);
+            }
             ObjectModified(sender, e);
+            //TODO: Add tracking
+            Verified = false;
             DirtyModified = true;
         }
 
@@ -250,10 +258,14 @@ namespace Jpp.Ironstone.Core.Autocad
         public bool DirtyAdded { get; set; }
         public bool DirtyRemoved { get; set; }
 
+	protected Dictionary<string, DrawingObject> SubObjects { get; set; }
+	public bool Verified { get; set; }
+
         protected DrawingObject()
         {
             _database = Application.DocumentManager.MdiActiveDocument.Database;
             _document = Application.DocumentManager.MdiActiveDocument;
+            SubObjects = new Dictionary<string, DrawingObject>();
         }
 
         [Obsolete]
@@ -269,6 +281,13 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public abstract void Erase();
 
+        public virtual Extents3d GetBoundingBox()
+        {
+            Transaction trans = _database.TransactionManager.TopTransaction;
+            Entity ent = (Entity) trans.GetObject(this.BaseObject, OpenMode.ForRead);
+            return ent.GeometricExtents;
+        }
+
         public void SetLayer(string name)
         {
             Transaction acTrans = _database.TransactionManager.TopTransaction;
@@ -276,6 +295,10 @@ namespace Jpp.Ironstone.Core.Autocad
             
             string layerName = DataService.Current.GetStore<DocumentStore>(DocumentName).LayerManager.GetLayerName(name);
             ent.Layer = layerName;
+        }
+
+        public virtual void ParentUpdated(DrawingObject parent)
+        {
         }
     }
 }

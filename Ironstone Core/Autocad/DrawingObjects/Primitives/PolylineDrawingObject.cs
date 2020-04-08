@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.ApplicationServices.Core;
+using System.Drawing;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
-using Transaction = Autodesk.AutoCAD.DatabaseServices.Transaction;
 
 namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
 {
@@ -16,6 +9,7 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
     /// This class is only present currently for the inheritance chain
     /// TODO: Flesh out polyline
     /// TODO: Override setter for baseobject to check if actually a polyline
+    /// TODO: Should this abstract??
     /// </summary>
     public class PolylineDrawingObject : CurveDrawingObject
     {
@@ -41,12 +35,12 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
 
         protected override void ObjectModified(object sender, EventArgs e)
         {
-            // TODO: Implement
+            //throw new NotImplementedException();
         }
 
         protected override void ObjectErased(object sender, ObjectErasedEventArgs e)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public override Point3d Location { get; set; }
@@ -60,7 +54,5 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
         {
             throw new NotImplementedException();
         }
-
-        
     }
 }

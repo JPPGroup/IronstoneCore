@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     public interface IUserSettings
     {
         IUserSettings LoadFrom(string path);
+        IUserSettings LoadStream(Stream stream);
 
         string GetValue(string key);
+        T? GetValue<T>(string key) where T : struct;
+        T GetObject<T>(string key) where T : class;
     }
 }

@@ -3,7 +3,7 @@ using System.Reflection;
 using Autodesk.AutoCAD.Runtime;
 using NUnit.Framework;
 
-namespace Jpp.Ironstone.Core.Tests
+namespace Jpp.Ironstone.Core.Tests.Attributes
 {
     [TestFixture]
     class IronstoneCommandAttributeTests : IronstoneTestFixture

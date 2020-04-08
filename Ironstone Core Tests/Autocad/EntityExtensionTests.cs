@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.IO;
+using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
@@ -7,16 +8,16 @@ using NUnit.Framework;
 
 namespace Jpp.Ironstone.Core.Tests.Autocad
 {
-    [TestFixture(@"..\..\..\Test-Drawings\EntityExtensionTests1.dwg", 5)]
-    [TestFixture(@"..\..\..\Test-Drawings\EntityExtensionTests2.dwg", 1)]
-    [TestFixture(@"..\..\..\Test-Drawings\EntityExtensionTests3.dwg", 2)]
-    [TestFixture(@"..\..\..\Test-Drawings\EntityExtensionTests4.dwg", 6)]
+    [TestFixture( @"Test Drawings\EntityExtensionTests1.dwg", 5)]
+    [TestFixture(@"Test Drawings\EntityExtensionTests2.dwg", 1)]
+    [TestFixture(@"Test Drawings\EntityExtensionTests3.dwg", 2)]
+    [TestFixture(@"Test Drawings\EntityExtensionTests4.dwg", 6)]
     public class EntityExtensionTests : IronstoneTestFixture
     {
         private readonly int _polyLineSegments;
 
         public EntityExtensionTests() : base(Assembly.GetExecutingAssembly(), typeof(EntityExtensionTests)) { }
-        public EntityExtensionTests(string drawingFile, int polyLineSegments) : base(Assembly.GetExecutingAssembly(), typeof(EntityExtensionTests), drawingFile)
+        public EntityExtensionTests(string drawingFile, int polyLineSegments) : base(Assembly.GetExecutingAssembly(), typeof(EntityExtensionTests), Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), drawingFile))
         {
             _polyLineSegments = polyLineSegments;
         }

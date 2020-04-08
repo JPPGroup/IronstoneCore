@@ -1,0 +1,59 @@
+{
+	"standarddetaillibrary": {
+		"location": "N:\\Consulting\\Library\\Ironstone\\Details",
+		"cachedisabled": "true"
+	},
+	"JPP_Foundations_TreeRings_Existing": {
+		"linetype": "1MM-HIDDEN"
+	},
+	"defaultTemplateFile": "embedded",
+	// Standard drawing scales that can be used by the automated systems
+	"standardScales": [
+		2,
+		5,
+		10,
+		20,
+		50,
+		100,
+		200,
+		500,
+		1000,
+		1250,
+		2500,
+		5000,
+		10000
+	],
+	"structures": {
+		"foundations": {
+			// Default color bands to be used for hatching foundation depth in concept drawings
+			"depthBands": [
+				{
+					"HexColor": "#008000",
+					"StartDepth": 0,
+					"EndDepth": 1
+				},
+				{
+					"HexColor": "#7CFC00",
+					"StartDepth": 1,
+					"EndDepth": 1.5
+				},
+				{
+					"HexColor": "#FFFF00",
+					"StartDepth": 1.5,
+					"EndDepth": 2
+				},
+				{
+					"HexColor": "#FFA500",
+					"StartDepth": 2,
+					"EndDepth": 2.5
+				},
+				{
+					"HexColor": "#FF0000",
+					"StartDepth": 2.5,
+					"EndDepth": 5
+				}
+			],
+			"depthBandHatchPattern": "SOLID" 
+		}
+	}
+}

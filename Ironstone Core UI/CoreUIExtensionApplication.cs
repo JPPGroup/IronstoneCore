@@ -55,6 +55,7 @@ namespace Jpp.Ironstone.Core.UI
 
             _container.RegisterType<About>();
             _container.RegisterType<AboutViewModel>();
+            _container.RegisterType<Review>();
             Logger = _container.Resolve<ILogger>();
         }
 
@@ -79,39 +80,54 @@ namespace Jpp.Ironstone.Core.UI
         // Triggered when idle to display tab. Immediately unregisters event for efficiency
         private void ApplicationOnIdle(object sender, EventArgs e)
         {
-            Application.Idle -= ApplicationOnIdle;
-
-            foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
+            try
             {
-                contextTab.Item1.IsVisible = false;
-            }
+                Application.Idle -= ApplicationOnIdle;
 
-            if (_toActivate.Any())
-            {
-
-                foreach (RibbonTab ribbonTab in _toActivate)
+                foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
                 {
-                    ribbonTab.IsVisible = true;
+                    contextTab.Item1.IsVisible = false;
                 }
 
-                _toActivate.Last().IsActive = true;
+                if (_toActivate.Any())
+                {
+
+                    foreach (RibbonTab ribbonTab in _toActivate)
+                    {
+                        ribbonTab.IsVisible = true;
+                    }
+
+                    _toActivate.Last().IsActive = true;
+                }
             }
+            catch (Exception exception)
+            {
+                Logger.Entry($"Unexpected error caught in idle event: {exception.Message}", Severity.Error);
+            }
+            
         }
 
         private void DocumentOnImpliedSelectionChanged(object sender, EventArgs e)
         {
-            // Remove all active tabs
-            _toActivate.Clear();
-
-            foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
+            try
             {
-                if (contextTab.Item2())
-                {
-                    _toActivate.Add(contextTab.Item1);
-                }
-            }
+                // Remove all active tabs
+                _toActivate.Clear();
 
-            Application.Idle += ApplicationOnIdle;
+                foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
+                {
+                    if (contextTab.Item2())
+                    {
+                        _toActivate.Add(contextTab.Item1);
+                    }
+                }
+
+                Application.Idle += ApplicationOnIdle;
+            }
+            catch (Exception exception)
+            {
+                Logger.Entry($"Unexpected error caught in selection changed event: {exception.Message}", Severity.Error);
+            }
         }
 
         /// <summary>
@@ -125,14 +141,14 @@ namespace Jpp.Ironstone.Core.UI
             {
                 Name = Resources.ExtensionApplication_IronstoneTab_Design_Name,
                 Title = Resources.ExtensionApplication_IronstoneTab_Design_Name,
-                Id = Constants.IRONSTONE_TAB_ID
+                Id = Ironstone.Core.Constants.IRONSTONE_TAB_ID
             };
 
             _conceptTab = new RibbonTab
             {
                 Name = Resources.ExtensionApplication_IronstoneTab_Concept_Name,
                 Title = Resources.ExtensionApplication_IronstoneTab_Concept_Name,
-                Id = Constants.IRONSTONE_CONCEPT_TAB_ID
+                Id = Ironstone.Core.Constants.IRONSTONE_CONCEPT_TAB_ID
             };
             
             rc.Tabs.Add(_conceptTab);
@@ -151,13 +167,15 @@ namespace Jpp.Ironstone.Core.UI
 
             RibbonToggleButton aboutButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_AboutWindow_Name, Resources.About, RibbonItemSize.Standard, _container.Resolve<About>(), "10992236-c8f6-4732-b5e0-2d9194f07068");
             RibbonButton feedbackButton = UIHelper.CreateButton(Resources.ExtensionApplication_UI_BtnFeedback, Resources.Feedback, RibbonItemSize.Standard, "Core_Feedback");
+            RibbonToggleButton reviewButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_ReviewWindow_Name, Resources.Review, RibbonItemSize.Large, _container.Resolve<Review>(), "18cd4414-8fc8-4978-9e97-ae3915e29e07");
 
             RibbonRowPanel column = new RibbonRowPanel { IsTopJustified = true };
             column.Items.Add(aboutButton);
             column.Items.Add(new RibbonRowBreak());
             column.Items.Add(feedbackButton);
-
+            
             stack.Items.Add(column);
+            stack.Items.Add(reviewButton);
 
             //Add the new tab section to the main tab
             source.Items.Add(stack);
