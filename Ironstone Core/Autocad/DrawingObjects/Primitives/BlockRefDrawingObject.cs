@@ -74,6 +74,42 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
+        protected void SetPropertyOnObject(string name, object value)
+        {
+            Transaction acTrans = _database.TransactionManager.TopTransaction;
+            BlockReference reference = (BlockReference) acTrans.GetObject(BaseObject, OpenMode.ForWrite);
+
+            if (reference.IsDynamicBlock)
+            {
+                DynamicBlockReferencePropertyCollection pc = reference.DynamicBlockReferencePropertyCollection;
+                foreach (DynamicBlockReferenceProperty dynamicBlockReferenceProperty in pc)
+                {
+                    if (dynamicBlockReferenceProperty.PropertyName == name)
+                    {
+                        dynamicBlockReferenceProperty.Value = value;
+                        return;
+                    }
+                }
+
+                foreach (ObjectId attId in reference.AttributeCollection)
+                {
+                    AttributeReference attRef = (AttributeReference) acTrans.GetObject(attId, OpenMode.ForRead);
+                    if (attRef.Tag == name)
+                    {
+                        attRef.UpgradeOpen();
+                        attRef.TextString = (string)value;
+                        return;
+                    }
+                }
+
+                throw new InvalidOperationException("Property not found");
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public T GetProperty<T>(string name)
         {
             if(!_properties.ContainsKey(name))
@@ -83,6 +119,14 @@ namespace Jpp.Ironstone.Core.Autocad
                 return default(T);
 
             return (T) _properties[name];
+        }
+
+        public void SetProperty(string name, object value)
+        {
+            SetPropertyOnObject(name, value);
+
+            if (!_properties.ContainsKey(name))
+                _properties[name] = value;
         }
 
         protected override void ObjectModified(object sender, EventArgs e)
