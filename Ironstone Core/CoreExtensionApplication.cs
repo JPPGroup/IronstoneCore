@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -254,6 +255,7 @@ namespace Jpp.Ironstone.Core
                 foreach (Document doc in Application.DocumentManager)
                 {
                     CheckDocument(doc);
+                    AddRegAppKey(doc);
                 }
                 Application.DocumentManager.DocumentCreated += DocumentManagerOnDocumentCreated;
             }
@@ -262,6 +264,7 @@ namespace Jpp.Ironstone.Core
         private void DocumentManagerOnDocumentCreated(object sender, DocumentCollectionEventArgs e)
         {
             CheckDocument(e.Document);
+            AddRegAppKey(e.Document);
         }
 
         private void CheckDocument(Document doc)
@@ -270,6 +273,28 @@ namespace Jpp.Ironstone.Core
             {
                 _logger.Entry("Civil3D features will not function in this drawing. Proceed at own risk.", Severity.Warning);
                 Civil3DTagWarning?.Invoke(this, doc);
+            }
+        }
+
+        private void AddRegAppKey(Document doc)
+        {
+            using (Transaction trans = doc.TransactionManager.StartTransaction())
+            {
+                RegAppTable regTable = (RegAppTable)trans.GetObject(doc.Database.RegAppTableId, OpenMode.ForRead);
+
+                if(!regTable.Has("JPP"))
+                {
+                    regTable.UpgradeOpen();
+
+                    // Add the application names that would be used to add Xdata
+                    RegAppTableRecord app = new RegAppTableRecord();
+                    app.Name = "JPP";
+
+                    regTable.Add(app);
+                    trans.AddNewlyCreatedDBObject(app, true);
+
+                    trans.Commit();
+                }
             }
         }
 

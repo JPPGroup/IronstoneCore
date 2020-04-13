@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -209,6 +210,15 @@ namespace Jpp.Ironstone.Core.Autocad
             }
 
             return result;
+        }
+
+        internal static BlockTableRecord GetBlockDefinition(this Database currentDatabase, string name)
+        {
+            var foundResult = GetAllBlockDefinitions(currentDatabase).Where(btr => btr.Name.Equals(name, StringComparison.CurrentCulture));
+            if (foundResult.Any())
+                return foundResult.ElementAt(0);
+            
+            return null;
         }
 
         internal static List<BlockReference> GetAllBlockReferences(this Database currentDatabase)

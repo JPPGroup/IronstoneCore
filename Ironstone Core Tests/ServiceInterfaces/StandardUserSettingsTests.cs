@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using NUnit.Framework;
 using System.Reflection;
@@ -30,10 +31,10 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             }
         }
 
-        [TestCase("standarddetaillibrary.location", ExpectedResult="n:\\consulting\\library\\ironstone\\details")] //Test base setting
-        [TestCase("standarddetaillibrary.cachedisabled", ExpectedResult = "false")] //Test overwrite
-        [TestCase("standarDDetailliBrary.loCation", ExpectedResult = "n:\\consulting\\library\\ironstone\\details")] //Test mixed case
-        [TestCase("STANDARDDETAILLIBRARY.LOCATION", ExpectedResult = "n:\\consulting\\library\\ironstone\\details")] //Test upper case
+        [TestCase("overwritetest.setting1", ExpectedResult="original")] //Test base setting
+        [TestCase("overwritetest.setting2", ExpectedResult = "modified")] //Test overwrite
+        [TestCase("oveRwritEtest.settiNg1", ExpectedResult = "original")] //Test mixed case
+        [TestCase("OVERWRITETEST.SETTING1", ExpectedResult = "original")] //Test upper case
         public string VerifyOverwrite(string key)
         { 
             return RunTest<string>(nameof(GetSettingResident), key).ToLower();
@@ -95,8 +96,8 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             return object.ReferenceEquals(settings, newSettings);
         }
 
-        [TestCase("standarddetaillibrary.cachedisabled", ExpectedResult = CastResult.CastSucceeded)]
-        [TestCase("standarddetaillibrary.location", ExpectedResult = CastResult.CastFailed)]
+        [TestCase("casttest.success", ExpectedResult = CastResult.CastSucceeded)]
+        [TestCase("casttest.fail", ExpectedResult = CastResult.CastFailed)]
         public CastResult VerifyCast(string key)
         {
             return RunTest<CastResult>(nameof(VerifyCastResident), key);
@@ -107,8 +108,11 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             StandardUserSettings settings = (StandardUserSettings)CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
             try
             {
-                settings.GetValue<bool>(key);
-                return CastResult.CastSucceeded;
+                bool? result = settings.GetValue<bool>(key);
+                if(result.HasValue)
+                    return CastResult.CastSucceeded;
+
+                throw new InvalidOperationException("Key not found");
             }
             catch (FormatException)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -15,7 +16,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             _logger = logger;
             _jObject = new JObject();
-
+            
             this.LoadStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("Jpp.Ironstone.Core.Resources.BaseConfig.json"))
                 .LoadFrom(configuration.NetworkUserSettingsPath).LoadFrom(configuration.UserSettingsPath);
         }

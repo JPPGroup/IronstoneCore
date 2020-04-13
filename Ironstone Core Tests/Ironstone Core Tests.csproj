@@ -10,12 +10,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <AspectInjectorEnabled>false</AspectInjectorEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLocal|x64'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <AspectInjectorEnabled>false</AspectInjectorEnabled>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AcTestFramework">

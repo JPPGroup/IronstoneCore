@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
@@ -158,6 +157,14 @@ namespace Jpp.Ironstone.Core.Autocad
             BlockReference obj = (BlockReference) acTrans.GetObject(BaseObject, OpenMode.ForRead);
 
             _cachedBlockName = obj.IsDynamicBlock ? ((BlockTableRecord)obj.DynamicBlockTableRecord.GetObject(OpenMode.ForRead)).Name : obj.Name;
+        }
+
+        // TODO: Add test
+        public BlockDrawingObject GetBlock()
+        {
+            BlockDrawingObject blockDrawingObject = new BlockDrawingObject();
+            blockDrawingObject.BaseObject = _database.GetBlockDefinition(BlockName).ObjectId;
+            return blockDrawingObject;
         }
     }
 }

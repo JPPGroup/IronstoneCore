@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using Autodesk.AutoCAD.EditorInput;
 using Jpp.Ironstone.Core.Autocad;
+using Jpp.Ironstone.Core.Properties;
+using Jpp.Ironstone.Core.ServiceInterfaces.Library;
+using Jpp.Ironstone.Core.ServiceInterfaces.Template;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
@@ -42,6 +42,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         internal List<Type> _storesList;
         internal List<Type> _managersList;
 
+        public IReadOnlyList<LibraryNode> RootLibraries { get; private set; }
+
         public DataService(ILogger logger, LayerManager lm, IUserSettings settings)
         {
             _layerManager = lm;
@@ -50,6 +52,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             _logger = logger;
             _stores = new Dictionary<string, Dictionary<Type, DocumentStore>>();
             _templateSources = new List<ITemplateSource>();
+
+            LoadLibraries();
 
             //Add the document hooks
             Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager.DocumentCreated += DocumentManagerOnDocumentCreated;
@@ -262,6 +266,32 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
 
             return null;
+        }
+
+        private void LoadLibraries()
+        {
+            try
+            {
+                RootLibraries = _settings.GetObject<List<DirectoryNode>>("standarddetaillibrary");
+                _logger.Entry(String.Format(Resources.DataService_Inform_LoadingStandardLibraries, RootLibraries.Count), Severity.Information);
+                foreach (LibraryNode rootLibrary in RootLibraries)
+                {
+                    if (!rootLibrary.PreloadDisabled)
+                    {
+                        rootLibrary.Load();
+                    }
+                    else
+                    {
+                        _logger.Entry(String.Format(Resources.DataService_Inform_SkippingLibrary, rootLibrary.Name), Severity.Information);
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Entry("Unexpected failure loading template libraries.", Severity.Error);
+                _logger.LogException(e);
+            }
         }
     }
 }

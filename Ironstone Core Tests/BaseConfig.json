@@ -1,9 +1,10 @@
 {
-	"standarddetaillibrary": {
-		"location":"N:\\Consulting\\Library\\Ironstone\\Details",
-	    "cachedisabled":"true"
+	"casttest": {
+		"success": "true",
+		"fail": "notaboolean"
 	},
-	"JPP_Foundations_TreeRings_Existing": {
-		"linetype":"1MM-HIDDEN"
+	"overwritetest": {
+		"setting1": "original",
+		"setting2": "original"
 	}
 }

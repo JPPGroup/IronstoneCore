@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jpp.Ironstone.Core.ServiceInterfaces
+namespace Jpp.Ironstone.Core.ServiceInterfaces.Template
 {
     public interface ITemplatedObject
     {

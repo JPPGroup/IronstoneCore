@@ -13,25 +13,31 @@
     <FileVersion>9.9.9.9</FileVersion>
     <Platforms>x64</Platforms>
     <Configurations>Debug;Release;DebugLocal;ReleaseLocal</Configurations>    
+    <UseWPF>true</UseWPF>
   </PropertyGroup>  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <AspectInjectorEnabled>false</AspectInjectorEnabled>
   </PropertyGroup>  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLocal|x64'">
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <AspectInjectorEnabled>false</AspectInjectorEnabled>
   </PropertyGroup>  
   <ItemGroup>
     <None Remove="AutocadStyleResourceDictionary.xaml" />
     <None Remove="AutocadWindowStyleResourceDictionary.xaml" />
+    <None Remove="Resources\Folder-Small.png" />
+    <None Remove="Resources\Pen-Small.png" />
     <None Remove="Views\About.xaml" />
     <None Remove="Views\FeedbackHost.xaml" />
+    <None Remove="Views\Libraries.xaml" />
     <None Remove="Views\Review.xaml" />
     <None Remove="Views\SurfaceSelect.xaml" />
     <None Remove="Views\SurfaceSelectWindow.xaml" />
+  </ItemGroup>  
+  <ItemGroup>
+    <Resource Include="Resources\Folder-Small.png" />
+    <Resource Include="Resources\Pen-Small.png" />
   </ItemGroup>  
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -81,6 +87,9 @@
     <Page Include="AutocadWindowStyleResourceDictionary.xaml" />
     <Page Include="Views\About.xaml" />
     <Page Include="Views\FeedbackHost.xaml" />
+    <Page Include="Views\Libraries.xaml">
+      <Generator></Generator>
+    </Page>
     <Page Include="Views\Review.xaml" />
     <Page Include="Views\SurfaceSelect.xaml" />
     <Page Include="Views\SurfaceSelectWindow.xaml" />
@@ -93,5 +102,18 @@
   </ItemGroup>  
   <ItemGroup Condition=" $(Configuration.Contains('Local')) ">
     <ProjectReference Include="..\..\Common\src\Common\Common.csproj" />
+  </ItemGroup>  
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>  
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>  
 </Project>

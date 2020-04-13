@@ -1,30 +1,20 @@
 ﻿using System;
-using System.Drawing;
-using System.Windows;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
-using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
-    public class BlockDrawingObject : DrawingObject, ITemplatedObject
+    public class BlockDrawingObject : DrawingObject
     {
-        public BlockDrawingObject(Database database) : base(database)
-        {
-        }
-
-        private BlockDrawingObject()
-        {
-        }
-
+        public const string TEMPLATE_ID_KEY = "TemplateId";
+        
         protected override void ObjectModified(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         protected override void ObjectErased(object sender, ObjectErasedEventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         public override Point3d Location { get; set; }
@@ -39,10 +29,56 @@ namespace Jpp.Ironstone.Core.Autocad
             throw new NotImplementedException();
         }
 
-        public Guid TemplateID { get; set; }
-        public void UpdateFromTemplate(ITemplateSource source)
+        public string Name
         {
-            throw new NotImplementedException();
+            get
+            {
+                Transaction trans = _database.TransactionManager.TopTransaction;
+                BlockTableRecord record = (BlockTableRecord)trans.GetObject(BaseObject, OpenMode.ForRead);
+                return record.Name;
+            }
+        }
+
+        public BlockDrawingObject() : base()
+        {
+        }
+
+        public BlockDrawingObject(Database database) : base(database)
+        {
+        }
+        
+        public BlockDrawingObject(Document document) : base(document)
+        {
+        }
+
+        public TemplateDrawingObject ConvertToTemplate()
+        {
+            this[TEMPLATE_ID_KEY] = Guid.NewGuid().ToString();
+            TemplateDrawingObject result = new TemplateDrawingObject();
+            result.BaseObject = this.BaseObject;
+
+            return result;
+        }
+
+        public BlockDrawingObject TransferToDocument(Document targetDocument)
+        {
+            Transaction sourceTrans = this._database.TransactionManager.TopTransaction;
+            Transaction destinatiopnTrans = targetDocument.Database.TransactionManager.TopTransaction;
+            BlockTableRecord sourceBlockTableRecord = sourceTrans.GetObject(this.BaseObject, OpenMode.ForRead) as BlockTableRecord;
+            ObjectIdCollection sourceObjects = new ObjectIdCollection();
+            /*foreach (ObjectId objectId in sourceBlockTableRecord)
+            {
+                sourceObjects.Add(objectId);
+            }*/
+            sourceObjects.Add(sourceBlockTableRecord.ObjectId);
+            IdMapping mapping = new IdMapping();
+            
+            // TODO: Confirm ignore is correct option
+            _document.Database.WblockCloneObjects(sourceObjects, targetDocument.Database.BlockTableId, mapping, DuplicateRecordCloning.Ignore, false);
+
+            BlockDrawingObject blockDrawingObject = new BlockDrawingObject(targetDocument);
+            blockDrawingObject.BaseObject = mapping.Lookup(sourceBlockTableRecord.ObjectId).Value;
+            return blockDrawingObject;
         }
     }
 }

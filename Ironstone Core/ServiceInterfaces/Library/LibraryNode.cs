@@ -1,21 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Library
 {
-    public class LibraryNode
+    public abstract class LibraryNode
     {
-        public string Name { get; set; }
-        public ObservableCollection<LibraryNode> Children { get; set; }
-        public string Path { get; set; }
+        public string Name { get; protected set; }
+        public ObservableCollection<LibraryNode> Children { get; }
+        public string Path { get; protected set; }
+        public bool PreloadDisabled { get; }
+        public bool CacheDisabled { get; }
 
-        public LibraryNode()
+        public NodeStatus Status { get; protected set; } = NodeStatus.Unloaded;
+
+        private LibraryNode()
         {
             Children = new ObservableCollection<LibraryNode>();
         }
+
+        public LibraryNode(string path, bool cacheDisabled, string name = null) : this()
+        {
+            Path = path;
+            if (name == null)
+            {
+                Name = System.IO.Path.GetFileNameWithoutExtension(path);
+            }
+            else
+            {
+                TextInfo textFormatter = new CultureInfo("en",false).TextInfo;
+                Name = textFormatter.ToTitleCase(name);
+            }
+            CacheDisabled = cacheDisabled;
+        }
+
+        public abstract void Load();
+    }
+
+    public enum NodeStatus
+    {
+        Cached,
+        Loaded,
+        Unloaded,
+        NotFound
     }
 }

@@ -61,11 +61,39 @@ namespace Jpp.Ironstone.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] BaseConfig {
+            get {
+                object obj = ResourceManager.GetObject("BaseConfig", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Command is not available unless running in Civil 3D.
         /// </summary>
         internal static string Civil3DAttribute_Inform_Not {
             get {
                 return ResourceManager.GetString("Civil3DAttribute_Inform_Not", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading standard libraries, {0} found....
+        /// </summary>
+        internal static string DataService_Inform_LoadingStandardLibraries {
+            get {
+                return ResourceManager.GetString("DataService_Inform_LoadingStandardLibraries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cache disabled for {0}, loading skipped..
+        /// </summary>
+        internal static string DataService_Inform_SkippingLibrary {
+            get {
+                return ResourceManager.GetString("DataService_Inform_SkippingLibrary", resourceCulture);
             }
         }
         

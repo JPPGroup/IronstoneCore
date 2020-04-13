@@ -130,6 +130,9 @@
   <data name="ExtensionApplication_IronstoneTab_Design_Name" xml:space="preserve">
     <value>Ironstone Design</value>
   </data>
+  <data name="ExtensionApplication_LibraryWindow_Name" xml:space="preserve">
+    <value>Template Libraries</value>
+  </data>
   <data name="ExtensionApplication_ReviewWindow_Name" xml:space="preserve">
     <value>Review</value>
   </data>
@@ -139,8 +142,17 @@
   <data name="Feedback" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Feedback.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Folder_Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Folder-Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Library_Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Library-Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Next" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Next.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Pen_Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Pen-Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Review" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Review.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

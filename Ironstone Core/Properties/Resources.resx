@@ -124,6 +124,12 @@
   <data name="Civil3DAttribute_Inform_Not" xml:space="preserve">
     <value>Command is not available unless running in Civil 3D</value>
   </data>
+  <data name="DataService_Inform_LoadingStandardLibraries" xml:space="preserve">
+    <value>Loading standard libraries, {0} found...</value>
+  </data>
+  <data name="DataService_Inform_SkippingLibrary" xml:space="preserve">
+    <value>Cache disabled for {0}, loading skipped.</value>
+  </data>
   <data name="ExtensionApplication_Inform_LoadedMain" xml:space="preserve">
     <value>Core loaded successfully.</value>
   </data>

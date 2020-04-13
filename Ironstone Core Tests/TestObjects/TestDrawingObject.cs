@@ -34,7 +34,7 @@ namespace Jpp.Ironstone.Core.Tests.TestObjects
         {
             //Do nothing...
         }
-
+        
         public static TestDrawingObject CreateActiveObject(Guid id)
         {
             var obj = CreateNonActiveObject(id);

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Windows;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Unity;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.Autocad
@@ -75,7 +74,15 @@ namespace Jpp.Ironstone.Core.Autocad
                     GenerateBase();
                 }
 
-                return _database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
+                //return _database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
+                if(_document != null)
+                    return _document.Database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
+
+                if (_database != null)
+                    return _database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
+
+                CoreExtensionApplication._current.Container.Resolve<ILogger>().Entry("Drawing object does not have database or document set, reverting to active document fopr ObjectID creation.", Severity.Error);
+                return Application.DocumentManager.MdiActiveDocument.Database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
             }
             set
             {
@@ -117,7 +124,19 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             try
             {
-                Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
+                //Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
+                Transaction acTrans = null;
+                if(_document != null)
+                    acTrans = _document.TransactionManager.TopTransaction;
+
+                if (_database != null)
+                    acTrans = _database.TransactionManager.TopTransaction;
+
+                if (acTrans == null)
+                {
+                    CoreExtensionApplication._current.Container.Resolve<ILogger>().Entry("Drawing object does not have database or document set, reverting to active document.", Severity.Error);
+                    acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
+                }
 
                 _activeObject = acTrans.GetObject(BaseObject, OpenMode.ForWrite);
                 _activeObject.Erased += ActiveObject_Erased;
@@ -171,41 +190,29 @@ namespace Jpp.Ironstone.Core.Autocad
         private Dictionary<string, string> _XData;
 
         [XmlIgnore]
+        // TODO: This needs lots of tests added
         public string this[string key]
         {
             get
             {
                 if (_XData == null)
                 {
-                    if (_XData.ContainsKey(key))
-                        throw new KeyNotFoundException();
-
-                    _XData = new Dictionary<string, string>();
-                    Transaction tr = BaseObject.Database.TransactionManager.TopTransaction;
-                    DBObject obj = tr.GetObject(BaseObject, OpenMode.ForRead);
-
-                    ResultBuffer rb = obj.XData;
-
-                    if (rb != null)
-                    {
-                        foreach (TypedValue tv in rb)
-                        {
-                            string data = tv.Value as string;
-                            string[] keyvalue = data.Split(':');
-                            _XData.Add(keyvalue[0], keyvalue[1]);
-                        }
-                    }
+                    LoadXData();
                 }
+
+                if (!_XData.ContainsKey(key))
+                    throw new KeyNotFoundException();
 
                 return _XData[key];
             }
             set
             {
                 Transaction tr = BaseObject.Database.TransactionManager.TopTransaction;
-                DBObject obj = tr.GetObject(BaseObject, OpenMode.ForRead);
+                DBObject obj = tr.GetObject(BaseObject, OpenMode.ForWrite);
 
                 ResultBuffer rb = obj.XData;
                 ResultBuffer newBuffer = new ResultBuffer();
+                newBuffer.Add(new TypedValue(1001, "JPP"));
 
                 if (rb != null && _XData.ContainsKey(key))
                 {
@@ -228,20 +235,41 @@ namespace Jpp.Ironstone.Core.Autocad
                 else
                 {
                     TypedValue newTypedValue = new TypedValue(1000, $"{key}:{value}");
+
                     newBuffer.Add(newTypedValue);
                 }
                 
                 obj.XData = newBuffer;
+            }
+        }
 
-                rb.Dispose();
-                tr.Commit();
+        private void LoadXData()
+        {
+            _XData = new Dictionary<string, string>();
+            Transaction tr = BaseObject.Database.TransactionManager.TopTransaction;
+            DBObject obj = tr.GetObject(BaseObject, OpenMode.ForRead);
+
+            ResultBuffer rb = obj.XData;
+
+            if (rb != null)
+            {
+                foreach (TypedValue tv in rb)
+                {
+                    string data = tv.Value as string;
+                    string[] keyvalue = data.Split(':');
+                    if (keyvalue.Length == 2)
+                    {
+                        _XData.Add(keyvalue[0], keyvalue[1]);
+                    }
+                }
             }
         }
 
         public bool HasKey(string key)
         {
             if (_XData == null)
-                return false;
+                LoadXData();
+                //return false;
 
             return _XData.ContainsKey(key);
         }
@@ -272,11 +300,13 @@ namespace Jpp.Ironstone.Core.Autocad
         protected DrawingObject(Database database)
         {
             _database = database;
+            SubObjects = new Dictionary<string, DrawingObject>();
         }
 
         protected DrawingObject(Document document)
         {
             _document = document;
+            SubObjects = new Dictionary<string, DrawingObject>();
         }
 
         public abstract void Erase();

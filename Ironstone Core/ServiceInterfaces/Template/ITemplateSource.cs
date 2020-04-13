@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using Jpp.Ironstone.Core.Autocad;
 
-namespace Jpp.Ironstone.Core.ServiceInterfaces
+namespace Jpp.Ironstone.Core.ServiceInterfaces.Template
 {
     public interface ITemplateSource
     {
         IEnumerable<Guid> GetAllTemplates();
 
-        DrawingObject GetTemplate(Guid id);
+        BlockDrawingObject GetTemplate(Guid id);
 
         bool Contains(Guid id);
     }

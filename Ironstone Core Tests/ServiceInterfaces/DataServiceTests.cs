@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Jpp.Ironstone.Core.ServiceInterfaces.Library;
 using Jpp.Ironstone.Core.Tests.TestObjects;
 using NUnit.Framework;
 
@@ -92,6 +95,21 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
                 }
             }
         }
+
+        [Test]
+        public void CheckRootLibrariesLoadedFromSettings()
+        {
+            int result = RunTest<int>(nameof(CheckRootLibrariesLoadedFromSettingsResident));
+            Assert.AreEqual(2, result);
+        }
+
+        public int CheckRootLibrariesLoadedFromSettingsResident()
+        {
+            DataService ds = DataService.Current;
+            return ds.RootLibraries.Count;
+        }
+
+        // TODO: Add test to check programfile library rewrite
         
         /*[Test]
         public void StoreCreationOnDocumentCreation()

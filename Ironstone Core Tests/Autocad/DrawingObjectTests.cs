@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -221,7 +222,8 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         {
             try
             {
-                var obj = new TestDrawingObject { BaseObjectPtr = long.MaxValue };
+                Debugger.Launch();
+                var obj = new TestDrawingObject() { BaseObjectPtr = long.MaxValue };
                 return !obj.CreateActiveObject();
             }
             catch (Exception)

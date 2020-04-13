@@ -98,6 +98,15 @@ namespace Jpp.Ironstone.Core.UI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Template Libraries.
+        /// </summary>
+        internal static string ExtensionApplication_LibraryWindow_Name {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_LibraryWindow_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Review.
         /// </summary>
         internal static string ExtensionApplication_ReviewWindow_Name {
@@ -128,9 +137,39 @@ namespace Jpp.Ironstone.Core.UI.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Folder_Small {
+            get {
+                object obj = ResourceManager.GetObject("Folder_Small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Library_Small {
+            get {
+                object obj = ResourceManager.GetObject("Library_Small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Next {
             get {
                 object obj = ResourceManager.GetObject("Next", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Pen_Small {
+            get {
+                object obj = ResourceManager.GetObject("Pen_Small", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
