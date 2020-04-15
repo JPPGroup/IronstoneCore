@@ -17,13 +17,13 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             LayerInfo newLayerInfo;
 
-            if (_settings.GetValue($"{name}.name") != null)
+            if (_settings.GetValue($"layers.{name}.name") != null)
             {
                 newLayerInfo = new LayerInfo()
                 {
-                    IndexColor = short.Parse(_settings.GetValue($"{name}.color")),
-                    LayerId = _settings.GetValue($"{name}.name"),
-                    Linetype = _settings.GetValue($"{name}.linetype")
+                    IndexColor = short.Parse(_settings.GetValue($"layers.{name}.color")),
+                    LayerId = _settings.GetValue($"layers.{name}.name"),
+                    Linetype = _settings.GetValue($"layers.{name}.linetype")
                 };
             }
             else

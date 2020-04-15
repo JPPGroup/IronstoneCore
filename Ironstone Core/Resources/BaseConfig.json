@@ -53,7 +53,19 @@
 					"EndDepth": 5
 				}
 			],
-			"depthBandHatchPattern": "SOLID" 
+			"depthBandHatchPattern": "SOLID"
 		}
-	}
+	},
+	"layers": {
+		"JPP_Structures_BeamCentreline": {
+			"name": "JPP_Structures_BeamCentreline",
+			"color": "6",
+			"linetype": "1MM-HIDDEN"
+		},
+		"StructuralBeamCentreline": {
+			"name": "JPP_Structures_LoadbearingWall",
+			"color": "10",
+			"linetype": "CONTINUOUS"
+		}
+	} 
 }
