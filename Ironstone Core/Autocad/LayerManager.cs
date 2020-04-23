@@ -7,10 +7,12 @@ namespace Jpp.Ironstone.Core.Autocad
     public class LayerManager
     {
         private IUserSettings _settings;
+        private ILogger _logger;
 
-        public LayerManager(IUserSettings settings)
+        public LayerManager(IUserSettings settings, ILogger logger)
         {
             _settings = settings;
+            _logger = logger;
         }
 
         public void CreateLayer(Database targetDatabase, string name)
@@ -34,7 +36,17 @@ namespace Jpp.Ironstone.Core.Autocad
                 };
             }
 
-            targetDatabase.RegisterLayer(newLayerInfo);
+            try
+            {
+                targetDatabase.RegisterLayer(newLayerInfo);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                // TODO: Test this fails with a made up layer linetype, and correctly goes to defaults
+
+                _logger.Entry($"Invalid layer settings for {name}, using defaults.");
+                targetDatabase.RegisterLayer(newLayerInfo.LayerId);
+            }
         }
 
         public string GetLayerName(string name)

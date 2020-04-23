@@ -107,7 +107,7 @@ namespace Jpp.Ironstone.Core.Autocad
         /// Add new object to managed object collection
         /// </summary>
         /// <param name="toBeManaged">Object to be added. Dirty added does not need to be marked</param>
-        public void Add(T toBeManaged)
+        public virtual void Add(T toBeManaged)
         {
             if (!toBeManaged.Active) throw new ArgumentException("Drawing object not active.");
 

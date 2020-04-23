@@ -18,6 +18,9 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
 
         }
 
+        public Point3d Start { get; set; }
+        public Point3d End { get; set; }
+
         public PolylineDrawingObject(Polyline polyline)
         {
             BaseObject = polyline.Id;
