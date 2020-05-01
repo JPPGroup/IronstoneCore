@@ -14,7 +14,7 @@
                 <HierarchicalDataTemplate DataType="{x:Type core:DirectoryNode}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="pack://application:,,,/IronstoneCoreUI;component/Resources/Folder-Small.png" Margin="4"/>
-                        <TextBlock Text="{Binding Name}" Foreground="White" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding Name}" Foreground="White" VerticalAlignment="Center" />
                     </StackPanel>
                     <HierarchicalDataTemplate.ItemContainerStyle>
                         <Style TargetType="TreeViewItem">
@@ -32,6 +32,12 @@
                     <StackPanel Orientation="Horizontal">
                         <Image Source="pack://application:,,,/IronstoneCoreUI;component/Resources/Pen-Small.png" Margin="4"/>
                         <TextBlock Text="{Binding Name}" Foreground="White" VerticalAlignment="Center"/>
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Load into drawing" Click="LoadBlock" Tag="{Binding TemplateId}"/>
+                                <MenuItem Header="Insert into drawing" Click="InsertBlock" Tag="{Binding TemplateId}"/>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
                     </StackPanel>
                 </DataTemplate>
             </TreeView.Resources>

@@ -74,7 +74,7 @@ namespace Jpp.Ironstone.Core.Autocad
             IdMapping mapping = new IdMapping();
             
             // TODO: Confirm ignore is correct option
-            _document.Database.WblockCloneObjects(sourceObjects, targetDocument.Database.BlockTableId, mapping, DuplicateRecordCloning.Ignore, false);
+            _database.WblockCloneObjects(sourceObjects, targetDocument.Database.BlockTableId, mapping, DuplicateRecordCloning.Ignore, false);
 
             BlockDrawingObject blockDrawingObject = new BlockDrawingObject(targetDocument);
             blockDrawingObject.BaseObject = mapping.Lookup(sourceBlockTableRecord.ObjectId).Value;

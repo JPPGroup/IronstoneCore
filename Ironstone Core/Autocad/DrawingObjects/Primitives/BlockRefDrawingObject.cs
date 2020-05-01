@@ -154,10 +154,12 @@ namespace Jpp.Ironstone.Core.Autocad
         private void UpdateCachedFields()
         {
             Transaction acTrans = _database.TransactionManager.TopTransaction;
-            BlockReference obj = (BlockReference) acTrans.GetObject(BaseObject, OpenMode.ForRead);
+            DBObject res = acTrans.GetObject(BaseObject, OpenMode.ForWrite);
+            BlockReference obj = (BlockReference) res;
 
-            _cachedBlockName = obj.IsDynamicBlock ? ((BlockTableRecord)obj.DynamicBlockTableRecord.GetObject(OpenMode.ForRead)).Name : obj.Name;
+            _cachedBlockName = obj.IsDynamicBlock ? ((BlockTableRecord) obj.DynamicBlockTableRecord.GetObject(OpenMode.ForRead)).Name : obj.Name;
         }
+
 
         // TODO: Add test
         public BlockDrawingObject GetBlock()
@@ -165,6 +167,22 @@ namespace Jpp.Ironstone.Core.Autocad
             BlockDrawingObject blockDrawingObject = new BlockDrawingObject();
             blockDrawingObject.BaseObject = _database.GetBlockDefinition(BlockName).ObjectId;
             return blockDrawingObject;
+        }
+
+        public static BlockRefDrawingObject Create(Database target, Point3d insertionPoint, BlockDrawingObject sourceBlock)
+        {
+            ObjectId newRefId;
+            Transaction trans = target.TransactionManager.TopTransaction;
+            BlockReference acadReference = new BlockReference(insertionPoint, sourceBlock.BaseObject);
+            newRefId = target.GetModelSpace(true).AppendEntity(acadReference);
+            trans.AddNewlyCreatedDBObject(acadReference, true);
+            
+            // TODO: Figure out why the belwo throws an exception
+            // Exception is thrown when the object is attempted to be opened, during the modified event handler
+            /*BlockRefDrawingObject newRef = new BlockRefDrawingObject();            
+            newRef.BaseObject = newRefId;
+            return newRef;*/
+            return null;
         }
     }
 }

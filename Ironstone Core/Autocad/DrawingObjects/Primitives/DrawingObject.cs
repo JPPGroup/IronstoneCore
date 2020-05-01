@@ -306,6 +306,7 @@ namespace Jpp.Ironstone.Core.Autocad
         protected DrawingObject(Document document)
         {
             _document = document;
+            _database = _document.Database;
             SubObjects = new Dictionary<string, DrawingObject>();
         }
 

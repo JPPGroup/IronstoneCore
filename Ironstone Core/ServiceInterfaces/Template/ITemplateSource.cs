@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.Autocad;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Template
@@ -8,7 +9,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Template
     {
         IEnumerable<Guid> GetAllTemplates();
 
-        BlockDrawingObject GetTemplate(Guid id);
+        (Database, TemplateDrawingObject) GetTemplate(Guid id);
 
         bool Contains(Guid id);
     }

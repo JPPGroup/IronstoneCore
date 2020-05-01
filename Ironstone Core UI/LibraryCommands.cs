@@ -4,6 +4,8 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Jpp.Ironstone.Core.Autocad;
+using Jpp.Ironstone.Core.ServiceInterfaces;
+using Jpp.Ironstone.Core.ServiceInterfaces.Template;
 using Jpp.Ironstone.Core.UI;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -48,6 +50,54 @@ namespace Jpp.Ironstone.Core.UI
 
                     Application.DocumentManager.MdiActiveDocument = newDoc;
                 }
+            }
+        }
+
+        [CommandMethod("Core_Lib_AddToDrawing")]
+        [IronstoneCommand]
+        public static void TemplateToBlock()
+        {
+            ToDrawing(true);
+        }
+
+        [CommandMethod("Core_Lib_LoadIntoDrawing")]
+        [IronstoneCommand]
+        public static void LoadIntoDrawing()
+        {
+            ToDrawing(false);
+        }
+
+        private static void ToDrawing(bool insert)
+        {
+            Document doc = Application.DocumentManager.MdiActiveDocument;
+            Editor editor = doc.Editor;
+
+            PromptResult promptResult = editor.GetString("\nEnter block template id: ");
+            if (promptResult.Status != PromptStatus.OK)
+                return;
+
+            using (Transaction trans = doc.TransactionManager.StartTransaction())
+            {
+                Guid id = new Guid(promptResult.StringResult);
+                ITemplateSource source = DataService.Current.GetTemplateSource(id);
+                (Database database, TemplateDrawingObject template) = source.GetTemplate(id);
+                BlockDrawingObject residentTemplateBlock;
+                using (database)
+                using(database.TransactionManager.StartTransaction())
+                {
+                    residentTemplateBlock = template.TransferToDocument(doc);
+                }
+
+                if (insert)
+                {
+                    PromptPointResult result = editor.GetPoint("Please enter location of block:");
+                    if (result.Status != PromptStatus.OK)
+                        return;
+
+                    BlockRefDrawingObject.Create(doc.Database, result.Value, residentTemplateBlock);
+                }
+
+                trans.Commit();
             }
         }
     }
