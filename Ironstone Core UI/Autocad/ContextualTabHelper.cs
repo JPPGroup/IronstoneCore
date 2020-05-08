@@ -4,7 +4,7 @@ using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.EditorInput;
 using Jpp.Ironstone.Core.Autocad;
 
-namespace Jpp.Ironstone.Core.UI
+namespace Jpp.Ironstone.Core.UI.Autocad
 {
     public static class ContextualTabHelper
     {

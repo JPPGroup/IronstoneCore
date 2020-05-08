@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.Windows;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Jpp.Ironstone.Core.UI.Autocad;
 using Jpp.Ironstone.Core.UI.Properties;
 using Jpp.Ironstone.Core.UI.ViewModels;
 using Jpp.Ironstone.Core.UI.Views;
 using Unity;
-using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.UI
 {
@@ -18,10 +15,8 @@ namespace Jpp.Ironstone.Core.UI
         public static CoreUIExtensionApplication Current { get; private set; }
 
         private IUnityContainer _container;
-
         private RibbonTab _designTab, _conceptTab;
-        private List<Tuple<RibbonTab, Func<bool>>> _contextTabs;
-        private List<RibbonTab> _toActivate;
+        private ContextualTabManager _contextualTabManager;
 
         public void CreateUI()
         {
@@ -35,18 +30,6 @@ namespace Jpp.Ironstone.Core.UI
         {
             Current = this;
             CoreExtensionApplication._current.RegisterExtension(this);
-            _contextTabs = new List<Tuple<RibbonTab, Func<bool>>>();
-            _toActivate = new List<RibbonTab>();
-
-            foreach (Document document in Application.DocumentManager)
-            {
-                document.ImpliedSelectionChanged += DocumentOnImpliedSelectionChanged;
-            }
-
-            Application.DocumentManager.DocumentCreated += delegate(object sender, DocumentCollectionEventArgs args)
-            {
-                args.Document.ImpliedSelectionChanged += DocumentOnImpliedSelectionChanged;
-            };
         }
 
         public void InjectContainer(IUnityContainer container)
@@ -57,6 +40,7 @@ namespace Jpp.Ironstone.Core.UI
             _container.RegisterType<AboutViewModel>();
             _container.RegisterType<Review>();
             Logger = _container.Resolve<ILogger>();
+            _contextualTabManager = new ContextualTabManager(Logger);
         }
 
         public void Terminate()
@@ -71,63 +55,18 @@ namespace Jpp.Ironstone.Core.UI
         /// <param name="filter">Boolean delegate that controls when tab is set active. Called whenever selection changes.</param>
         public void RegisterConceptTab(RibbonTab contextualTab, Func<bool> filter)
         {
-            _contextTabs.Add(new Tuple<RibbonTab, Func<bool>>(contextualTab, filter));
-            contextualTab.IsVisible = false;
-            contextualTab.IsContextualTab = true;
-            ComponentManager.Ribbon.Tabs.Add(contextualTab);
+            _contextualTabManager.RegisterConceptTab(contextualTab, filter);
         }
 
-        // Triggered when idle to display tab. Immediately unregisters event for efficiency
-        private void ApplicationOnIdle(object sender, EventArgs e)
+        /// <summary>
+        /// Add a contextual tab with activation delegate. No properties specific to being contextual need to be set
+        /// </summary>
+        /// <param name="contextualTab">Reference to contextual tab</param>
+        /// <param name="filter">Boolean delegate that controls when tab is set active. Called whenever selection changes.</param>
+        /// /// <param name="mode">Enum flags indicating when this tab is valid to be shown</param>
+        public void RegisterConceptTab(RibbonTab contextualTab, Func<bool> filter, ContextualMode mode)
         {
-            try
-            {
-                Application.Idle -= ApplicationOnIdle;
-
-                foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
-                {
-                    contextTab.Item1.IsVisible = false;
-                }
-
-                if (_toActivate.Any())
-                {
-
-                    foreach (RibbonTab ribbonTab in _toActivate)
-                    {
-                        ribbonTab.IsVisible = true;
-                    }
-
-                    _toActivate.Last().IsActive = true;
-                }
-            }
-            catch (Exception exception)
-            {
-                Logger.Entry($"Unexpected error caught in idle event: {exception.Message}", Severity.Error);
-            }
-            
-        }
-
-        private void DocumentOnImpliedSelectionChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                // Remove all active tabs
-                _toActivate.Clear();
-
-                foreach (Tuple<RibbonTab, Func<bool>> contextTab in _contextTabs)
-                {
-                    if (contextTab.Item2())
-                    {
-                        _toActivate.Add(contextTab.Item1);
-                    }
-                }
-
-                Application.Idle += ApplicationOnIdle;
-            }
-            catch (Exception exception)
-            {
-                Logger.Entry($"Unexpected error caught in selection changed event: {exception.Message}", Severity.Error);
-            }
+            _contextualTabManager.RegisterConceptTab(contextualTab, filter, mode);
         }
 
         /// <summary>
