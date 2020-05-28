@@ -41,6 +41,7 @@ namespace Jpp.Ironstone.Core.UI.Autocad
             return pSelRes.Status != PromptStatus.OK ? null : pSelRes.Value;
         }
 
+        // TODO: CHanges this from an array to collection, as removed need for unnessary casts
         public static string PromptForKeywords(this Editor ed, string promptMessage, string[] keywords, string defaultKeyword = null) 
         {
             var pKeyOpts = new PromptKeywordOptions(promptMessage);

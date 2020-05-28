@@ -38,7 +38,7 @@ namespace Jpp.Ironstone.Core.UI
                         using (Transaction destinationTrans = newDoc.TransactionManager.StartTransaction())
                         {
                             BlockReference refObj = (BlockReference) trans.GetObject(acSSPrompt.Value[0].ObjectId, OpenMode.ForWrite);
-                            BlockRefDrawingObject reference = new BlockRefDrawingObject(refObj);
+                            BlockRefDrawingObject reference = new BlockRefDrawingObject(newDoc, refObj);
 
                             Database source = Application.DocumentManager.MdiActiveDocument.Database;
                             BlockDrawingObject newInsance = reference.GetBlock().TransferToDocument(newDoc);

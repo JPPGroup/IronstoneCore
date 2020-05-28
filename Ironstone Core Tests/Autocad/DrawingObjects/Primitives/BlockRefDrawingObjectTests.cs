@@ -51,7 +51,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad.DrawingObjects.Primitives
             Document doc = Application.DocumentManager.MdiActiveDocument;
             using (Transaction trans = doc.TransactionManager.StartTransaction())
             {
-                IEnumerable<BlockRefDrawingObject> records = doc.Database.GetLayout(pi.LayoutName).GetBlockReferences().Select(br => new TestBlockRefDrawingObject(br));
+                IEnumerable<BlockRefDrawingObject> records = doc.Database.GetLayout(pi.LayoutName).GetBlockReferences().Select(br => new TestBlockRefDrawingObject(doc, br));
                 records = records.Where(br => br.BlockName == pi.BlockName);
 
                 if (records.Count() != 1)

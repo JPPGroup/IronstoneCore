@@ -1,5 +1,6 @@
 ﻿using System;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
@@ -78,6 +79,27 @@ namespace Jpp.Ironstone.Core.Autocad
 
             BlockDrawingObject blockDrawingObject = new BlockDrawingObject(targetDocument);
             blockDrawingObject.BaseObject = mapping.Lookup(sourceBlockTableRecord.ObjectId).Value;
+            return blockDrawingObject;
+        }
+
+        public static BlockDrawingObject Create(Database target, string blockName)
+        {
+            Transaction trans = target.TransactionManager.TopTransaction;
+            BlockTable bt = (BlockTable)trans.GetObject(target.BlockTableId, OpenMode.ForRead);
+
+            SymbolUtilityServices.ValidateSymbolName(blockName, false);
+            if(bt.Has(blockName))
+                throw  new InvalidOperationException("Block name exists");
+
+            BlockTableRecord btr = new BlockTableRecord();
+            btr.Name = blockName;
+
+            bt.UpgradeOpen();
+            ObjectId btrId = bt.Add(btr);
+            trans.AddNewlyCreatedDBObject(btr, true);
+
+            BlockDrawingObject blockDrawingObject = new BlockDrawingObject(target);
+            blockDrawingObject.BaseObject = btrId;
             return blockDrawingObject;
         }
     }

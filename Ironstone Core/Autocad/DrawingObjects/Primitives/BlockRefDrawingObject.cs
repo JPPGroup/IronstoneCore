@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
@@ -14,7 +15,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
         private Dictionary<string, object> _properties;
 
-        public BlockRefDrawingObject(BlockReference reference) : base()
+        public BlockRefDrawingObject(Document doc, BlockReference reference) : base(doc)
         {
             BaseObject = reference.ObjectId;
             _properties = new Dictionary<string, object>();
@@ -130,8 +131,9 @@ namespace Jpp.Ironstone.Core.Autocad
 
         protected override void ObjectModified(object sender, EventArgs e)
         {
-            UpdateCachedFields();
-            GetProperties();
+            // TODO: These need to be renabled
+            //UpdateCachedFields();
+            //GetProperties();
         }
 
         protected override void ObjectErased(object sender, ObjectErasedEventArgs e)
@@ -177,12 +179,34 @@ namespace Jpp.Ironstone.Core.Autocad
             newRefId = target.GetModelSpace(true).AppendEntity(acadReference);
             trans.AddNewlyCreatedDBObject(acadReference, true);
             
-            // TODO: Figure out why the belwo throws an exception
+            // TODO: Figure out why the belwo throws an exception when the modified handler is active
             // Exception is thrown when the object is attempted to be opened, during the modified event handler
-            /*BlockRefDrawingObject newRef = new BlockRefDrawingObject();            
+            BlockRefDrawingObject newRef = new BlockRefDrawingObject();            
             newRef.BaseObject = newRefId;
-            return newRef;*/
-            return null;
+            return newRef;
+        }
+
+        public DBObjectCollection Explode(bool addToModelSpace = false)
+        {
+            Transaction trans = this._document.Database.TransactionManager.TopTransaction;
+
+            DBObjectCollection collection = new DBObjectCollection();
+
+            BlockReference reference = (BlockReference)trans.GetObject(this.BaseObject, OpenMode.ForRead);
+            reference.Explode(collection);
+
+            if (addToModelSpace)
+            {
+                foreach (DBObject dbObject in collection)
+                {
+                    Entity ent = (Entity)dbObject;
+                    BlockTableRecord btr = _document.Database.GetModelSpace(true);
+                    btr.AppendEntity(ent);
+                    trans.AddNewlyCreatedDBObject(ent, true);
+                }
+            }
+
+            return collection;
         }
     }
 }

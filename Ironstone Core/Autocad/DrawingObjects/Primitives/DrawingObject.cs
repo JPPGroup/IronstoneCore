@@ -40,6 +40,11 @@ namespace Jpp.Ironstone.Core.Autocad
 
         protected Document _document { get; private set; }
 
+        public Document Document
+        {
+            get { return _document; }
+        }
+
         public string DocumentName
         {
             get { return _document.Name; }

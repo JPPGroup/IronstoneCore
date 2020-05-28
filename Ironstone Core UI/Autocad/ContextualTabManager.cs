@@ -22,16 +22,19 @@ namespace Jpp.Ironstone.Core.UI.Autocad
         {
             _contextTabs = new List<ContextualTab>();
             _toActivate = new List<RibbonTab>();
+            _logger = logger;
 
             foreach (Document document in Application.DocumentManager)
             {
                 document.ImpliedSelectionChanged += DocumentOnImpliedSelectionChanged;
+                // TODO: Not sure these event handles are needed, implied changes seems to trigger on command end anyway
                 document.CommandEnded += (sender, args) => UpdateMode(document);
             }
 
             Application.DocumentManager.DocumentCreated += delegate(object sender, DocumentCollectionEventArgs args)
             {
                 args.Document.ImpliedSelectionChanged += DocumentOnImpliedSelectionChanged;
+                // TODO: Not sure these event handles are needed, implied changes seems to trigger on command end anyway
                 args.Document.CommandEnded += (sender2, args2) => UpdateMode(args.Document);
             };
 
@@ -44,23 +47,24 @@ namespace Jpp.Ironstone.Core.UI.Autocad
             // TODO: Consider moving to attribute
             try
             {
+                _mode = ContextualMode.None;
+
                 if (IsInModel() || IsInLayoutViewport())
                 {
-                    _mode = ContextualMode.ModelSpace;
-                    return;
+                    _mode = _mode | ContextualMode.ModelSpace;
                 }
 
                 if (IsInLayoutPaper())
                 {
-                    _mode = ContextualMode.PaperSpace;
-                    return;
+                    _mode = _mode | ContextualMode.PaperSpace;
                 }
 
-                if (IsInLayoutPaper())
+                if (IsInBlockEdit())
                 {
-                    _mode = ContextualMode.BlockEdit;
-                    return;
+                    _mode = _mode | ContextualMode.BlockEdit;
                 }
+
+                UpdateTabs();
             }
             catch (Exception e)
             {
@@ -106,7 +110,9 @@ namespace Jpp.Ironstone.Core.UI.Autocad
 
         public static bool IsInBlockEdit()
         {
-            return (System.Convert.ToInt32(Application.GetSystemVariable("BLOCKEDITOR "))  == 1);
+            /*int variable = (int) Application.GetSystemVariable("BLOCKEDITOR");
+            return (variable  == 1);*/
+            return Autodesk.AutoCAD.Internal.AcAeUtilities.IsInBlockEditor();
         }
  
         public static bool IsInLayoutViewport()
@@ -163,6 +169,11 @@ namespace Jpp.Ironstone.Core.UI.Autocad
         }
 
         private void DocumentOnImpliedSelectionChanged(object sender, EventArgs e)
+        {
+            UpdateTabs();
+        }
+
+        private void UpdateTabs()
         {
             try
             {
