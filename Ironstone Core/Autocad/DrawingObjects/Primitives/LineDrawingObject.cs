@@ -60,16 +60,17 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             get
             {
-                return 0;
+                Transaction acTrans = _document.TransactionManager.TopTransaction;
+                Point3d result;
+                using (Line l = acTrans.GetObject(BaseObject, OpenMode.ForWrite) as Line)
+                {
+                    return l.Angle;
+                }
             }
             set
             {
-                return;
+                throw new NotImplementedException();
             }
-        }
-
-        public override void Erase()
-        {
         }
 
         public Point3d StartPoint
@@ -128,7 +129,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
         protected Curve CreateOffset(double offsetDistance, Side side)
         {
-            Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
+            Transaction acTrans = _document.TransactionManager.TopTransaction;
 
             Curve baseEntity = acTrans.GetObject(this.BaseObject, OpenMode.ForRead) as Curve;
 

@@ -182,7 +182,7 @@ namespace Jpp.Ironstone.Core.UI.Autocad
 
                 foreach (ContextualTab contextTab in _contextTabs)
                 {
-                    if (contextTab.Mode.HasFlag(_mode) && contextTab.Filter())
+                    if (_mode.HasFlag(contextTab.Mode) && contextTab.Filter())
                     {
                         _toActivate.Add(contextTab.Tab);
                     }

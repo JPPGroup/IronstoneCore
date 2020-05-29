@@ -67,7 +67,15 @@
 						"EndDepth": 5
 					}
 				],
-				"depthBandHatchPattern": "SOLID"
+				"depthBandHatchPattern": "SOLID",
+				"layers":
+        {
+					"foundation": {
+						"color": "6",
+						"name": "JPP_Structures_Foundations",
+            "linetype": "Continuous"
+					}
+        }
 			}
 		}
 }

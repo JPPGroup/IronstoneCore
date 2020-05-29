@@ -112,6 +112,13 @@ namespace Jpp.Ironstone.Core.Autocad
                     if (layerObj is LayerAttribute layerAttribute)
                     {
                         var layer = AcCurDb.GetLayer(layerAttribute.Name);
+                        if (layer == null)
+                        {
+                            // TODO: Redo this to use pull the correct name from the layer manager
+                            _log.Entry($"Layer {layerAttribute.Name} not found when attempting to save state.", Severity.Error);
+                            continue;
+                        }
+
                         var status = new LayerState(layer);
 
                         if (status.IsInvalid)

@@ -315,7 +315,12 @@ namespace Jpp.Ironstone.Core.Autocad
             SubObjects = new Dictionary<string, DrawingObject>();
         }
 
-        public abstract void Erase();
+        public virtual void Erase()
+        {
+            Transaction trans = _database.TransactionManager.TopTransaction;
+            Entity ent = (Entity) trans.GetObject(this.BaseObject, OpenMode.ForWrite);
+            ent.Erase();
+        }
 
         public virtual Extents3d GetBoundingBox()
         {
@@ -335,6 +340,18 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public virtual void ParentUpdated(DrawingObject parent)
         {
+        }
+
+        public void DrawOnTop()
+        {
+            Transaction trans = _document.TransactionManager.TopTransaction;
+            BlockTableRecord btr = _document.Database.GetModelSpace(false);
+            DrawOrderTable drawOrder = trans.GetObject(btr.DrawOrderTableId, OpenMode.ForWrite) as DrawOrderTable;
+            
+            ObjectIdCollection ids = new ObjectIdCollection();
+            ids.Add(BaseObject);
+
+            drawOrder.MoveToTop(ids);
         }
     }
 }
