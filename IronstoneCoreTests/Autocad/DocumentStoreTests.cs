@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,15 +19,16 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         [Test]
         public void VerifyDocumentStoreSaveCommand()
         {
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyDocumentStoreSaveCommandResident)));
-            string testFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Test1.dwg");
+            string filename = $"{Guid.NewGuid()}.dwg";
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyDocumentStoreSaveCommandResident), filename));
+            string testFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename);
             if (File.Exists(testFile))
             {
                 File.Delete(testFile);
             }
         }
 
-        public bool VerifyDocumentStoreSaveCommandResident()
+        public bool VerifyDocumentStoreSaveCommandResident(string filename)
         {
             using (Transaction trans = Application.DocumentManager.MdiActiveDocument.TransactionManager.StartTransaction())
             {
@@ -43,7 +43,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                     store.SaveTestProperty = true;
 
                     var ed = Application.DocumentManager.MdiActiveDocument.Editor;
-                    ed.Command("_qsave", "Test1.dwg");
+                    ed.Command("_qsave", filename);
                     store = ds.GetStore<TestDocumentStore>(Application.DocumentManager.MdiActiveDocument.Name);
 
                     trans.Commit();
