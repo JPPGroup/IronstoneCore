@@ -95,7 +95,7 @@
     <Page Include="Views\SurfaceSelectWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ironstone Core\Ironstone Core.csproj" />
+    <ProjectReference Include="..\IronstoneCore\IronstoneCore.csproj" />
   </ItemGroup>
   <ItemGroup Condition=" $(Configuration.Contains('Local')) == false">
     <PackageReference Include="Jpp.Common" Version="0.3.7" />

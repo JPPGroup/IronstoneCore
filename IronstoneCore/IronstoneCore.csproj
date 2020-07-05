@@ -78,9 +78,6 @@
       <Version>2.9.8</Version>
     </PackageReference>
 	  <PackageReference Include="Unity" Version="5.11.4" />
-    <!--<PackageReference Include="System.Runtime.CompilerServices.Unsafe">
-      <Version>4.7.0</Version>
-    </PackageReference>-->
   </ItemGroup>  
   <ItemGroup Condition=" $(Configuration.Contains('Local')) == false">
     <PackageReference Include="Jpp.Common" Version="0.3.7" />
