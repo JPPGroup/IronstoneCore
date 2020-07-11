@@ -222,7 +222,6 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         {
             try
             {
-                Debugger.Launch();
                 var obj = new TestDrawingObject() { BaseObjectPtr = long.MaxValue };
                 return !obj.CreateActiveObject();
             }

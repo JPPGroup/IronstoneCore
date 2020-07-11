@@ -24,7 +24,25 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
             string testFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename);
             if (File.Exists(testFile))
             {
-                File.Delete(testFile);
+                int tries = 0;
+                bool loop = true;
+                while (loop)
+                {
+                    try
+                    {
+                        if (tries > 4)
+                        {
+                            Assert.Fail("Unable to remove test drawing");
+                        }
+
+                        File.Delete(testFile);
+                        loop = false;
+                    }
+                    catch (IOException e)
+                    {
+                        tries++;
+                    }
+                }
             }
         }
 

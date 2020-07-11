@@ -6,7 +6,7 @@ namespace Jpp.Ironstone.Core.Tests.Attributes
 {
     [TestFixture]
     // TODO: Add a test for when civil 3d is running to check this works ok. Need Civil 3d test environment to implement 
-    class Civil3DCommandAttributeTests : IronstoneTestFixture
+    class Civil3DCommandAttributeTests : IronstoneAutocadTestFixture
     {
         public Civil3DCommandAttributeTests() : base(Assembly.GetExecutingAssembly(), typeof(Civil3DCommandAttributeTests)) { }
 

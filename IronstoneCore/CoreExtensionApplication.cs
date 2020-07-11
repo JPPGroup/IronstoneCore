@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -10,7 +9,6 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
-using Autodesk.Civil.ApplicationServices;
 using Jpp.AutoUpdate;
 using Jpp.AutoUpdate.Classes;
 using Jpp.Ironstone.Core;
@@ -78,23 +76,15 @@ namespace Jpp.Ironstone.Core
             get
             {
                 if (_civil3D != null) return _civil3D.Value;
-                try
-                {
-                    Civil3DTest();
-                    _civil3D = true;
-                }
-                catch (System.Exception)
-                {
-                    _civil3D = false;
-                }
+                _civil3D = Civil3DTest();
 
                 return _civil3D.Value;
             }
         }
 
-        private static void Civil3DTest()
+        private static bool Civil3DTest()
         {
-            CivilDocument unused = CivilApplication.ActiveDocument;
+            return AppDomain.CurrentDomain.GetAssemblies().Any(a => a.FullName.Contains("AeccDbMgd"));
         }
 
         /// <summary>
@@ -248,16 +238,21 @@ namespace Jpp.Ironstone.Core
             }
 
             _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
-            
+
             // If not running in civil 3d, hook into document creation events to monitor for civil3d drawings being opened
             if (!Civil3D)
             {
+                _logger.Entry($"Application is not running in Civil3d, checking documents...");
                 foreach (Document doc in Application.DocumentManager)
                 {
                     CheckDocument(doc);
                     AddRegAppKey(doc);
                 }
                 Application.DocumentManager.DocumentCreated += DocumentManagerOnDocumentCreated;
+            }
+            else
+            {
+                _logger.Entry($"Application is running in Civil3d, document checks bypassed.");
             }
         }
 
