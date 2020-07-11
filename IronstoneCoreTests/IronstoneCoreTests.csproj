@@ -16,8 +16,8 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AcTestFramework">
-      <Version>2.4.47</Version>
+    <PackageReference Include="JPP.AcTestFramework.2021">
+      <Version>4.0.6</Version>
     </PackageReference>
     <PackageReference Include="AspectInjector">
       <Version>2.4.0</Version>
