@@ -2,16 +2,14 @@
 <Project Sdk="Microsoft.NET.Sdk">  
   <PropertyGroup>    
     <RootNamespace>Jpp.Ironstone.Core.UI</RootNamespace>
-    <AssemblyName>IronstoneCoreUI</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>IronstoneCoreUI</AssemblyName>    
     <Description>Common library for all UI functions in Ironstone</Description>
     <Copyright>Copyright ©  2020</Copyright>
     <Company>JPP Consulting Ltd.</Company>
     <Product>Ironstone Core UI</Product>
     <Authors>JPPGroup</Authors>
     <AssemblyVersion>9.9.9.9</AssemblyVersion>
-    <FileVersion>9.9.9.9</FileVersion>
-    <Platforms>x64</Platforms>      
+    <FileVersion>9.9.9.9</FileVersion>    
     <UseWPF>true</UseWPF>
   </PropertyGroup>  
   <ItemGroup>

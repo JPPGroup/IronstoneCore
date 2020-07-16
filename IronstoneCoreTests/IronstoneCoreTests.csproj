@@ -2,9 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk"> 
   <PropertyGroup>    
     <RootNamespace>Jpp.Ironstone.Core.Tests</RootNamespace>
-    <AssemblyName>IronstoneCoreTests</AssemblyName>
-    <TargetFramework>net472</TargetFramework>
-    <Platforms>x64</Platforms>    
+    <AssemblyName>IronstoneCoreTests</AssemblyName>    
   </PropertyGroup>
   <Import Project="..\IronstoneBase\IronstoneBaseProject.csproj" />
   <ItemGroup>
