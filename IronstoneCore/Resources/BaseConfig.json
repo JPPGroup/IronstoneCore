@@ -82,7 +82,32 @@
 					"color": "6",
 					"name": "JPP_Structures_Foundations",
 					"linetype": "Continuous"
-				}
+				},
+				"treerings_existing": {
+					"name": "JPP_Structures_Foundations_TreeRings_Existing",
+					"color": "6",
+					"linetype": "Continuous"
+				},
+				"treerings_proposed": {
+					"name": "JPP_Structures_Foundations_TreeRings_Proposed",
+					"color": "6",
+					"linetype": "Continuous"
+				},
+				"treerings_piled": {
+					"name": "JPP_Structures_Foundations_TreeRings_Piled",
+					"color": "10",
+					"linetype": "Continuous"
+				},
+				"treerings_heave": {
+					"name": "JPP_Structures_Foundations_TreeRings_Heave",
+					"color": "40",
+					"linetype": "Continuous"
+				},
+        "treerings_label": {
+          "name": "JPP_Structures_Foundations_TreeRings_Text",
+          "color": "2",
+          "linetype": "Continuous"
+        }
 			}
 		}
 	}

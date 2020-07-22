@@ -108,6 +108,22 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
+        [XmlIgnore]
+        public int ColorIndex {
+            get
+            {
+                Transaction trans = _database.TransactionManager.TopTransaction;
+                Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForRead);
+                return ent.ColorIndex;
+            }
+            set
+            {
+                Transaction trans = _database.TransactionManager.TopTransaction;
+                Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForWrite);
+                ent.ColorIndex = value;
+            }
+        }
+
         protected virtual bool VerifyBaseObject()
         {
             return true;
@@ -320,6 +336,12 @@ namespace Jpp.Ironstone.Core.Autocad
             Transaction trans = _database.TransactionManager.TopTransaction;
             Entity ent = (Entity) trans.GetObject(this.BaseObject, OpenMode.ForWrite);
             ent.Erase();
+
+            foreach (DrawingObject drawingObject in SubObjects.Values)
+            {
+                drawingObject.Erase();
+            }
+            SubObjects.Clear();
         }
 
         public virtual Extents3d GetBoundingBox()
@@ -352,6 +374,18 @@ namespace Jpp.Ironstone.Core.Autocad
             ids.Add(BaseObject);
 
             drawOrder.MoveToTop(ids);
+        }
+
+        public void DrawOnBottom()
+        {
+            Transaction trans = _document.TransactionManager.TopTransaction;
+            BlockTableRecord btr = _document.Database.GetModelSpace(false);
+            DrawOrderTable drawOrder = trans.GetObject(btr.DrawOrderTableId, OpenMode.ForWrite) as DrawOrderTable;
+
+            ObjectIdCollection ids = new ObjectIdCollection();
+            ids.Add(BaseObject);
+
+            drawOrder.MoveToBottom(ids);
         }
     }
 }
