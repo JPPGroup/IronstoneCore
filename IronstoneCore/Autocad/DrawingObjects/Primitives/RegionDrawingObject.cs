@@ -42,35 +42,44 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
                 trans.AddNewlyCreatedDBObject(acHatch, true);
                 HatchDrawingObject hatchDrawingObject = new HatchDrawingObject(acHatch);
 
-                this.SubObjects.Add("Hatch", hatchDrawingObject);
-                
-
                 // Set the properties of the hatch object
                 // Associative must be set after the hatch object is appended to the 
                 // block table record and before AppendLoop
                 acHatch.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
                 acHatch.Associative = true;
 
-                /*foreach (Entity enclosed in intersectedRegions)
+                Region baseObject = trans.GetObject(BaseObject, OpenMode.ForWrite) as Region;
+                
+                DBObjectCollection cvs = new DBObjectCollection();
+                baseObject.Explode(cvs);
+                if (cvs[0] is Region)
+                {
+                    int i = 0;
+                    foreach (Region r in cvs)
+                    {
+                        RegionDrawingObject rdo = new RegionDrawingObject(Document);
+                        rdo.BaseObject = modelSpace.AppendEntity(r);
+                        rdo.Hatch();
+
+                        trans.AddNewlyCreatedDBObject(r, true);
+                        this.SubObjects.Add($"Subregion{i}", rdo);
+                        i++;
+                    }
+                }
+                else
                 {
                     ObjectIdCollection boundary = new ObjectIdCollection();
-                    RingsCollection.Add(acBlkTblRec.AppendEntity(enclosed));
-                    acTrans.AddNewlyCreatedDBObject(enclosed, true);
-                    boundary.Add(enclosed.ObjectId);
-                    acHatch.AppendLoop(HatchLoopTypes.Outermost, boundary);
-                }*/
+                    boundary.Add(BaseObject);
+                    acHatch.AppendLoop(HatchLoopTypes.External, boundary);
+                    acHatch.HatchStyle = HatchStyle.Ignore;
+                    acHatch.EvaluateHatch(true);
 
-                ObjectIdCollection boundary = new ObjectIdCollection();
-                boundary.Add(BaseObject);
-                acHatch.AppendLoop(HatchLoopTypes.External, boundary);
+                    Byte alpha = (Byte)(255 * (100 - 80) / 100);
+                    acHatch.Transparency = new Transparency(alpha);
 
-                acHatch.HatchStyle = HatchStyle.Ignore;
-                acHatch.EvaluateHatch(true);
-
-                Byte alpha = (Byte)(255 * (100 - 80) / 100);
-                acHatch.Transparency = new Transparency(alpha);
-                
-                hatchDrawingObject.DrawOnBottom();
+                    hatchDrawingObject.DrawOnBottom();
+                    this.SubObjects.Add("Hatch", hatchDrawingObject);
+                }
             }
         }
     }

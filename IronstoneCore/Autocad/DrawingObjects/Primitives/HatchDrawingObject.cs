@@ -32,10 +32,6 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
         }
 
         public override double Rotation { get; set; }
-        public override void Erase()
-        {
-            
-        }
 
         public Autodesk.AutoCAD.Colors.Color Color
         {
