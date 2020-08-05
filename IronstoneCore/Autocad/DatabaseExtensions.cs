@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -257,5 +259,24 @@ namespace Jpp.Ironstone.Core.Autocad
 
             return result;
         }
+
+        /*public static  IEnumerable<DocumentStore> GetStores(this Database database)
+        {
+            Dictionary<Type, DocumentStore> storeContainer = new Dictionary<Type, DocumentStore>();
+            foreach (Type t in DataService.Current._storesList)
+            {
+                storeContainer.Add(t, (DocumentStore) CreateDocumentStore(t, database));
+            }
+
+            return storeContainer.Values;
+        }
+
+        private static object CreateDocumentStore(Type T, Database doc)
+        {
+            DocumentStore ds = (DocumentStore) Activator.CreateInstance(T, doc, GetManagerTypes(), _logger, _layerManager, _settings);
+            ds.DocumentNameChanged += Store_DocumentNameChanged;
+            ds.LoadWrapper();
+            return ds;
+        }*/
     }
 }

@@ -215,13 +215,24 @@ namespace Jpp.Ironstone.Core.Autocad
                 Transaction tr = BaseObject.Database.TransactionManager.TopTransaction;
                 DBObject obj = tr.GetObject(BaseObject, OpenMode.ForWrite);
 
+                //TODO: Remove this brute force registration
+                DataService.Current.RegisterAppKey(_database);
+
                 ResultBuffer rb = obj.XData;
                 ResultBuffer newBuffer = new ResultBuffer();
                 newBuffer.Add(new TypedValue(1001, "JPP"));
 
-                if (rb != null && _XData.ContainsKey(key))
+                if (_XData == null)
                 {
-                    for(int i = 0; i < rb.AsArray().Length; i++)//foreach (TypedValue tv in rb)
+                    LoadXData();
+                }
+
+                //TODO: Check if this area can be simplified
+                //TODO: Add unit tests ensuring data is preserved/replace correctly
+                if (rb != null)
+                {
+                    //Skip the first entry as this is the regappkey
+                    for(int i = 1; i < rb.AsArray().Length; i++)//foreach (TypedValue tv in rb)
                     {
                         TypedValue tv = rb.AsArray()[i];
                         string data = tv.Value as string;
@@ -236,15 +247,21 @@ namespace Jpp.Ironstone.Core.Autocad
                             newBuffer.Add(tv);
                         }
                     }
+
+                    if (!_XData.ContainsKey(key))
+                    {
+                        TypedValue newTypedValue = new TypedValue(1000, $"{key}:{value}");
+                        newBuffer.Add(newTypedValue);
+                    }
                 }
                 else
                 {
                     TypedValue newTypedValue = new TypedValue(1000, $"{key}:{value}");
-
                     newBuffer.Add(newTypedValue);
                 }
                 
                 obj.XData = newBuffer;
+                LoadXData();
             }
         }
 

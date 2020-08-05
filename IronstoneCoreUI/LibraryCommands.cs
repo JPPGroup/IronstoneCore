@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
@@ -29,7 +30,8 @@ namespace Jpp.Ironstone.Core.UI
                 if(acSSPrompt.Value.Count > 1)
                     throw new ArgumentOutOfRangeException("More items than expected");
 
-                using (Transaction trans = Application.DocumentManager.MdiActiveDocument.TransactionManager.StartTransaction())
+                Document original = Application.DocumentManager.MdiActiveDocument;
+                using (Transaction trans = original.TransactionManager.StartTransaction())
                 {
                     DocumentCollection acDocMgr = Application.DocumentManager;
                     Document newDoc = acDocMgr.Add("");
@@ -38,11 +40,23 @@ namespace Jpp.Ironstone.Core.UI
                         using (Transaction destinationTrans = newDoc.TransactionManager.StartTransaction())
                         {
                             BlockReference refObj = (BlockReference) trans.GetObject(acSSPrompt.Value[0].ObjectId, OpenMode.ForWrite);
-                            BlockRefDrawingObject reference = new BlockRefDrawingObject(newDoc, refObj);
+                            BlockRefDrawingObject reference = new BlockRefDrawingObject(original, refObj);
+                            TemplateDrawingObject template = reference.GetBlock().ConvertToTemplate();
+                            BlockDrawingObject newBlock = template.TransferToDocument(newDoc);
 
-                            Database source = Application.DocumentManager.MdiActiveDocument.Database;
-                            BlockDrawingObject newInsance = reference.GetBlock().TransferToDocument(newDoc);
-                            TemplateDrawingObject blockDefinition = newInsance.ConvertToTemplate();
+                            //Iterate through all managers to see if block is referenced anywhere.
+                            //If so move to new document
+                            foreach (DocumentStore existingStore in DataService.Current.GetExistingStores(original.Name))
+                            {
+                                foreach (IDrawingObjectManager existingStoreManager in existingStore.Managers)
+                                {
+                                    foreach (DrawingObject o in existingStoreManager.GetAllDrawingObjects().Where(drawingObject => drawingObject.BaseObject == template.BaseObject))
+                                    {
+                                        if(o is ITemplatedObject)
+                                            ((ITemplatedObject)o).TransferDrawingObject(newDoc, newBlock.BaseObject);
+                                    }
+                                }
+                            }
 
                             destinationTrans.Commit();
                         }
@@ -82,11 +96,29 @@ namespace Jpp.Ironstone.Core.UI
                 ITemplateSource source = DataService.Current.GetTemplateSource(id);
                 (Database database, TemplateDrawingObject template) = source.GetTemplate(id);
                 BlockDrawingObject residentTemplateBlock;
+
+                Document sourceDoc = Application.DocumentManager.Open(database.Filename);
+                
                 using (database)
                 using(database.TransactionManager.StartTransaction())
                 {
                     residentTemplateBlock = template.TransferToDocument(doc);
+                    //template.TransferDrawingObject(doc, residentTemplateBlock.BaseObject);
+
+                    foreach (DocumentStore existingStore in DataService.Current.GetExistingStores(sourceDoc.Name))
+                    {
+                        foreach (IDrawingObjectManager existingStoreManager in existingStore.Managers)
+                        {
+                            foreach (DrawingObject o in existingStoreManager.GetAllDrawingObjects().Where(drawingObject => drawingObject.BaseObject == template.BaseObject))
+                            {
+                                if(o is ITemplatedObject)
+                                    ((ITemplatedObject)o).TransferDrawingObject(doc, residentTemplateBlock.BaseObject);
+                            }
+                        }
+                    }
                 }
+
+                sourceDoc.CloseAndDiscard();
 
                 if (insert)
                 {

@@ -25,5 +25,9 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             throw new NotImplementedException();
         }
+
+        public virtual void TransferDrawingObject(Document destination, ObjectId newId)
+        {
+        }
     }
 }

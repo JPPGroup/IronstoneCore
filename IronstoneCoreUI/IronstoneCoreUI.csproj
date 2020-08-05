@@ -61,7 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AspectInjector">
-      <Version>2.4.0</Version>
+      <Version>2.4.1</Version>
     </PackageReference>
     <PackageReference Include="Jpp.Ironstone.BaseApi.2019">
       <Version>0.1.1</Version>

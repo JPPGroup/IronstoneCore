@@ -153,7 +153,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public void RegisterAppKey(Document document)
         {
-            using (Transaction tr = document.TransactionManager.StartTransaction())
+            using (document.LockDocument())
+            {
+                RegisterAppKey(document.Database);
+            }
+
+            /*using (Transaction tr = document.TransactionManager.StartTransaction())
             {
 
                 RegAppTable rat = (RegAppTable)tr.GetObject(document.Database.RegAppTableId, OpenMode.ForRead, false);
@@ -173,6 +178,29 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
                         tr.Commit();
                     }
+                }
+            }*/
+        }
+
+        public void RegisterAppKey(Database database)
+        {
+            using (Transaction tr = database.TransactionManager.StartTransaction())
+            {
+
+                RegAppTable rat = (RegAppTable)tr.GetObject(database.RegAppTableId, OpenMode.ForRead, false);
+
+                if (!rat.Has(Constants.REG_APP_NAME))
+                {
+                    rat.UpgradeOpen();
+                    RegAppTableRecord ratr = new RegAppTableRecord
+                    {
+                        Name = Constants.REG_APP_NAME
+                    };
+
+                    rat.Add(ratr);
+                    tr.AddNewlyCreatedDBObject(ratr, true);
+
+                    tr.Commit();
                 }
             }
         }

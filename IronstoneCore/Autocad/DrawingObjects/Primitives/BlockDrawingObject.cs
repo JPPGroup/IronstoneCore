@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Linq;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
     public class BlockDrawingObject : DrawingObject
     {
         public const string TEMPLATE_ID_KEY = "TemplateId";
+        public const string DOCSTORE_TYPE_KEY = "DocstoreType";
+        public const string MANAGER_TYPE_KEY = "ManagerType";
         
         protected override void ObjectModified(object sender, EventArgs e)
         {
@@ -52,11 +56,33 @@ namespace Jpp.Ironstone.Core.Autocad
         {
         }
 
+        public void AddEntity(Entity entity)
+        {
+            Transaction trans = Document.TransactionManager.TopTransaction;
+            BlockTableRecord block =  (BlockTableRecord) trans.GetObject(BaseObject, OpenMode.ForWrite);
+
+            block.AppendEntity(entity);
+            trans.AddNewlyCreatedDBObject(entity, true);
+        }
+
         public TemplateDrawingObject ConvertToTemplate()
         {
             this[TEMPLATE_ID_KEY] = Guid.NewGuid().ToString();
             TemplateDrawingObject result = new TemplateDrawingObject();
             result.BaseObject = this.BaseObject;
+
+            //Determine if a managed object
+            foreach (DocumentStore ds in DataService.Current._stores[Document.Name].Values)
+            {
+                foreach (var manager in ds.Managers)
+                {
+                    if (manager.GetAllDrawingObjects().Contains(this))
+                    {
+                        this[MANAGER_TYPE_KEY] = manager.GetType().FullName;
+                        this[DOCSTORE_TYPE_KEY] = ds.GetType().FullName;
+                    }
+                }
+            }
 
             return result;
         }
@@ -82,10 +108,10 @@ namespace Jpp.Ironstone.Core.Autocad
             return blockDrawingObject;
         }
 
-        public static BlockDrawingObject Create(Database target, string blockName)
+        public static BlockDrawingObject Create(Document target, string blockName)
         {
             Transaction trans = target.TransactionManager.TopTransaction;
-            BlockTable bt = (BlockTable)trans.GetObject(target.BlockTableId, OpenMode.ForRead);
+            BlockTable bt = (BlockTable)trans.GetObject(target.Database.BlockTableId, OpenMode.ForRead);
 
             SymbolUtilityServices.ValidateSymbolName(blockName, false);
             if(bt.Has(blockName))
@@ -100,6 +126,15 @@ namespace Jpp.Ironstone.Core.Autocad
 
             BlockDrawingObject blockDrawingObject = new BlockDrawingObject(target);
             blockDrawingObject.BaseObject = btrId;
+            return blockDrawingObject;
+        }
+
+        public static BlockDrawingObject GetExisting(Document target, string blockName)
+        {
+            BlockTableRecord btr = target.Database.GetBlockDefinition(blockName);
+
+            BlockDrawingObject blockDrawingObject = new BlockDrawingObject(target);
+            blockDrawingObject.BaseObject = btr.ObjectId;
             return blockDrawingObject;
         }
     }

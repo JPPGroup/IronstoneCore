@@ -483,6 +483,25 @@ namespace Jpp.Ironstone.Core.Autocad
             return foundManager;
 
         }
+
+        public IDrawingObjectManager GetManager(Type t)
+        {
+            IDrawingObjectManager foundManager = null;
+            foreach (var manager in Managers)
+            {
+                if (manager.GetType() == t)
+                    foundManager = manager;
+            }
+
+            if (foundManager != null) return foundManager;
+
+            foundManager = (IDrawingObjectManager)Activator.CreateInstance(t, AcDoc, _log);
+            Managers.Add(foundManager);
+            PopulateLayers();
+
+            return foundManager;
+
+        }
         #endregion
     }
 
