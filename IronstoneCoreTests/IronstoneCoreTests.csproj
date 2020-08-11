@@ -7,7 +7,7 @@
   <Import Project="..\IronstoneBase\IronstoneBaseTestProject.csproj" />
   <ItemGroup>
     <PackageReference Include="JPP.AcTestFramework.2021">
-      <Version>4.1.0</Version>
+      <Version>4.2.1</Version>
     </PackageReference>
     <PackageReference Include="Jpp.Ironstone.UiApi.2019">
       <Version>0.1.1</Version>
