@@ -24,41 +24,44 @@
 		<ComponentGroup Id="CoreProductComponents" Directory="INSTALLFOLDER">
 			<!-- <Component Id="ProductComponent"> -->
 		  <Component Id="IronstoneCore.dll" Guid="9E579346-97B3-43A5-8AD7-786C8A5BB284" Win64="yes">
-		    <File Id="IronstoneCore.dll" Source="..\bin\x64\Release\IronstoneCore.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+		    <File Id="IronstoneCore.dll" Source="$(var.IronstoneCore.TargetDir)\IronstoneCore.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
 		  </Component>
       <Component Id="AutoUpdate.dll" Guid="1030798b-fa22-45a3-9b17-58b259fe77e9" Win64="yes">
-        <File Id="AutoUpdate.dll" Source="..\bin\x64\Release\AutoUpdate.dll" Checksum="yes"/>
+        <File Id="AutoUpdate.dll" Source="$(var.IronstoneCore.TargetDir)\AutoUpdate.dll" Checksum="yes"/>
       </Component>
 		  <Component Id="dpwin64.dll" Guid="26452eb9-3b41-4083-9932-92620f4cd1bb" Win64="yes">
-		    <File Id="dpwin64.dll" Source="..\bin\x64\Release\dpwin64.dll" Checksum="yes"/>
+		    <File Id="dpwin64.dll" Source="$(var.IronstoneCore.TargetDir)\dpwin64.dll" Checksum="yes"/>
 		  </Component>
 		  <Component Id="Unity.Container.dll" Guid="dfcceb0d-d444-4aa0-89c5-3dd7c581aba3" Win64="yes">
-		    <File Id="Unity.Container.dll" Source="..\bin\x64\Release\Unity.Container.dll" Checksum="yes"/>
+		    <File Id="Unity.Container.dll" Source="$(var.IronstoneCore.TargetDir)\Unity.Container.dll" Checksum="yes"/>
 		  </Component>
 		  <Component Id="Unity.Abstractions.dll" Guid="0f4b43b3-fa66-495d-9e88-3694ac21bee0" Win64="yes">
-		    <File Id="Unity.Abstractions.dll" Source="..\bin\x64\Release\Unity.Abstractions.dll" Checksum="yes"/>
+		    <File Id="Unity.Abstractions.dll" Source="$(var.IronstoneCore.TargetDir)\Unity.Abstractions.dll" Checksum="yes"/>
 		  </Component>
 		  <Component Id="Common.dll" Guid="36e91aa6-4da3-4421-b72a-44e2bea52cc8" Win64="yes">
-		    <File Id="Common.dll" Source="..\bin\x64\Release\Common.dll" Checksum="yes"/>
+		    <File Id="Common.dll" Source="$(var.IronstoneCore.TargetDir)\Common.dll" Checksum="yes"/>
 		  </Component>
 		  <Component Id="ZipExtract.dll" Guid="1b7d3402-29fd-47a6-8a68-759b2f357083" Win64="yes">
-		    <File Id="ZipExtract.dll" Source="..\bin\x64\Release\ZipExtract.dll" Checksum="yes"/>
+		    <File Id="ZipExtract.dll" Source="$(var.IronstoneCore.TargetDir)\ZipExtract.dll" Checksum="yes"/>
 		  </Component>
 		  <Component Id="Microsoft.ApplicationInsights.dll" Guid="868c371c-b7e4-4653-b86b-83fb0cf4f743" Win64="yes">
-		    <File Id="Microsoft.ApplicationInsights.dll" Source="..\bin\x64\Release\Microsoft.ApplicationInsights.dll" Checksum="yes"/>
+		    <File Id="Microsoft.ApplicationInsights.dll" Source="$(var.IronstoneCore.TargetDir)\Microsoft.ApplicationInsights.dll" Checksum="yes"/>
 		  </Component>
 		  <Component Id="System.Diagnostics.DiagnosticSource.dll" Guid="3cb13fba-a228-402d-920c-be7cf0cea1d6" Win64="yes">
-		    <File Id="System.Diagnostics.DiagnosticSource.dll" Source="..\bin\x64\Release\System.Diagnostics.DiagnosticSource.dll" Checksum="yes"/>
+		    <File Id="System.Diagnostics.DiagnosticSource.dll" Source="$(var.IronstoneCore.TargetDir)\System.Diagnostics.DiagnosticSource.dll" Checksum="yes"/>
 		  </Component>		 
 		  <Component Id="System.Runtime.CompilerServices.Unsafe.dll" Guid="f32738ed-378c-47bb-b12d-50735f991aff" Win64="yes">
-		    <File Id="System.Runtime.CompilerServices.Unsafe.dll" Source="..\bin\x64\Release\System.Runtime.CompilerServices.Unsafe.dll" Checksum="yes"/>
+		    <File Id="System.Runtime.CompilerServices.Unsafe.dll" Source="$(var.IronstoneCore.TargetDir)\System.Runtime.CompilerServices.Unsafe.dll" Checksum="yes"/>
 		  </Component>
 		  <Component Id="NLog.dll" Guid="7d677e2c-5c6c-41f2-962a-34d1460d864c" Win64="yes">
-		    <File Id="NLog.dll" Source="..\bin\x64\Release\NLog.dll" Checksum="yes"/>
+		    <File Id="NLog.dll" Source="$(var.IronstoneCore.TargetDir)\NLog.dll" Checksum="yes"/>
 		  </Component>
       <Component Id="Newtonsoft.Json.dll" Guid="f6177c40-36b5-4f2a-9c75-068a89c2fa6c" Win64="yes">
-        <File Id="Newtonsoft.Json.dll" Source="..\bin\x64\Release\Newtonsoft.Json.dll" Checksum="yes"/>
+        <File Id="Newtonsoft.Json.dll" Source="$(var.IronstoneCore.TargetDir)\Newtonsoft.Json.dll" Checksum="yes"/>
       </Component>
+      <!--<Component Id="System.ValueTuple.dll" Guid="29e2c147-7606-47f5-825f-495acbcd473a" Win64="yes">
+        <File Id="System.ValueTuple.dll" Source="$(var.IronstoneCore.TargetDir)\System.ValueTuple.dll" Checksum="yes"/>
+      </Component>-->
 		  <?include ConfigFile.wxi?>
 		  <Component Id="RegistryEntries" Guid="DBD2BF14-98A3-42C1-867D-72FEFF681867">
 		    <RegistryKey Root="HKCU" Key="Software\Autodesk\AutoCAD\R23.0\ACAD-2000:409\Applications\Ironstone" Action="createAndRemoveOnUninstall">
@@ -94,11 +97,10 @@
       <Component Id="IronstoneCoreUI.dll" Guid="8c629359-b5e4-4624-b038-65377827c6bb" Win64="yes">
         <RemoveFolder Id="RemoveCompanyAdf" On="uninstall" Directory="CompanyAdf"/>
         <RemoveFolder Id="RemoveAPPDATAINSTALLFOLDER" On="uninstall" Directory="APPDATAINSTALLFOLDER"/>
-        <File Id="IronstoneCoreUI.dll" Source="..\bin\x64\Release\IronstoneCoreUI.dll" Checksum="yes" ProcessorArchitecture="x64"/>
+        <File Id="IronstoneCoreUI.dll" Source="$(var.IronstoneCoreUI.TargetDir)\IronstoneCoreUI.dll" Checksum="yes" ProcessorArchitecture="x64"/>
         <RegistryKey Root="HKCU" Key="Software\JPPConsulting\Ironstone" Action="createAndRemoveOnUninstall">
           <RegistryValue Type="integer" Name="INSTALLED" Value="1" KeyPath="yes"/>
         </RegistryKey>
-        <File Id="System.ValueTuple.dll" Source="..\bin\x64\Release\System.ValueTuple.dll" Checksum="yes"/>
       </Component>
     </ComponentGroup>
   </Fragment>

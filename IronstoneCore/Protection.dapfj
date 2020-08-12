@@ -1,0 +1,198 @@
+{
+   "Notes": null,
+   "Models": ["Pro Plus","Pro Net"],
+   "ProductCode": "ISTONE",
+   "NetUserType": "per licence",
+   "ProductMaxNetUsers": null,
+
+   "Advanced": {
+      "DongleNumbers": "all",
+      "DongleNumberRangeMin": null,
+      "DongleNumberRangeMax": null,
+      "DataEncKeyProductCode": null,
+      "LockDongleToComputer": false,
+      "AllowUSBOverNetwork": true,
+      "AllowSoftwareKeys": true
+   },
+
+   "Licences": [
+      {
+         "Name": "IronstoneStructures",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneCore",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneHighways",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneDocumentManagement",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneVisualiser",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneSurfaces",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneStructuralMembers",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstonePlanning",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneHousing",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneGeotechnical",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneDraughter",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      },
+      {
+         "Name": "IronstoneDrainage",
+         "Executions": "no limit",
+         "ExecutionWarning": null,
+         "ExpiryDate": "no limit",
+         "MaxDays": "no limit",
+         "ExpiryWarning": null,
+         "Features": 0,
+         "LicenceMaxNetUsers": "no limit"
+      }
+   ],
+
+   "Files": [
+      {
+         "InputName": "dpwin64.dll",
+         "OutputName": "..\\bin\\x64\\Release\\dpwin64.dll",
+         "CallingProgram": null,
+         "Licence": "IronstoneCore",
+         "Method": "API",
+         "ShellOptions": {
+            "DecrementExecution": true,
+            "StartNetworkUser": true,
+            "BackgroundCheck": 5,
+            "DataFileEncryption": false,
+            "DataFileTypes": null,
+            "DataFileExceptions": null,
+            "ExtraAntiDebug": true,
+            "ExtraAntiPiracy": true
+         }
+      }
+   ],
+
+   "DataArea": {
+      "ZeroDataSize": null,
+      "DataFile": ""
+   },
+
+   "ShellMessages": {
+      "Success": "",
+      "DongleNotFound": "Error! A valid dongle for MyProduct has not been detected.",
+      "ExpiryError": "MyProduct has expired!",
+      "ExecsLimit": "MyProduct has used up all of its allowed executions.",
+      "ExpiryWarning": "Warning! MyProduct will expire in %1 days.",
+      "ExecsWarning": "Warning! You will only be able to run MyProduct %1 more times.",
+      "NetUserLimit": "The maximum number of permitted network users has been exceeded.",
+      "OtherError": "The error %1/%2 has occurred checking the dongle in MyProduct.",
+      "Background": "This program will terminate in 30 seconds.\r\nPlease save your work or attach a valid dongle.",
+      "NetNoServer": "Error! Cannot detect DinkeyServer on the network."
+   },
+
+   "Algorithms": [
+   ],
+
+   "ExtraSecurity": {
+      "DRISEncryptionKeys": null,
+      "DataEncryptionKeys": null,
+      "RWAlgorithm": null,
+      "SecureUpdatesOnly": false
+   },
+
+   "Actions": {
+      "ProgramDongle": true,
+      "LockSoftware": false
+   },
+
+   "DataFileEncryptionTool": {
+      "Files": [
+      ]
+   }
+}
