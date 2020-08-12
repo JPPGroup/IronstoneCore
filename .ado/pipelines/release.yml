@@ -1,0 +1,21 @@
+trigger: 
+  tags:
+    include:    
+    - v*   
+
+pr: none
+
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: JPPGroup/IronstoneMeta
+      endpoint: JPPGroup      
+      
+jobs:
+- template: .ado/pipelinetemplates/buildtest.yml@templates  # Template reference
+  parameters:
+    SolutionName: 'IronstoneCore'    
+#- template: .ado/pipelinetemplates/release.yml@templates  # Template reference
+#  parameters:
+#    SolutionName: 'IronstoneCore'

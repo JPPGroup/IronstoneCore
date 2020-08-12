@@ -28,7 +28,7 @@
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <CompilerAdditionalOptions>-arch x64</CompilerAdditionalOptions>
   </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugLocal|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugLocal|x86' ">
     <DefineConstants>Debug</DefineConstants>
     <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
@@ -77,7 +77,7 @@
     <Compile Include="Product.wxs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ironstone Core UI\Ironstone Core UI.csproj">
+    <ProjectReference Include="..\IronstoneCoreUI\IronstoneCoreUI.csproj">
       <Name>IronstoneCoreUI</Name>
       <Project>{ac79c0ae-544a-4cb5-8fb7-665754bdea9f}</Project>
       <Private>True</Private>
@@ -85,7 +85,7 @@
       <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
-    <ProjectReference Include="..\Ironstone Core\Ironstone Core.csproj">
+    <ProjectReference Include="..\IronstoneCore\IronstoneCore.csproj">
       <Name>IronstoneCore</Name>
       <Project>{a3bfa507-a2c4-4c33-943b-6083133ee63c}</Project>
       <Private>True</Private>
