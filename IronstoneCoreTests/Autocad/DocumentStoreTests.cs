@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.Autocad;
@@ -41,6 +42,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                     catch (IOException e)
                     {
                         tries++;
+                        Thread.Sleep(1000);
                     }
                 }
             }
