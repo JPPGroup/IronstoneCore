@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.Autocad;
@@ -30,9 +31,10 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                 {
                     try
                     {
-                        if (tries > 4)
+                        if (tries > 10)
                         {
-                            Assert.Fail("Unable to remove test drawing");
+                            loop = false;
+                            Assert.Warn("Unable to remove test drawing");
                         }
 
                         File.Delete(testFile);
@@ -41,6 +43,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                     catch (IOException e)
                     {
                         tries++;
+                        Thread.Sleep(2000 * tries);
                     }
                 }
             }

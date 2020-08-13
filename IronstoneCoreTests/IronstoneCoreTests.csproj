@@ -35,25 +35,7 @@
     <None Update="BaseConfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Test Drawings\Blank.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Test Drawings\Civil3dTagged.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Test Drawings\CivilTemplate.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Test Drawings\EntityExtensionTests1.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Test Drawings\EntityExtensionTests2.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Test Drawings\EntityExtensionTests3.dwg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Test Drawings\EntityExtensionTests4.dwg">
+    <None Update="Test Drawings\*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="UserConfig.json">

@@ -4,17 +4,18 @@ using Autodesk.AutoCAD.Geometry;
 using Jpp.Ironstone.Core.Autocad;
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Reflection;
 
 
 namespace Jpp.Ironstone.Core.Tests.Autocad
 {
-    [TestFixture(@"..\..\..\Test-Drawings\DynamicBlock.dwg")]
+    [TestFixture]
     public class BlockReferenceExtensionsTests : IronstoneTestFixture
     {
         private const string LevelBlockName = "ProposedLevel";
 
-        public BlockReferenceExtensionsTests() : base(Assembly.GetExecutingAssembly(), typeof(BlockReferenceExtensionsTests)) { }
+        public BlockReferenceExtensionsTests() : base(Assembly.GetExecutingAssembly(), typeof(BlockReferenceExtensionsTests), Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Test Drawings\\DynamicBlock.dwg") { }
         public BlockReferenceExtensionsTests(string drawingFile) : base(Assembly.GetExecutingAssembly(), typeof(BlockReferenceExtensionsTests), drawingFile) { }
 
 
