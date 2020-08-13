@@ -31,8 +31,9 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                 {
                     try
                     {
-                        if (tries > 15)
+                        if (tries > 10)
                         {
+                            loop = false;
                             Assert.Warn("Unable to remove test drawing");
                         }
 
