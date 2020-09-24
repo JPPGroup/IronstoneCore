@@ -4,32 +4,21 @@
     <RootNamespace>Jpp.Ironstone.Core.Tests</RootNamespace>
     <AssemblyName>IronstoneCoreTests</AssemblyName>    
   </PropertyGroup>
-  <Import Project="..\IronstoneBase\IronstoneBaseTestProject.csproj" />
+  <Import Project="..\IronstoneBase\IronstoneBaseTestProject.csproj" />  
   <ItemGroup>
-    <PackageReference Include="JPP.AcTestFramework.2021">
-      <Version>4.2.1</Version>
-    </PackageReference>
-    <PackageReference Include="Jpp.Ironstone.UiApi.2019">
-      <Version>0.1.1</Version>
-	  <ExcludeAssets>runtime</ExcludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights">
       <Version>2.14.0</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="NLog">
       <Version>4.7.2</Version>
     </PackageReference>
-    <PackageReference Include="NUnit">
-      <Version>3.12.0</Version>
-    </PackageReference>
-    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
   </ItemGroup>       
   <ItemGroup>
     <ProjectReference Include="..\IronstoneCore\IronstoneCore.csproj" />
+	<ProjectReference Include="..\IronstoneCoreUI\IronstoneCoreUI.csproj" />
   </ItemGroup>       
   <ItemGroup>
     <None Update="BaseConfig.json">
