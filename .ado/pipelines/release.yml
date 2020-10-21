@@ -16,6 +16,6 @@ jobs:
 - template: .ado/pipelinetemplates/buildtest.yml@templates  # Template reference
   parameters:
     SolutionName: 'IronstoneCore'    
-#- template: .ado/pipelinetemplates/release.yml@templates  # Template reference
-#  parameters:
-#    SolutionName: 'IronstoneCore'
+- template: .ado/pipelinetemplates/release.yml@templates  # Template reference
+  parameters:
+    SolutionName: 'IronstoneCore'
