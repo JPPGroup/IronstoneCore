@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using Jpp.Common;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -14,7 +15,7 @@ namespace Jpp.Ironstone.Core.Autocad
     /// <summary>
     /// Class for storing of document level data
     /// </summary>
-    public class DocumentStore : IDisposable
+    public class DocumentStore : DisposableManagedObject
     {
         [XmlIgnore] public bool ShouldUnlockUnfreeze { get; }
         [XmlIgnore] public bool ShouldSwitchOn { get;  }
@@ -23,8 +24,8 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public event EventHandler<DocumentNameChangedEventArgs> DocumentNameChanged;
         
-        protected Document AcDoc;
-        protected Database AcCurDb;
+        protected Document AcDoc { get; set; }
+        protected Database AcCurDb { get; set; }
 
         public List<IDrawingObjectManager> Managers { get; private set; }
         private readonly Type[] _managerTypes;
@@ -42,6 +43,12 @@ namespace Jpp.Ironstone.Core.Autocad
         /// </summary>
         public DocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm, IUserSettings settings)
         {
+            if(doc is null)
+                throw new ArgumentNullException(nameof(doc));
+
+            if(settings is null)
+                throw new ArgumentNullException(nameof(settings));
+
             AcDoc = doc;
             AcCurDb = doc.Database;
 
@@ -179,7 +186,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
             //check if file extension is valid, used to ignore auto-save file
             var extension = Path.GetExtension(fileName);
-            if (string.IsNullOrEmpty(extension) || !Constants.VALID_DOCUMENT_EXTENSIONS.Contains(extension.ToLower()))
+            if (string.IsNullOrEmpty(extension) || !Constants.ValidDocumentExtensions.Contains(extension.ToLower()))
             {
                 _log.Entry($"Assumed AutoSave. Filename: {fileName}", Severity.Information);
                 return;
@@ -211,6 +218,7 @@ namespace Jpp.Ironstone.Core.Autocad
             handler?.Invoke(this, e);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "No errors should propogate to Autocad to prevent crash")]
         private void CommandEnded(string globalCommandName)
         {
             try
@@ -277,9 +285,11 @@ namespace Jpp.Ironstone.Core.Autocad
             //Doesnt have any default fields to load
         }
 
+
         /// <summary>
         /// Wrapper around the save method to ensure a transaction is active when called
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "All exceptions need to be caught to prevent autocad crashes")]
         internal void SaveWrapper()
         {
             try
@@ -305,7 +315,8 @@ namespace Jpp.Ironstone.Core.Autocad
 
         /// <summary>
         /// Wrapper around the load method to ensure a transaction is active when called
-        /// </summary>
+        /// </summary> 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "All exceptions need to be caught to prevent autocad crashes")]
         internal void LoadWrapper()
         {
             try
@@ -360,24 +371,26 @@ namespace Jpp.Ironstone.Core.Autocad
                 xml = new XmlSerializer(binaryObject.GetType(), additionalTypes);
             }
 
-            MemoryStream ms = new MemoryStream();
-            xml.Serialize(ms, binaryObject);
-            string s = Encoding.ASCII.GetString(ms.ToArray());
-
-            byte[] data = new byte[512];
-            int moreData = 1;
-            ResultBuffer rb = new ResultBuffer();
-            ms.Position = 0;
-            while (moreData > 0)
+            using (MemoryStream ms = new MemoryStream())
             {
-                data = new byte[512];
-                moreData = ms.Read(data, 0, data.Length);
-                string dataString = Encoding.ASCII.GetString(data);
-                TypedValue tv = new TypedValue((int)DxfCode.Text, dataString);
-                rb.Add(tv);
-            }
+                xml.Serialize(ms, binaryObject);
+                string s = Encoding.ASCII.GetString(ms.ToArray());
 
-            plotXRecord.Data = rb;
+                byte[] data = new byte[512];
+                int moreData = 1;
+                ResultBuffer rb = new ResultBuffer();
+                ms.Position = 0;
+                while (moreData > 0)
+                {
+                    data = new byte[512];
+                    moreData = ms.Read(data, 0, data.Length);
+                    string dataString = Encoding.ASCII.GetString(data);
+                    TypedValue tv = new TypedValue((int) DxfCode.Text, dataString);
+                    rb.Add(tv);
+                }
+
+                plotXRecord.Data = rb;
+            }
 
             // Create the entry in the Named Object Dictionary
             string id = this.GetType().FullName + key;
@@ -387,7 +400,6 @@ namespace Jpp.Ironstone.Core.Autocad
 
         protected T LoadBinary<T>(string key, Type[] additionalTypes = null) where T : new()
         {
-            //Database acCurDb = Application.DocumentManager.MdiActiveDocument.Database;
             Transaction tr = AcCurDb.TransactionManager.TopTransaction;
 
             // Find the NOD in the database
@@ -399,37 +411,40 @@ namespace Jpp.Ironstone.Core.Autocad
             {
                 ObjectId plotId = nod.GetAt(id);
                 Xrecord plotXRecord = (Xrecord)tr.GetObject(plotId, OpenMode.ForRead);
-                MemoryStream ms = new MemoryStream();
-                foreach (TypedValue value in plotXRecord.Data)
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    byte[] data = new byte[512];
+                    foreach (TypedValue value in plotXRecord.Data)
+                    {
+                        byte[] data = new byte[512];
 
-                    string message = (string)value.Value;
-                    data = Encoding.ASCII.GetBytes(message);
-                    ms.Write(data, 0, data.Length);
-                }
-                ms.Position = 0;
+                        string message = (string) value.Value;
+                        data = Encoding.ASCII.GetBytes(message);
+                        ms.Write(data, 0, data.Length);
+                    }
 
-                XmlSerializer xml;
+                    ms.Position = 0;
 
-                if (additionalTypes == null)
-                {
-                    xml = new XmlSerializer(typeof(T));
-                }
-                else
-                {
-                    xml = new XmlSerializer(typeof(T), additionalTypes);
-                }
+                    XmlSerializer xml;
 
-                try
-                {
-                    string s = Encoding.ASCII.GetString(ms.ToArray());
-                    return (T)xml.Deserialize(ms);
-                }
-                catch (Exception e)
-                {
-                    _log.LogException(e);
-                    return new T();
+                    if (additionalTypes == null)
+                    {
+                        xml = new XmlSerializer(typeof(T));
+                    }
+                    else
+                    {
+                        xml = new XmlSerializer(typeof(T), additionalTypes);
+                    }
+
+                    try
+                    {
+                        string s = Encoding.ASCII.GetString(ms.ToArray());
+                        return (T) xml.Deserialize(ms);
+                    }
+                    catch (Exception e)
+                    {
+                        _log.LogException(e);
+                        return new T();
+                    }
                 }
             }
 
@@ -437,9 +452,10 @@ namespace Jpp.Ironstone.Core.Autocad
             return new T();
         }
 
-        public void Dispose()
+        protected override void DisposeManagedResources()
         {
             SaveWrapper();
+            base.DisposeManagedResources();
         }
 
         public void UpdateManagers()

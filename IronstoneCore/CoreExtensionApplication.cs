@@ -13,7 +13,6 @@ using Jpp.AutoUpdate;
 using Jpp.AutoUpdate.Classes;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Autocad;
-using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
@@ -34,6 +33,7 @@ namespace Jpp.Ironstone.Core
     {
         #region Public Variables
 
+        [Obsolete("Access should be resolved via dependency injection")]
         public static CoreExtensionApplication _current;
 
         [Obsolete("Configuration should be resolved via dependency injection")]
@@ -47,15 +47,7 @@ namespace Jpp.Ironstone.Core
             get
             {
                 if (_coreConsole != null) return _coreConsole.Value;
-                /*try
-                {
-                    StatusBar unused = Application.StatusBar;
-                    _coreConsole = false;
-                }
-                catch (System.Exception)
-                {
-                    _coreConsole = true;
-                }*/
+
                 if (System.Diagnostics.Process.GetCurrentProcess().ProcessName.Contains("accoreconsole"))
                 {
                     _coreConsole = true;
@@ -170,6 +162,7 @@ namespace Jpp.Ironstone.Core
         /// <summary>
         /// Init JPP command loads all essential elements of the program, including the helper DLL files.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public void InitExtension()
         {
             _extensions = new List<IIronstoneExtensionApplication>();
@@ -189,7 +182,6 @@ namespace Jpp.Ironstone.Core
             Container.RegisterType<IReviewManager, ReviewManager>(new ContainerControlledLifetimeManager());
             Container.AddExtension(new Diagnostic());
             
-
             try
             {
                 LoadConfiguration();
@@ -272,7 +264,7 @@ namespace Jpp.Ironstone.Core
             }
         }
 
-        private void AddRegAppKey(Document doc)
+        private static void AddRegAppKey(Document doc)
         {
             using (Transaction trans = doc.TransactionManager.StartTransaction())
             {

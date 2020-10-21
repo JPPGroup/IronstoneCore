@@ -1,4 +1,5 @@
-﻿using Autodesk.AutoCAD.DatabaseServices;
+﻿using System;
+using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 
 namespace Jpp.Ironstone.Core.Autocad
@@ -7,6 +8,9 @@ namespace Jpp.Ironstone.Core.Autocad
     {
         public static bool IsClockwise(this Arc arc)
         {
+            if(arc == null)
+                throw new ArgumentNullException(nameof(arc));
+
             var startPoint = new Point2d(arc.StartPoint.X, arc.StartPoint.Y);
             var centrePoint = new Point2d(arc.Center.X, arc.Center.Y);
             var endPoint = new Point2d(arc.EndPoint.X, arc.EndPoint.Y);

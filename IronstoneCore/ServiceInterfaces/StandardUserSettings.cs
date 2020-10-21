@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -14,7 +14,10 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public StandardUserSettings(ILogger logger, Configuration configuration)
         {
-            _logger = logger;
+            if (configuration == null)
+                throw new ArgumentNullException(nameof(configuration));
+
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _jObject = new JObject();
             
             this.LoadStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("Jpp.Ironstone.Core.Resources.BaseConfig.json"))
@@ -56,8 +59,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             JObject newData;
             using (StreamReader sr = new StreamReader(stream))
             {
-                string json = sr.ReadToEnd().ToLower();
-                newData = JObject.Parse(json);
+                //TODO: Verify why cast to lower?
+                newData = JObject.Parse(sr.ReadToEnd().ToLower(CultureInfo.InvariantCulture));
             }
 
             JsonMergeSettings mergeSettings = new JsonMergeSettings()
@@ -72,6 +75,9 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public T? GetValue<T>(string key) where T : struct
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+            
             var root = GetNode(key);
 
             // If this cast fails, this will fail and throw an exception. Considered intentional; if setting is found
@@ -81,6 +87,9 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public string GetValue(string key)
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+
             var root = GetNode(key);
 
             // If this cast fails (i.e. calling a setting group rather a setting) this will fail and throw an exception
@@ -91,12 +100,18 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public T GetObject<T>(string key) where T : class
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+
             var root = GetNode(key);
             return root.ToObject<T>();
         }
 
         private JToken GetNode(string key)
         {
+            if (key == null)
+                throw new ArgumentNullException(nameof(key));
+
             string[] path = key.ToLower().Split('.');
             JToken root = _jObject;
             foreach (string s in path)
