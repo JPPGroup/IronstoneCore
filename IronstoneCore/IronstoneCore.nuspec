@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Jpp.Ironstone.Core.$id$</id>
-    <version>0.6.0-alpha.1</version>
+    <version>0.6.0-alpha.2</version>
     <title>Ironstone Core $id$</title>
     <authors>JPP Consulting</authors>
     <owners>JPP Consulting</owners>
@@ -10,5 +10,6 @@
     <description>Core Ironstone references</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
     <copyright>Copyright 2019</copyright>
+	<repository type="git" url="https://github.com/JPPGroup/IronstoneCore" />
   </metadata>
 </package>
