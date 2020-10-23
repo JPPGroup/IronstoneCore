@@ -36,7 +36,7 @@ jobs:
   - task: GitHubRelease@1
     inputs:
       gitHubConnection: 'Github'
-      repositoryName: 'JPPGroup/${{ parameters.SolutionName }}'
+      repositoryName: 'JPPGroup/IronstoneCore'
       action: 'create'
       target: '$(Build.SourceVersion)'
       tagSource: 'gitTag'

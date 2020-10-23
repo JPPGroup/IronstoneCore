@@ -1,12 +1,3 @@
-trigger:
-  batch: true
-  branches:
-    include:
-    - master
-  tags:
-    exclude:    
-    - v*   
-
 pr:
   autoCancel: true
   branches:
