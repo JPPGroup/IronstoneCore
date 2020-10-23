@@ -31,8 +31,8 @@ jobs:
       checkLatest: true
   - script: |
       dotnet nuget add source https://nuget.pkg.github.com/jppgroup/index.json --name "github" --username jppgroup --password $(GithubPAT) --store-password-in-clear-text
-      dotnet nuget push "$(Pipeline.Worksapce)\**\*.nupkg" --source "github" --skip-duplicate
-      dotnet nuget push "$(Pipeline.Worksapce)\**\*.symbols.nupkg" --source "github" --skip-duplicate
+      dotnet nuget push "$(Pipeline.Workspace)\**\*.nupkg" --source "github" --skip-duplicate
+      dotnet nuget push "$(Pipeline.Workspace)\**\*.symbols.nupkg" --source "github" --skip-duplicate
   - task: GitHubRelease@1
     inputs:
       gitHubConnection: 'Github'
