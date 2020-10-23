@@ -12,10 +12,38 @@ resources:
       name: JPPGroup/IronstoneMeta
       endpoint: JPPGroup      
       
+variables:
+  - group: build
+      
 jobs:
 - template: .ado/pipelinetemplates/buildtest.yml@templates  # Template reference
   parameters:
     SolutionName: 'IronstoneCore'    
-- template: .ado/pipelinetemplates/release.yml@templates  # Template reference
-  parameters:
-    SolutionName: 'IronstoneCore'
+- job: Deploy  
+  dependsOn: Test
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - checkout: none
+  - download: current
+  - task: NuGetToolInstaller@1
+    inputs:      
+      checkLatest: true
+  - script: |
+    dotnet nuget add source https://nuget.pkg.github.com/jppgroup/index.json --name "github" --username jppgroup --password $(GithubPAT) --store-password-in-clear-text
+    dotnet nuget push **\*.nupkg --source "github" --skip-duplicate
+    dotnet nuget push **\*.symbols.nupkg --source "github" --skip-duplicate
+  - task: GitHubRelease@1
+    inputs:
+      gitHubConnection: 'Github'
+      repositoryName: 'JPPGroup/${{ parameters.SolutionName }}'
+      action: 'create'
+      target: '$(Build.SourceVersion)'
+      tagSource: 'gitTag'
+      tagPattern: 'v.*'
+      releaseNotesSource: 'inline'
+      releaseNotesInline: 'Latest version'
+      isDraft: true
+      changeLogCompareToRelease: 'lastFullRelease'
+      changeLogType: 'commitBased'
+      assets: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Worksapce)/**/*.symbols.nupkg'    
