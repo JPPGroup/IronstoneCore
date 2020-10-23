@@ -30,9 +30,9 @@ jobs:
     inputs:      
       checkLatest: true
   - script: |
-    dotnet nuget add source https://nuget.pkg.github.com/jppgroup/index.json --name "github" --username jppgroup --password $(GithubPAT) --store-password-in-clear-text
-    dotnet nuget push **\*.nupkg --source "github" --skip-duplicate
-    dotnet nuget push **\*.symbols.nupkg --source "github" --skip-duplicate
+      dotnet nuget add source https://nuget.pkg.github.com/jppgroup/index.json --name "github" --username jppgroup --password $(GithubPAT) --store-password-in-clear-text
+      dotnet nuget push **\*.nupkg --source "github" --skip-duplicate
+      dotnet nuget push **\*.symbols.nupkg --source "github" --skip-duplicate
   - task: GitHubRelease@1
     inputs:
       gitHubConnection: 'Github'
