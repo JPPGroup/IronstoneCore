@@ -9,21 +9,9 @@
     <Product>Ironstone Core UI</Product>
     <Authors>JPPGroup</Authors>
     <AssemblyVersion>9.9.9.9</AssemblyVersion>
-    <FileVersion>9.9.9.9</FileVersion>    
+    <FileVersion>9.9.9.9</FileVersion>
     <UseWPF>true</UseWPF>
   </PropertyGroup>  
-  <ItemGroup>
-    <None Remove="AutocadStyleResourceDictionary.xaml" />
-    <None Remove="AutocadWindowStyleResourceDictionary.xaml" />
-    <None Remove="Resources\Folder-Small.png" />
-    <None Remove="Resources\Pen-Small.png" />
-    <None Remove="Views\About.xaml" />
-    <None Remove="Views\FeedbackHost.xaml" />
-    <None Remove="Views\Libraries.xaml" />
-    <None Remove="Views\Review.xaml" />
-    <None Remove="Views\SurfaceSelect.xaml" />
-    <None Remove="Views\SurfaceSelectWindow.xaml" />
-  </ItemGroup>  
   <ItemGroup>
     <Resource Include="Resources\Folder-Small.png" />
     <Resource Include="Resources\Pen-Small.png" />
@@ -56,18 +44,6 @@
     <PackageReference Include="System.Windows.Interactivity.WPF">
       <Version>2.0.20525</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="AutocadStyleResourceDictionary.xaml" />
-    <Page Include="AutocadWindowStyleResourceDictionary.xaml" />
-    <Page Include="Views\About.xaml" />
-    <Page Include="Views\FeedbackHost.xaml" />
-    <Page Include="Views\Libraries.xaml">
-      <Generator></Generator>
-    </Page>
-    <Page Include="Views\Review.xaml" />
-    <Page Include="Views\SurfaceSelect.xaml" />
-    <Page Include="Views\SurfaceSelectWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\IronstoneCore\IronstoneCore.csproj" />
