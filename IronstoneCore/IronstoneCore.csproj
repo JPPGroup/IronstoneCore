@@ -100,4 +100,7 @@
   <ItemGroup>
     <Folder Include="Libraries\" />
   </ItemGroup>  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(SolutionDir)\docs\make htmlhelp" />
+  </Target>  
 </Project>

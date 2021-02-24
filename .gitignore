@@ -340,3 +340,6 @@ ASALocalRun/
 # BeatPulse healthcheck temp database 
 healthchecksdb
 Tools/TestRunner/AutoNetLoad.scr
+
+#Built Help
+docs/_build/*
