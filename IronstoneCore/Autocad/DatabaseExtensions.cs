@@ -22,6 +22,17 @@ namespace Jpp.Ironstone.Core.Autocad
             return modelSpace;
         }
 
+        public static DrawOrderTable GetDrawOrderTable(this Database currentDatabase, bool forWrite = false)
+        {
+            Transaction acTrans = currentDatabase.TransactionManager.TopTransaction;
+            if (acTrans == null) throw new TransactionException("No top transaction");
+
+
+            BlockTableRecord btr = currentDatabase.GetModelSpace(false);
+            OpenMode mode = forWrite ? OpenMode.ForWrite : OpenMode.ForRead;
+            return acTrans.GetObject(btr.DrawOrderTableId, mode) as DrawOrderTable;
+        }
+
         /// <summary>
         /// Get layout identified by name from the specified database
         /// </summary>

@@ -108,6 +108,22 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
+        [XmlIgnore]
+        public int ColorIndex {
+            get
+            {
+                Transaction trans = _database.TransactionManager.TopTransaction;
+                Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForRead);
+                return ent.ColorIndex;
+            }
+            set
+            {
+                Transaction trans = _database.TransactionManager.TopTransaction;
+                Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForWrite);
+                ent.ColorIndex = value;
+            }
+        }
+
         protected virtual bool VerifyBaseObject()
         {
             return true;
@@ -274,7 +290,6 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             if (_XData == null)
                 LoadXData();
-                //return false;
 
             return _XData.ContainsKey(key);
         }
@@ -320,6 +335,12 @@ namespace Jpp.Ironstone.Core.Autocad
             Transaction trans = _database.TransactionManager.TopTransaction;
             Entity ent = (Entity) trans.GetObject(this.BaseObject, OpenMode.ForWrite);
             ent.Erase();
+
+            foreach (DrawingObject drawingObject in SubObjects.Values)
+            {
+                drawingObject.Erase();
+            }
+            SubObjects.Clear();
         }
 
         public virtual Extents3d GetBoundingBox()
@@ -344,14 +365,20 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public void DrawOnTop()
         {
-            Transaction trans = _document.TransactionManager.TopTransaction;
-            BlockTableRecord btr = _document.Database.GetModelSpace(false);
-            DrawOrderTable drawOrder = trans.GetObject(btr.DrawOrderTableId, OpenMode.ForWrite) as DrawOrderTable;
-            
-            ObjectIdCollection ids = new ObjectIdCollection();
-            ids.Add(BaseObject);
+            using (ObjectIdCollection ids = new ObjectIdCollection())
+            {
+                ids.Add(BaseObject);
+                _document.Database.GetDrawOrderTable(true).MoveToTop(ids);
+            }
+        }
 
-            drawOrder.MoveToTop(ids);
+        public void DrawOnBottom()
+        {
+            using (ObjectIdCollection ids = new ObjectIdCollection())
+            {
+                ids.Add(BaseObject);
+                _document.Database.GetDrawOrderTable(true).MoveToBottom(ids);
+            }
         }
     }
 }

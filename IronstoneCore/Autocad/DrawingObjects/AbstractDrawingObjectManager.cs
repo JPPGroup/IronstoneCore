@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Unity;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -31,6 +32,8 @@ namespace Jpp.Ironstone.Core.Autocad
         [XmlIgnore]
         public ILogger Log { get; private set; }
 
+        protected IUserSettings _settings;
+
         /// <summary>
         /// Create an instance of the manager
         /// </summary>
@@ -41,6 +44,8 @@ namespace Jpp.Ironstone.Core.Autocad
             HostDocument = document;
             ManagedObjects = new List<T>();
             Log = log;
+
+            _settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
         }
 
         protected AbstractDrawingObjectManager() { }
