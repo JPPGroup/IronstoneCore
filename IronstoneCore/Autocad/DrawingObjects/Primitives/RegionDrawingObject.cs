@@ -40,13 +40,6 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
 
                 modelSpace.AppendEntity(acHatch);
                 trans.AddNewlyCreatedDBObject(acHatch, true);
-                HatchDrawingObject hatchDrawingObject = new HatchDrawingObject(acHatch);
-
-                // Set the properties of the hatch object
-                // Associative must be set after the hatch object is appended to the 
-                // block table record and before AppendLoop
-                acHatch.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
-                acHatch.Associative = true;
 
                 Region baseObject = trans.GetObject(BaseObject, OpenMode.ForWrite) as Region;
                 
@@ -54,32 +47,50 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
                 baseObject.Explode(cvs);
                 if (cvs[0] is Region)
                 {
-                    int i = 0;
-                    foreach (Region r in cvs)
-                    {
-                        RegionDrawingObject rdo = new RegionDrawingObject(Document);
-                        rdo.BaseObject = modelSpace.AppendEntity(r);
-                        rdo.Hatch();
-
-                        trans.AddNewlyCreatedDBObject(r, true);
-                        this.SubObjects.Add($"Subregion{i}", rdo);
-                        i++;
-                    }
+                    AddSubRegion(cvs, modelSpace, trans);
                 }
                 else
                 {
-                    ObjectIdCollection boundary = new ObjectIdCollection();
-                    boundary.Add(BaseObject);
-                    acHatch.AppendLoop(HatchLoopTypes.External, boundary);
-                    acHatch.HatchStyle = HatchStyle.Ignore;
-                    acHatch.EvaluateHatch(true);
-
-                    Byte alpha = (Byte)(255 * (100 - 80) / 100);
-                    acHatch.Transparency = new Transparency(alpha);
-
-                    hatchDrawingObject.DrawOnBottom();
-                    this.SubObjects.Add("Hatch", hatchDrawingObject);
+                    BuildHatchBoundary(acHatch);
                 }
+            }
+        }
+
+        private void BuildHatchBoundary(Hatch acHatch)
+        {
+            HatchDrawingObject hatchDrawingObject = new HatchDrawingObject(acHatch);
+
+            // Set the properties of the hatch object
+            // Associative must be set after the hatch object is appended to the 
+            // block table record and before AppendLoop
+            acHatch.SetHatchPattern(HatchPatternType.PreDefined, "SOLID");
+            acHatch.Associative = true;
+
+            ObjectIdCollection boundary = new ObjectIdCollection();
+            boundary.Add(BaseObject);
+            acHatch.AppendLoop(HatchLoopTypes.External, boundary);
+            acHatch.HatchStyle = HatchStyle.Ignore;
+            acHatch.EvaluateHatch(true);
+
+            Byte alpha = (Byte) (255 * (100 - 80) / 100);
+            acHatch.Transparency = new Transparency(alpha);
+
+            hatchDrawingObject.DrawOnBottom();
+            this.SubObjects.Add("Hatch", hatchDrawingObject);
+        }
+
+        private void AddSubRegion(DBObjectCollection cvs, BlockTableRecord modelSpace, Transaction trans)
+        {
+            int i = 0;
+            foreach (Region r in cvs)
+            {
+                RegionDrawingObject rdo = new RegionDrawingObject(Document);
+                rdo.BaseObject = modelSpace.AppendEntity(r);
+                rdo.Hatch();
+
+                trans.AddNewlyCreatedDBObject(r, true);
+                this.SubObjects.Add($"Subregion{i}", rdo);
+                i++;
             }
         }
     }

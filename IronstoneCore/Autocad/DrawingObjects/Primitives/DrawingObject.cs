@@ -290,7 +290,6 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             if (_XData == null)
                 LoadXData();
-                //return false;
 
             return _XData.ContainsKey(key);
         }
@@ -366,26 +365,20 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public void DrawOnTop()
         {
-            Transaction trans = _document.TransactionManager.TopTransaction;
-            BlockTableRecord btr = _document.Database.GetModelSpace(false);
-            DrawOrderTable drawOrder = trans.GetObject(btr.DrawOrderTableId, OpenMode.ForWrite) as DrawOrderTable;
-            
-            ObjectIdCollection ids = new ObjectIdCollection();
-            ids.Add(BaseObject);
-
-            drawOrder.MoveToTop(ids);
+            using (ObjectIdCollection ids = new ObjectIdCollection())
+            {
+                ids.Add(BaseObject);
+                _document.Database.GetDrawOrderTable(true).MoveToTop(ids);
+            }
         }
 
         public void DrawOnBottom()
         {
-            Transaction trans = _document.TransactionManager.TopTransaction;
-            BlockTableRecord btr = _document.Database.GetModelSpace(false);
-            DrawOrderTable drawOrder = trans.GetObject(btr.DrawOrderTableId, OpenMode.ForWrite) as DrawOrderTable;
-
-            ObjectIdCollection ids = new ObjectIdCollection();
-            ids.Add(BaseObject);
-
-            drawOrder.MoveToBottom(ids);
+            using (ObjectIdCollection ids = new ObjectIdCollection())
+            {
+                ids.Add(BaseObject);
+                _document.Database.GetDrawOrderTable(true).MoveToBottom(ids);
+            }
         }
     }
 }
