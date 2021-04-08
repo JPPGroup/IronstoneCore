@@ -91,17 +91,17 @@
 				"treerings_proposed": {
 					"name": "JPP_Structures_Foundations_TreeRings_Proposed",
 					"color": "6",
-					"linetype": "Continuous"
+					"linetype": "1MM-HIDDEN"
 				},
 				"treerings_piled": {
 					"name": "JPP_Structures_Foundations_TreeRings_Piled",
 					"color": "10",
-					"linetype": "Continuous"
+					"linetype": "1MM-HIDDEN"
 				},
 				"treerings_heave": {
 					"name": "JPP_Structures_Foundations_TreeRings_Heave",
 					"color": "40",
-					"linetype": "Continuous"
+					"linetype": "1DASH"
 				},
         "treerings_label": {
           "name": "JPP_Structures_Foundations_TreeRings_Text",
