@@ -38,9 +38,8 @@
   </ItemGroup>  
   <Import Project="..\IronstoneBase\IronstoneBaseProject.csproj" />
   <ItemGroup>
-    <PackageReference Include="Jpp.Common.Tooling.Protection">
-      <Version>0.3.3</Version>
-    </PackageReference>
+    <PackageReference Include="Jpp.Common.Tooling.Protection" Version="0.3.6" />
+    <PackageReference Include="Jpp.Common.Tooling.Signing" Version="0.4.8" />
     <PackageReference Include="Microsoft.ApplicationInsights">
       <Version>2.14.0</Version>
     </PackageReference>
