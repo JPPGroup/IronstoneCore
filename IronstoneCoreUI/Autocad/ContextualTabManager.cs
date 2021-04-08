@@ -146,18 +146,10 @@ namespace Jpp.Ironstone.Core.UI.Autocad
 
                 foreach (ContextualTab contextTab in _contextTabs)
                 {
-                    contextTab.Tab.IsVisible = false;
-                }
+                    contextTab.Tab.IsVisible = _toActivate.Contains(contextTab.Tab);
 
-                if (_toActivate.Any())
-                {
-
-                    foreach (RibbonTab ribbonTab in _toActivate)
-                    {
-                        ribbonTab.IsVisible = true;
-                    }
-
-                    _toActivate.Last().IsActive = true;
+                    //TODO: Review - do this work?
+                    //_toActivate.Last().IsActive = true;
                 }
             }
             catch (Exception exception)
