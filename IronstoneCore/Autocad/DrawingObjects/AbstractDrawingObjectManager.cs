@@ -15,7 +15,9 @@ namespace Jpp.Ironstone.Core.Autocad
     /// <typeparam name="T">Class that extends DrawingObject</typeparam>
     public abstract class AbstractDrawingObjectManager<T> : IDrawingObjectManager where T : DrawingObject
     {
-        public List<T> ManagedObjects { get; }
+        //Setter required for deserialization
+        //TODO: Verify if this can be made readonly/private
+        public List<T> ManagedObjects { get; set; }
 
         [XmlIgnore] 
         public IReadOnlyList<T> ActiveObjects {
