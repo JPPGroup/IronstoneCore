@@ -6,10 +6,13 @@ using System.Text;						// so we can extract / set strings in the DRIS
 using System.Windows.Forms;				// for MessageBox
 
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi, Pack=1)]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Code from vendor")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Code from vendor")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Code from vendor")]
 public class DRIS
 {
-	// the first 4 fields are never encrypted
-	public byte header1;				// should be set to "DRIS"
+    // the first 4 fields are never encrypted
+    public byte header1;				// should be set to "DRIS"
 	public byte header2;
 	public byte header3;
 	public byte header4;
@@ -80,8 +83,8 @@ public class DRIS
 			return sb.ToString();
 		}
 	}
-
-	public string fd_drive
+	
+    public string fd_drive
 	{
 		get 
 		{
@@ -97,8 +100,10 @@ public class DRIS
 		}
 	}
 
-	// NB we have to do it this way because we cannot encrypt strings correctly unless they are byte arrays
-	public string alt_licence_name
+
+    // NB we have to do it this way because we cannot encrypt strings correctly unless they are byte arrays
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1044:Properties should not be write only", Justification = "Code from vendor")]
+    public string alt_licence_name
 	{
 		set 
 		{
@@ -179,10 +184,12 @@ public class DRIS
 }
 
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi, Pack=1)]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Code from vendor")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Code from vendor")]
 public struct NU_INFO
 {
 	[MarshalAs(UnmanagedType.ByValTStr, SizeConst=256)]
-	public string licenceName;
+    public string licenceName;
 	[MarshalAs(UnmanagedType.ByValTStr, SizeConst=50)]
 	public string userName;
 	[MarshalAs(UnmanagedType.ByValTStr, SizeConst=256)]

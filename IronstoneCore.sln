@@ -21,6 +21,11 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "BetaInstaller", "BetaInstal
 		{AC79C0AE-544A-4CB5-8FB7-665754BDEA9F} = {AC79C0AE-544A-4CB5-8FB7-665754BDEA9F}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E225C0F1-1B99-44DE-916C-B9FD4AEC939B}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug 2019|x64 = Debug 2019|x64

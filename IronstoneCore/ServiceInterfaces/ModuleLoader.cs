@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,24 +14,26 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         private readonly IAuthentication _authentication;
         private readonly ILogger _logger;
         private readonly IDataService _dataService;
+        private readonly Configuration _config;
 
         public string BinPath { get; set; }
         public string DataPath { get; set; }
 
-        public ModuleLoader(IAuthentication authentication, IDataService dataService, ILogger logger)
+        public ModuleLoader(IAuthentication authentication, IDataService dataService, ILogger logger, Configuration config)
         {
             _authentication = authentication;
             _dataService = dataService;
             _logger = logger;
+            _config = config;
             
             BinPath = Assembly.GetExecutingAssembly().Location;
             BinPath = BinPath.Substring(0, BinPath.LastIndexOf('\\'));
-            DataPath = CoreExtensionApplication._current.Configuration.AppData;
+            DataPath = _config.AppData;
 
             _loadedModules = new Dictionary<string, Module>();
 
             _logger.Entry($"Loading modules from {BinPath} and {DataPath}.", Severity.Debug);
-            if (CoreExtensionApplication._current.Configuration.EnableModuleUpdate)
+            if (_config.EnableModuleUpdate)
             {
                 ProcessManifest();
             }
@@ -46,7 +47,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             {
                 GetAssemblyInfo(dll);
             }
-            if (Directory.Exists(DataPath) && CoreExtensionApplication._current.Configuration.LoadAppDirectory)
+            if (Directory.Exists(DataPath) && _config.LoadAppDirectory)
             {
                 foreach (string dll in Directory.GetFiles(DataPath, "*.dll"))
                 {
@@ -105,7 +106,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         public void ProcessManifest()
         {
-            string moduleFile = DataPath + "\\" + CoreExtensionApplication._current.Configuration.ModuleManifest;
+            string moduleFile = DataPath + "\\" + _config.ModuleManifest;
             UpdateManifest(moduleFile);
 
             //Verify the file actually existis
@@ -205,7 +206,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 }
                 catch (System.Exception e)
                 {
-                    _logger.Entry($"Unable to donwload current module manifest file to {moduleFile} from {ModuleUrl}", Severity.Error);
+                    _logger.Entry($"Unable to download current module manifest file to {moduleFile} from {ModuleUrl}", Severity.Error);
                     _logger.LogException(e);
                 }
             }

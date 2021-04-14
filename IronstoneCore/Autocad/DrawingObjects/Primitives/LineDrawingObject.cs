@@ -34,7 +34,7 @@ namespace Jpp.Ironstone.Core.Autocad
                 {
                     if (l == null)
                     {
-                        throw new NullReferenceException();
+                        throw new InvalidOperationException("Line base object not found");
                     }
 
                     Vector3d lineVector = l.EndPoint.GetAsVector() - l.StartPoint.GetAsVector();
@@ -61,7 +61,6 @@ namespace Jpp.Ironstone.Core.Autocad
             get
             {
                 Transaction acTrans = _document.TransactionManager.TopTransaction;
-                Point3d result;
                 using (Line l = acTrans.GetObject(BaseObject, OpenMode.ForWrite) as Line)
                 {
                     return l.Angle;
@@ -78,7 +77,6 @@ namespace Jpp.Ironstone.Core.Autocad
             get
             {
                 Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
-                Point3d result;
                 using (Line l = acTrans.GetObject(BaseObject, OpenMode.ForRead) as Line)
                 {
                     return l.StartPoint;
@@ -87,7 +85,6 @@ namespace Jpp.Ironstone.Core.Autocad
             set
             {
                 Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
-                Point3d result;
                 using (Line l = acTrans.GetObject(BaseObject, OpenMode.ForWrite) as Line)
                 {
                     l.StartPoint = value;
@@ -100,7 +97,6 @@ namespace Jpp.Ironstone.Core.Autocad
             get
             {
                 Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
-                Point3d result;
                 using (Line l = acTrans.GetObject(BaseObject, OpenMode.ForRead) as Line)
                 {
                     return l.EndPoint;
@@ -109,7 +105,6 @@ namespace Jpp.Ironstone.Core.Autocad
             set
             {
                 Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
-                Point3d result;
                 using (Line l = acTrans.GetObject(BaseObject, OpenMode.ForWrite) as Line)
                 {
                     l.EndPoint = value;
@@ -173,16 +168,26 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public static LineDrawingObject Create(Database target, Point3d startPoint, Point3d endPoint)
         {
+            if (target == null)
+                throw new ArgumentNullException(nameof(target));
+
+            if (startPoint == null)
+                throw new ArgumentNullException(nameof(startPoint));
+
+            if (endPoint == null)
+                throw new ArgumentNullException(nameof(endPoint));
+
             LineDrawingObject newLineDrawingObject = new LineDrawingObject();
 
             Transaction trans = target.TransactionManager.TopTransaction;
             BlockTableRecord record = (BlockTableRecord)trans.GetObject(target.CurrentSpaceId, OpenMode.ForWrite);
 
-            Line acLine = new Line(startPoint, endPoint);
- 
-            // Add the new object to the block table record and the transaction
-            newLineDrawingObject.BaseObject = record.AppendEntity(acLine);
-            trans.AddNewlyCreatedDBObject(acLine, true);
+            using (Line acLine = new Line(startPoint, endPoint))
+            {
+                // Add the new object to the block table record and the transaction
+                newLineDrawingObject.BaseObject = record.AppendEntity(acLine);
+                trans.AddNewlyCreatedDBObject(acLine, true);
+            }
 
             return newLineDrawingObject;
         }

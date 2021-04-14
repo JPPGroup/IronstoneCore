@@ -12,6 +12,7 @@ using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class DataService : IDataService
     {
         /// <summary>
@@ -158,14 +159,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
                 RegAppTable rat = (RegAppTable)tr.GetObject(document.Database.RegAppTableId, OpenMode.ForRead, false);
 
-                if (!rat.Has(Constants.REG_APP_NAME))
+                if (!rat.Has(Constants.RegAppName))
                 {
                     using (document.LockDocument())
                     {
                         rat.UpgradeOpen();
                         RegAppTableRecord ratr = new RegAppTableRecord
                         {
-                            Name = Constants.REG_APP_NAME
+                            Name = Constants.RegAppName
                         };
 
                         rat.Add(ratr);

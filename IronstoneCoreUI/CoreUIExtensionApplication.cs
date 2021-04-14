@@ -80,14 +80,14 @@ namespace Jpp.Ironstone.Core.UI
             {
                 Name = Resources.ExtensionApplication_IronstoneTab_Design_Name,
                 Title = Resources.ExtensionApplication_IronstoneTab_Design_Name,
-                Id = Ironstone.Core.Constants.IRONSTONE_TAB_ID
+                Id = Ironstone.Core.Constants.IronstoneTabId
             };
 
             _conceptTab = new RibbonTab
             {
                 Name = Resources.ExtensionApplication_IronstoneTab_Concept_Name,
                 Title = Resources.ExtensionApplication_IronstoneTab_Concept_Name,
-                Id = Ironstone.Core.Constants.IRONSTONE_CONCEPT_TAB_ID
+                Id = Ironstone.Core.Constants.IronstoneConceptTabId
             };
             
             rc.Tabs.Add(_conceptTab);
