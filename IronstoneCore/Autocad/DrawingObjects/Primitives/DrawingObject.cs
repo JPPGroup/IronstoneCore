@@ -6,6 +6,8 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Unity;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -86,7 +88,7 @@ namespace Jpp.Ironstone.Core.Autocad
                 if (_database != null)
                     return _database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
 
-                CoreExtensionApplication._current.Container.Resolve<ILogger>().Entry("Drawing object does not have database or document set, reverting to active document fopr ObjectID creation.", Severity.Error);
+                CoreExtensionApplication._current.Container.GetRequiredService<ILogger<CoreExtensionApplication>>().LogWarning("Drawing object does not have database or document set, reverting to active document fopr ObjectID creation.");
                 return Application.DocumentManager.MdiActiveDocument.Database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
             }
             set
@@ -155,7 +157,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
                 if (acTrans == null)
                 {
-                    CoreExtensionApplication._current.Container.Resolve<ILogger>().Entry("Drawing object does not have database or document set, reverting to active document.", Severity.Error);
+                    CoreExtensionApplication._current.Container.GetRequiredService<ILogger<CoreExtensionApplication>>().LogWarning("Drawing object does not have database or document set, reverting to active document.");
                     acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
                 }
 

@@ -17,6 +17,10 @@ using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
 using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Serilog;
 using Unity;
 using Unity.Lifetime;
 
@@ -29,7 +33,7 @@ namespace Jpp.Ironstone.Core
     /// Loader class, the main entry point for the full application suite. Implements IExtensionApplication is it
     /// automatically initialised and terminated by AutoCad.
     /// </summary>
-    public class CoreExtensionApplication : IExtensionApplication, IUpdateable
+    public class CoreExtensionApplication : IExtensionApplication, IUpdateable, ICivil3dController
     {
         #region Public Variables
 
@@ -85,7 +89,7 @@ namespace Jpp.Ironstone.Core
         /// </summary>
         public event EventHandler<Document> Civil3DTagWarning;
 
-        public UnityContainer Container { get; set; }
+        public IServiceProvider Container { get; private set; }
 
         #endregion
 
@@ -101,7 +105,7 @@ namespace Jpp.Ironstone.Core
         private static bool? _civil3D;
 
         
-        private ILogger _logger;
+        private ILogger<CoreExtensionApplication> _logger;
         private IAuthentication _authentication;
         private ObjectModel _objectModel;
         private List<IIronstoneExtensionApplication> _extensions;
@@ -168,43 +172,51 @@ namespace Jpp.Ironstone.Core
             _extensions = new List<IIronstoneExtensionApplication>();
             _uiCreated = false;
 
-            //Unity registration
-            Container= new UnityContainer();
+            IServiceCollection serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<IAuthentication, DinkeyAuthentication>();
+            serviceCollection.AddSingleton<IDataService, DataService>();
+            serviceCollection.AddSingleton<ObjectModel>();
+            serviceCollection.AddSingleton<IUserSettings, StandardUserSettings>();
+            serviceCollection.AddSingleton<LayerManager>();
+            serviceCollection.AddSingleton<IReviewManager, ReviewManager>();
 
-            //TODO: Add code here for choosing log type
-            Container.RegisterType<ILogger, CollectionLogger>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IAuthentication, DinkeyAuthentication>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IModuleLoader, ModuleLoader>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IDataService, DataService>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ObjectModel, ObjectModel>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IUserSettings, StandardUserSettings>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<LayerManager>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<IReviewManager, ReviewManager>(new ContainerControlledLifetimeManager());
-            Container.AddExtension(new Diagnostic());
-            
+            var serilog = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.File("IronstoneLog.txt", retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day, buffered: true)
+                .CreateLogger();
+
+            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole()
+                    .AddSerilog(serilog, true);
+            });
+            serviceCollection.AddSingleton<ILoggerFactory>(loggerFactory);
+            _logger = loggerFactory.CreateLogger<CoreExtensionApplication>();
+
+            //TODO: Add in file logger and autocad console logger
+
             try
             {
-                LoadConfiguration();
-                _logger = Container.Resolve<ILogger>();
-                _logger.LogEvent(Event.Message, "Application Startup");
+                LoadConfiguration(serviceCollection);
+                _logger.LogInformation("Application Startup");
 
-                _logger.Entry("Wiring up custom assembly resolve");
+                _logger.LogDebug("Wiring up custom assembly resolve");
                 AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
                 {
                     string toassname = resolveArgs.Name.Split(',')[0];
                     if (!toassname.Contains("Ironstone")) return null;
                     if (toassname.Contains("resources"))
                     {
-                        _logger.Entry($"Localized resource for {CultureInfo.CurrentCulture} not found.", Severity.Information);
+                        _logger.LogWarning($"Localized resource for {CultureInfo.CurrentCulture} not found.");
                         return null;
                     }
                     if (toassname.Contains("XmlSerializer"))
                     {
-                        _logger.Entry($"Serialization library {toassname} not pregenerated", Severity.Debug);
+                        _logger.LogDebug($"Serialization library {toassname} not pregenerated");
                         return null;
                     }
 
-                    _logger.Entry($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
+                    _logger.LogDebug($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
                     Assembly[] asmblies = AppDomain.CurrentDomain.GetAssemblies();
                     foreach (Assembly ass in asmblies)
                     {
@@ -217,25 +229,28 @@ namespace Jpp.Ironstone.Core
                     return null;
                 };
 
-                _logger.Entry(Resources.ExtensionApplication_Inform_LoadingMain);
+                //TODO: Check position
+                Container = serviceCollection.BuildServiceProvider();
 
-                _authentication = Container.Resolve<IAuthentication>();
+                _logger.LogInformation(Resources.ExtensionApplication_Inform_LoadingMain);
 
-                IDataService dataService = Container.Resolve<IDataService>();
+                _authentication = Container.GetRequiredService<IAuthentication>();
+
+                IDataService dataService = Container.GetRequiredService<IDataService>();
 
                 Update();
             }
             catch (System.Exception e)
             {
-                _logger.Entry($"Exception thrown in core main resolver block - {e.Message}", Severity.Crash);
+                _logger.LogCritical($"Exception thrown in core main resolver block - {e.Message}");
             }
 
-            _logger.Entry(Resources.ExtensionApplication_Inform_LoadedMain);
+            _logger.LogInformation(Resources.ExtensionApplication_Inform_LoadedMain);
 
             // If not running in civil 3d, hook into document creation events to monitor for civil3d drawings being opened
             if (!Civil3D)
             {
-                _logger.Entry($"Application is not running in Civil3d, checking documents...");
+                _logger.LogInformation($"Application is not running in Civil3d, checking documents...");
                 foreach (Document doc in Application.DocumentManager)
                 {
                     CheckDocument(doc);
@@ -245,7 +260,7 @@ namespace Jpp.Ironstone.Core
             }
             else
             {
-                _logger.Entry($"Application is running in Civil3d, document checks bypassed.");
+                _logger.LogInformation($"Application is running in Civil3d, document checks bypassed.");
             }
         }
 
@@ -259,7 +274,7 @@ namespace Jpp.Ironstone.Core
         {
             if (CheckDrawingForCivil3D(doc))
             {
-                _logger.Entry("Civil3D features will not function in this drawing. Proceed at own risk.", Severity.Warning);
+                _logger.LogWarning("Civil3D features will not function in this drawing. Proceed at own risk.");
                 Civil3DTagWarning?.Invoke(this, doc);
             }
         }
@@ -286,7 +301,7 @@ namespace Jpp.Ironstone.Core
             }
         }
 
-        private void LoadConfiguration()
+        private void LoadConfiguration(IServiceCollection provider)
         {
             XmlSerializer xml = new XmlSerializer(typeof(Configuration));
             string dll = Assembly.GetExecutingAssembly().Location;
@@ -309,10 +324,10 @@ namespace Jpp.Ironstone.Core
             {
                 Type from = Type.GetType(Configuration.ContainerResolvers.Keys.ElementAt(i));
                 Type to = Type.GetType(Configuration.ContainerResolvers.Values.ElementAt(i));
-                Container.RegisterType(from, to, new ContainerControlledLifetimeManager());
+                //Container.(from, to, new ContainerControlledLifetimeManager());
             }
 
-            Container.RegisterInstance<Configuration>(Configuration, new ContainerControlledLifetimeManager());
+            //Container.RegisterInstance<Configuration>(Configuration, new ContainerControlledLifetimeManager());
         }
 
         #endregion
@@ -334,7 +349,7 @@ namespace Jpp.Ironstone.Core
                     }
                     else
                     {
-                        _objectModel = Container.Resolve<ObjectModel>();
+                        _objectModel = Container.GetRequiredService<ObjectModel>();
                     }
                 };
                 AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
@@ -352,8 +367,8 @@ namespace Jpp.Ironstone.Core
             }
             else
             {
-                _objectModel = Container.Resolve<ObjectModel>();
-                Container.Resolve<IModuleLoader>().Scan();
+                _objectModel = Container.GetRequiredService<ObjectModel>();
+                Container.GetRequiredService<IModuleLoader>().Scan();
             }
         }
         #endregion
@@ -362,23 +377,22 @@ namespace Jpp.Ironstone.Core
         {
             if (_uiCreated)
             {
-                _logger.Entry("Extensions registration attempted after UI has been loaded", Severity.Error);
+                _logger.LogCritical("Extensions registration attempted after UI has been loaded");
                 return;
             }
 
-            _logger.Entry($"{extension.GetType().ToString()} registration started", Severity.Debug);
+            _logger.LogDebug($"{extension.GetType().ToString()} registration started");
             DataService.Current.InvalidateStoreTypes();
             try
             {
                 extension.InjectContainer(_current.Container);
                 _extensions.Add(extension);
 
-                _logger.Entry($"{extension.GetType().ToString()} registration completed", Severity.Debug);
+                _logger.LogInformation($"{extension.GetType().ToString()} registration completed");
             }
             catch (System.Exception e)
             {
-                _logger.Entry($"{extension.GetType().ToString()} registration failed", Severity.Error);
-                _logger.LogException(e);
+                _logger.LogError(e, $"{extension.GetType().ToString()} registration failed");
             }
         }
 

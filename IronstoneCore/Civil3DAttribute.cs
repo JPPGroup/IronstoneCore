@@ -3,7 +3,8 @@ using System;
 using System.Linq;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
-using Unity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Jpp.Ironstone.Core
 {
@@ -22,10 +23,13 @@ namespace Jpp.Ironstone.Core
     [Aspect(Scope.Global, Factory = typeof(Civil3DAspectFactory))]
     public class Civil3DAspect
     {
-        private ILogger _logger;
-        public Civil3DAspect(ILogger logger)
+        private ILogger<Civil3DAspect> _logger;
+        private ICivil3dController _controller;
+
+        public Civil3DAspect(ILogger<Civil3DAspect> logger, ICivil3dController controller)
         {
             _logger = logger;
+            _controller = controller;
         }
 
         [Advice(Kind.Around, Targets = Target.Method)]
@@ -38,12 +42,12 @@ namespace Jpp.Ironstone.Core
             {
                 var result = method(arguments);
                 if(tagDrawing)
-                    CoreExtensionApplication._current.MarkCurrentDrawingAsCivil3D();
+                    _controller.MarkCurrentDrawingAsCivil3D();
                 return result;
             }
             else
             {
-                _logger.LogEvent(Event.Message, Resources.Civil3DAttribute_Inform_Not);
+                _logger.LogInformation(Resources.Civil3DAttribute_Inform_Not);
                 return null;
             }
         }
@@ -59,7 +63,7 @@ namespace Jpp.Ironstone.Core
             }
 
             //Realise this is an Anti-Pattern but this is better than remembering to set properties on the factory at runtime
-            Civil3DAspect aspect = CoreExtensionApplication._current.Container.Resolve<Civil3DAspect>();
+            Civil3DAspect aspect = CoreExtensionApplication._current.Container.GetRequiredService<Civil3DAspect>();
 
             return aspect;
         }

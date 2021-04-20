@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Microsoft.Extensions.Logging;
 using Unity;
 
 namespace Jpp.Ironstone.Core.Autocad
@@ -41,13 +42,13 @@ namespace Jpp.Ironstone.Core.Autocad
         /// </summary>
         /// <param name="document">The document in which the manager resides</param>
         /// <param name="log"></param>
-        protected AbstractDrawingObjectManager(Document document, ILogger log)
+        protected AbstractDrawingObjectManager(Document document, ILogger<CoreExtensionApplication> log, IUserSettings settings)
         {
             HostDocument = document;
             ManagedObjects = new List<T>();
             Log = log;
 
-            _settings = CoreExtensionApplication._current.Container.Resolve<IUserSettings>();
+            _settings = settings;
         }
 
         protected AbstractDrawingObjectManager() { }
@@ -149,10 +150,11 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        public void SetDependencies(Document doc, ILogger log)
+        public void SetDependencies(Document doc, ILogger<CoreExtensionApplication> log, IUserSettings settings)
         {
             HostDocument = doc;
             Log = log;
+            _settings = settings;
         }
 
         public object[] GetRequiredLayers()
