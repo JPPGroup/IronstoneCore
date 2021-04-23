@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
-using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 
@@ -17,7 +18,8 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces.Authentication
         [TestCaseSource(nameof(VerifyGetModuleNameFromPathTestCases))]
         public string VerifyGetModuleNameFromPath(string path)
         {
-            ConsoleLogger logger = new ConsoleLogger();
+            LoggerFactory lf = new LoggerFactory();
+            var logger = lf.CreateLogger<IAuthentication>();
             DinkeyAuthentication da = new DinkeyAuthentication(logger);
             return da.GetModuleNameFromPath(path);
         }

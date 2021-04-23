@@ -1,14 +1,15 @@
 ﻿using System;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
     public class LayerManager
     {
-        private IUserSettings _settings;
+        private IConfiguration _settings;
 
-        public LayerManager(IUserSettings settings)
+        public LayerManager(IConfiguration settings)
         {
             _settings = settings;
         }
@@ -17,13 +18,13 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             LayerInfo newLayerInfo;
 
-            if (_settings.GetValue($"{name}.name") != null)
+            if (_settings[$"{name}:name"] != null)
             {
                 newLayerInfo = new LayerInfo()
                 {
-                    IndexColor = short.Parse(_settings.GetValue($"{name}.color")),
-                    LayerId = _settings.GetValue($"{name}.name"),
-                    Linetype = _settings.GetValue($"{name}.linetype")
+                    IndexColor = short.Parse(_settings[$"{name}:color"]),
+                    LayerId = _settings[$"{name}:name"],
+                    Linetype = _settings[$"{name}:linetype"]
                 };
             }
             else
@@ -39,9 +40,9 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public string GetLayerName(string name)
         {
-            if (_settings.GetValue($"{name}.name") != null)
+            if (_settings[$"{name}.name"] != null)
             {
-                return _settings.GetValue($"{name}.name");
+                return _settings[$"{name}.name"];
             }
             else
             {

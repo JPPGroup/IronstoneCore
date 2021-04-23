@@ -1,28 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Xml.Serialization;
+using System.Text.RegularExpressions;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
-using Jpp.AutoUpdate;
-using Jpp.AutoUpdate.Classes;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
-using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using Serilog;
-using Unity;
-using Unity.Lifetime;
+using Exception = Autodesk.AutoCAD.Runtime.Exception;
 
 [assembly: ExtensionApplication(typeof(CoreExtensionApplication))]
 [assembly: CommandClass(typeof(CoreExtensionApplication))]
@@ -33,7 +30,7 @@ namespace Jpp.Ironstone.Core
     /// Loader class, the main entry point for the full application suite. Implements IExtensionApplication is it
     /// automatically initialised and terminated by AutoCad.
     /// </summary>
-    public class CoreExtensionApplication : IExtensionApplication, IUpdateable, ICivil3dController
+    public class CoreExtensionApplication : IExtensionApplication, ICivil3dController
     {
         #region Public Variables
 
@@ -107,7 +104,6 @@ namespace Jpp.Ironstone.Core
         
         private ILogger<CoreExtensionApplication> _logger;
         private IAuthentication _authentication;
-        private ObjectModel _objectModel;
         private List<IIronstoneExtensionApplication> _extensions;
         private bool _uiCreated;
         #endregion
@@ -169,76 +165,28 @@ namespace Jpp.Ironstone.Core
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public void InitExtension()
         {
+            Debugger.Launch();
             _extensions = new List<IIronstoneExtensionApplication>();
             _uiCreated = false;
 
-            IServiceCollection serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<IAuthentication, DinkeyAuthentication>();
-            serviceCollection.AddSingleton<IDataService, DataService>();
-            serviceCollection.AddSingleton<ObjectModel>();
-            serviceCollection.AddSingleton<IUserSettings, StandardUserSettings>();
-            serviceCollection.AddSingleton<LayerManager>();
-            serviceCollection.AddSingleton<IReviewManager, ReviewManager>();
-
-            var serilog = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                .WriteTo.File("IronstoneLog.txt", retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day, buffered: true)
-                .CreateLogger();
-
-            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddConsole()
-                    .AddSerilog(serilog, true);
-            });
-            serviceCollection.AddSingleton<ILoggerFactory>(loggerFactory);
-            _logger = loggerFactory.CreateLogger<CoreExtensionApplication>();
-
-            //TODO: Add in file logger and autocad console logger
+            IServiceCollection serviceCollection = BuildServiceCollection();
 
             try
             {
-                LoadConfiguration(serviceCollection);
+                
                 _logger.LogInformation("Application Startup");
 
-                _logger.LogDebug("Wiring up custom assembly resolve");
-                AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
-                {
-                    string toassname = resolveArgs.Name.Split(',')[0];
-                    if (!toassname.Contains("Ironstone")) return null;
-                    if (toassname.Contains("resources"))
-                    {
-                        _logger.LogWarning($"Localized resource for {CultureInfo.CurrentCulture} not found.");
-                        return null;
-                    }
-                    if (toassname.Contains("XmlSerializer"))
-                    {
-                        _logger.LogDebug($"Serialization library {toassname} not pregenerated");
-                        return null;
-                    }
-
-                    _logger.LogDebug($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
-                    Assembly[] asmblies = AppDomain.CurrentDomain.GetAssemblies();
-                    foreach (Assembly ass in asmblies)
-                    {
-                        if (ass.FullName.Split(',')[0] == toassname)
-                        {
-                            return ass;
-                        }
-                    }
-
-                    return null;
-                };
-
+                SetCustomAssemblyResolve();
+                serviceCollection.AddSingleton<IConfiguration>(LoadConfiguration(_logger));
                 //TODO: Check position
                 Container = serviceCollection.BuildServiceProvider();
 
                 _logger.LogInformation(Resources.ExtensionApplication_Inform_LoadingMain);
-
                 _authentication = Container.GetRequiredService<IAuthentication>();
 
                 IDataService dataService = Container.GetRequiredService<IDataService>();
-
-                Update();
+                
+                Container.GetRequiredService<IModuleLoader>().Scan();
             }
             catch (System.Exception e)
             {
@@ -262,6 +210,74 @@ namespace Jpp.Ironstone.Core
             {
                 _logger.LogInformation($"Application is running in Civil3d, document checks bypassed.");
             }
+        }
+
+        private void SetCustomAssemblyResolve()
+        {
+            _logger.LogDebug("Wiring up custom assembly resolve");
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
+            {
+                string toassname = resolveArgs.Name.Split(',')[0];
+                //if (!toassname.Contains("Ironstone")) return null;
+                if (toassname.Contains("resources"))
+                {
+                    _logger.LogWarning($"Localized resource for {CultureInfo.CurrentCulture} not found.");
+                    return null;
+                }
+
+                if (toassname.Contains("XmlSerializer"))
+                {
+                    _logger.LogDebug($"Serialization library {toassname} not pregenerated");
+                    return null;
+                }
+
+                _logger.LogDebug($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
+                Assembly[] asmblies = AppDomain.CurrentDomain.GetAssemblies();
+                foreach (Assembly ass in asmblies)
+                {
+                    if (ass.FullName.Split(',')[0] == toassname)
+                    {
+                        return ass;
+                    }
+                }
+                
+                //Bruteforce bidning redirect
+                // Get just the name of assmebly
+                // Aseembly name excluding version and other metadata
+                string name = new Regex(",.*").Replace(resolveArgs.Name, string.Empty);
+
+                // Load whatever version available
+                return Assembly.Load(name);
+            };
+        }
+
+        private IServiceCollection BuildServiceCollection()
+        {
+            IServiceCollection serviceCollection = new ServiceCollection();
+            serviceCollection.AddSingleton<IAuthentication, DinkeyAuthentication>();
+            serviceCollection.AddSingleton<IDataService, DataService>();
+            serviceCollection.AddSingleton<LayerManager>();
+            serviceCollection.AddSingleton<IReviewManager, ReviewManager>();
+
+            var serilog = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.File("IronstoneLog.txt", retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
+                    buffered: true)
+                .CreateLogger();
+
+            /*ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole()
+                    .AddSerilog(serilog, true);
+            });*/
+            ILoggerFactory loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
+            serviceCollection.AddSingleton<ILoggerFactory>(loggerFactory);
+            serviceCollection.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+            _logger = loggerFactory.CreateLogger<CoreExtensionApplication>();
+
+            //TODO: Add in file logger and autocad console logger
+
+            return serviceCollection;
         }
 
         private void DocumentManagerOnDocumentCreated(object sender, DocumentCollectionEventArgs e)
@@ -301,9 +317,58 @@ namespace Jpp.Ironstone.Core
             }
         }
 
-        private void LoadConfiguration(IServiceCollection provider)
+        private IConfiguration LoadConfiguration(ILogger<CoreExtensionApplication> logger)
         {
-            XmlSerializer xml = new XmlSerializer(typeof(Configuration));
+            ConfigurationBuilder rootBuilder = new ConfigurationBuilder();
+            var resStream = Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream("Jpp.Ironstone.Core.Resources.BaseConfig.json");
+            IConfiguration root = rootBuilder.AddJsonStream(resStream).Build();
+
+
+            IConfiguration local;
+            if (File.Exists("config.json"))
+            {
+                ConfigurationBuilder localBuilder = new ConfigurationBuilder();
+                local = rootBuilder.AddConfiguration(root).AddJsonFile("config.json").Build();
+            }
+            else
+            {
+                local = root;
+            }
+
+#if DEBUG
+            _logger.LogDebug("User and network setting skipped as running in debug.");
+            return local;
+#endif
+            string networkPath = local["Settings:NetworkPath"];
+            IConfiguration network;
+            if (!string.IsNullOrEmpty(networkPath) && File.Exists(networkPath))
+            {
+                ConfigurationBuilder localBuilder = new ConfigurationBuilder();
+                network = rootBuilder.AddConfiguration(local).AddJsonFile(networkPath).Build();
+            }
+            else
+            {
+                _logger.LogWarning($"Network settings not found at {networkPath}");
+                network = local;
+            }
+
+            string userPath = local["Settings:UserPath"];
+            IConfiguration user;
+            if (!string.IsNullOrEmpty(networkPath) && File.Exists(networkPath))
+            {
+                ConfigurationBuilder localBuilder = new ConfigurationBuilder();
+                user = rootBuilder.AddConfiguration(network).AddJsonFile(userPath).Build();
+            }
+            else
+            {
+                _logger.LogWarning($"User settings not found at {userPath}");
+                user = network;
+            }
+
+            return user;
+
+            /*XmlSerializer xml = new XmlSerializer(typeof(Configuration));
             string dll = Assembly.GetExecutingAssembly().Location;
             string containingFoler = dll.Remove(dll.LastIndexOf("\\"));
             string configPath = Path.Combine(containingFoler, "IronstoneConfig.xml");
@@ -327,51 +392,10 @@ namespace Jpp.Ironstone.Core
                 //Container.(from, to, new ContainerControlledLifetimeManager());
             }
 
-            //Container.RegisterInstance<Configuration>(Configuration, new ContainerControlledLifetimeManager());
+            //Container.RegisterInstance<Configuration>(Configuration, new ContainerControlledLifetimeManager());*/
         }
 
-        #endregion
-
-        #region Updater
-        // ReSharper disable once UnusedMember.Global
-        public void Update()
-        {
-            if (Configuration.EnableInstallerUpdate)
-            {
-                AutoUpdate.Updater<CoreExtensionApplication>.Start(CoreExtensionApplication._current.Configuration.InstallerUrl, this);
-                AutoUpdate.Updater<CoreExtensionApplication>.CheckForUpdateEvent += (UpdateInfoEventArgs args) =>
-                {
-                    if (args == null)
-                        return;
-                    if (args.IsUpdateAvailable)
-                    {
-                        AutoUpdate.Updater<CoreExtensionApplication>.ShowUpdateForm();
-                    }
-                    else
-                    {
-                        _objectModel = Container.GetRequiredService<ObjectModel>();
-                    }
-                };
-                AutoUpdate.Updater<CoreExtensionApplication>.ApplicationExitEvent += () =>
-                {
-                    if (Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
-                            .MdiActiveDocument == null)
-                    {
-                        Autodesk.AutoCAD.ApplicationServices.Core.Application.Quit();
-                        return;
-                    }
-
-                    Autodesk.AutoCAD.ApplicationServices.Core.Application.DocumentManager
-                        .MdiActiveDocument?.SendStringToExecute("quit ", true, false, true);
-                };
-            }
-            else
-            {
-                _objectModel = Container.GetRequiredService<ObjectModel>();
-                Container.GetRequiredService<IModuleLoader>().Scan();
-            }
-        }
-        #endregion
+#endregion
 
         public void RegisterExtension(IIronstoneExtensionApplication extension)
         {
@@ -396,11 +420,7 @@ namespace Jpp.Ironstone.Core
             }
         }
 
-        public string CompanyAttribute { get; } = "JPP Consulting";
-        public string AppTitle { get; } = "JPP Ironstone";
-        public Version InstalledVersion { get; } = Assembly.GetExecutingAssembly().GetName().Version;
-
-        #region Civil3D Flag
+#region Civil3D Flag
 
         public void MarkCurrentDrawingAsCivil3D()
         {
@@ -456,6 +476,6 @@ namespace Jpp.Ironstone.Core
 
             return false;
         }
-        #endregion
+#endregion
     }
 }

@@ -4,9 +4,8 @@ using System.Linq;
 using System.Xml.Serialization;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using Jpp.Ironstone.Core.ServiceInterfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Unity;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -35,14 +34,14 @@ namespace Jpp.Ironstone.Core.Autocad
         [XmlIgnore]
         public ILogger Log { get; private set; }
 
-        protected IUserSettings _settings;
+        protected IConfiguration _settings;
 
         /// <summary>
         /// Create an instance of the manager
         /// </summary>
         /// <param name="document">The document in which the manager resides</param>
         /// <param name="log"></param>
-        protected AbstractDrawingObjectManager(Document document, ILogger<CoreExtensionApplication> log, IUserSettings settings)
+        protected AbstractDrawingObjectManager(Document document, ILogger<CoreExtensionApplication> log, IConfiguration settings)
         {
             HostDocument = document;
             ManagedObjects = new List<T>();
@@ -150,7 +149,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        public void SetDependencies(Document doc, ILogger<CoreExtensionApplication> log, IUserSettings settings)
+        public void SetDependencies(Document doc, ILogger<CoreExtensionApplication> log, IConfiguration settings)
         {
             HostDocument = doc;
             Log = log;

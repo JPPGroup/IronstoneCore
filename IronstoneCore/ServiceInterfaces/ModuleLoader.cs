@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Autodesk.AutoCAD.Runtime;
+using Microsoft.Extensions.Logging;
 using Exception = Autodesk.AutoCAD.Runtime.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
@@ -12,14 +13,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
     {
         private readonly Dictionary<string, Module> _loadedModules;
         private readonly IAuthentication _authentication;
-        private readonly ILogger _logger;
+        private readonly ILogger<CoreExtensionApplication> _logger;
         private readonly IDataService _dataService;
         private readonly Configuration _config;
 
         public string BinPath { get; set; }
         public string DataPath { get; set; }
 
-        public ModuleLoader(IAuthentication authentication, IDataService dataService, ILogger logger, Configuration config)
+        public ModuleLoader(IAuthentication authentication, IDataService dataService, ILogger<CoreExtensionApplication> logger, Configuration config)
         {
             _authentication = authentication;
             _dataService = dataService;
@@ -32,11 +33,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             _loadedModules = new Dictionary<string, Module>();
 
-            _logger.Entry($"Loading modules from {BinPath} and {DataPath}.", Severity.Debug);
-            if (_config.EnableModuleUpdate)
+            _logger.LogDebug($"Loading modules from {BinPath} and {DataPath}.");
+            /*if (_config.EnableModuleUpdate)
             {
                 ProcessManifest();
-            }
+            }*/
         }
 
         public void Scan()
@@ -70,12 +71,11 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     {
                         ExtensionLoader.Load(BinPath + "\\IronstoneCoreUI.dll");
                     }
-                    _logger.Entry("Core UI library loaded.", Severity.Debug);
+                    _logger.LogDebug("Core UI library loaded.");
                 }
                 catch (System.Exception e)
                 {
-                    _logger.Entry($"Unable to load Core UI library", Severity.Crash);
-                    _logger.LogException(e);
+                    _logger.LogCritical(e, $"Unable to load Core UI library");
                     throw;
                 }
             }
@@ -107,7 +107,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         public void ProcessManifest()
         {
             string moduleFile = DataPath + "\\" + _config.ModuleManifest;
-            UpdateManifest(moduleFile);
+            //UpdateManifest(moduleFile);
 
             //Verify the file actually existis
             if (File.Exists(moduleFile))
@@ -166,8 +166,8 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                                     }
                                     catch (System.Exception e)
                                     {
-                                        _logger.Entry($"Unable to download module {module.Key} from {downloadPath}", Severity.Error);
-                                        _logger.LogException(e);
+                                        //_logger.Entry($"Unable to download module {module.Key} from {downloadPath}", Severity.Error);
+                                        //_logger.LogException(e);
                                     }
                                 }
                             }
@@ -176,13 +176,13 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 }
                 catch (System.Exception e)
                 {
-                    _logger.Entry($"Unable to process latest manifest file {moduleFile}", Severity.Error);
-                    _logger.LogException(e);
+                    //_logger.Entry($"Unable to process latest manifest file {moduleFile}", Severity.Error);
+                    //_logger.LogException(e);
                 }
             }
         }
 
-        private void UpdateManifest(string moduleFile)
+        /*private void UpdateManifest(string moduleFile)
         {
             if (File.Exists(moduleFile))
             {
@@ -210,7 +210,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     _logger.LogException(e);
                 }
             }
-        }
+        }*/
 
         public IEnumerable<Module> GetModules()
         {

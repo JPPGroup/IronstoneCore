@@ -1,68 +1,68 @@
 ﻿using Jpp.Ironstone.Core.ServiceInterfaces;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 
 namespace Jpp.Ironstone.Core.Tests.TestObjects
 {
-    public class TestLayersEnabledSettings : IUserSettings
+    public class TestLayersEnabledSettings : IConfiguration
     {
-        public IUserSettings LoadFrom(string path)
+        public IConfigurationSection GetSection(string key)
         {
             throw new NotImplementedException();
         }
 
-        public IUserSettings LoadStream(Stream stream)
+        public IEnumerable<IConfigurationSection> GetChildren()
         {
             throw new NotImplementedException();
         }
 
-        public string GetValue(string key)
-        {
-            if (key == "layers-unlock-unfreeze") return true.ToString();
-            if (key == "layers-switch-on") return true.ToString();
-
-            return null;
-        }
-
-        public T? GetValue<T>(string key) where T : struct
+        public IChangeToken GetReloadToken()
         {
             throw new NotImplementedException();
         }
 
-        public T GetObject<T>(string key) where T : class
+        public string this[string key]
         {
-            throw new NotImplementedException();
+            get {
+                if (key == "layers-unlock-unfreeze") return true.ToString();
+                if (key == "layers-switch-on") return true.ToString();
+
+                return null;
+            }
+            set { throw new NotImplementedException(); }
         }
     }
 
-    public class TestLayersDisabledSettings : IUserSettings
+    public class TestLayersDisabledSettings : IConfiguration
     {
-        public IUserSettings LoadFrom(string path)
+        public IConfigurationSection GetSection(string key)
         {
             throw new NotImplementedException();
         }
 
-        public IUserSettings LoadStream(Stream stream)
+        public IEnumerable<IConfigurationSection> GetChildren()
         {
             throw new NotImplementedException();
         }
 
-        public string GetValue(string key)
-        {
-            if (key == "layers-unlock-unfreeze") return false.ToString();
-            if (key == "layers-switch-on") return false.ToString();
-
-            return null;
-        }
-
-        public T? GetValue<T>(string key) where T : struct
+        public IChangeToken GetReloadToken()
         {
             throw new NotImplementedException();
         }
 
-        public T GetObject<T>(string key) where T : class
+        public string this[string key]
         {
-            throw new NotImplementedException();
+            get
+            {
+                if (key == "layers-unlock-unfreeze") return false.ToString();
+                if (key == "layers-switch-on") return false.ToString();
+
+                return null;
+            }
+            set { throw new NotImplementedException(); }
         }
     }
 }

@@ -2,7 +2,8 @@
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using Jpp.Ironstone.Core.Autocad;
-using Jpp.Ironstone.Core.ServiceInterfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.Tests.TestObjects
@@ -12,7 +13,7 @@ namespace Jpp.Ironstone.Core.Tests.TestObjects
     {
         public PersistentObjectIdCollection ObjectCollection { get; set; }
 
-        public TestDrawingObjectManager(Document document, ILogger log) : base(document, log)
+        public TestDrawingObjectManager(Document document, ILogger<CoreExtensionApplication> log, IConfiguration settings) : base(document, log, settings)
         {
             ObjectCollection = new PersistentObjectIdCollection();
         }
