@@ -19,7 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Exception = Autodesk.AutoCAD.Runtime.Exception;
+using Module = Jpp.Ironstone.Core.ServiceInterfaces.Module;
 
 [assembly: ExtensionApplication(typeof(CoreExtensionApplication))]
 [assembly: CommandClass(typeof(CoreExtensionApplication))]
@@ -103,9 +103,12 @@ namespace Jpp.Ironstone.Core
 
         
         private ILogger<CoreExtensionApplication> _logger;
+        private ILogger<IAuthentication> _authLogger;
         private IAuthentication _authentication;
         private List<IIronstoneExtensionApplication> _extensions;
         private bool _uiCreated;
+
+        private IServiceCollection serviceCollection;
         #endregion
 
         #region Autocad Extension Lifecycle
@@ -165,11 +168,11 @@ namespace Jpp.Ironstone.Core
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public void InitExtension()
         {
-            Debugger.Launch();
             _extensions = new List<IIronstoneExtensionApplication>();
             _uiCreated = false;
-
-            IServiceCollection serviceCollection = BuildServiceCollection();
+            
+            SetBindingRedirect();
+            serviceCollection = BuildServiceCollection();
 
             try
             {
@@ -177,16 +180,31 @@ namespace Jpp.Ironstone.Core
                 _logger.LogInformation("Application Startup");
 
                 SetCustomAssemblyResolve();
-                serviceCollection.AddSingleton<IConfiguration>(LoadConfiguration(_logger));
+                IConfiguration config = LoadConfiguration(_logger);
+                serviceCollection.AddSingleton<IConfiguration>(config);
+                
+                _logger.LogInformation(Resources.ExtensionApplication_Inform_LoadingMain);
+                _authentication = new DinkeyAuthentication(_authLogger);
+                
+                IModuleLoader moduleLoader = new ModuleLoader(_authentication, _logger, config);
+                moduleLoader.Scan();
+                moduleLoader.Load();
+
+                serviceCollection.AddSingleton<ILogger<IAuthentication>>(_authLogger);
+                serviceCollection.AddSingleton<IModuleLoader>(moduleLoader);
+                
                 //TODO: Check position
                 Container = serviceCollection.BuildServiceProvider();
 
-                _logger.LogInformation(Resources.ExtensionApplication_Inform_LoadingMain);
-                _authentication = Container.GetRequiredService<IAuthentication>();
-
-                IDataService dataService = Container.GetRequiredService<IDataService>();
+                foreach (IIronstoneExtensionApplication ironstoneExtensionApplication in _extensions)
+                {
+                    ironstoneExtensionApplication.InjectContainer(Container);
+                }
                 
-                Container.GetRequiredService<IModuleLoader>().Scan();
+                IDataService dataService = Container.GetRequiredService<IDataService>();
+                //TODO: This needed??
+                DataService.Current.InvalidateStoreTypes();
+                dataService.CreateStoresFromAppDocumentManager();
             }
             catch (System.Exception e)
             {
@@ -218,7 +236,7 @@ namespace Jpp.Ironstone.Core
             AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
             {
                 string toassname = resolveArgs.Name.Split(',')[0];
-                //if (!toassname.Contains("Ironstone")) return null;
+                if (!toassname.Contains("Ironstone")) return null;
                 if (toassname.Contains("resources"))
                 {
                     _logger.LogWarning($"Localized resource for {CultureInfo.CurrentCulture} not found.");
@@ -240,11 +258,27 @@ namespace Jpp.Ironstone.Core
                         return ass;
                     }
                 }
-                
+
+                return null;
+            };
+        }
+
+        private void SetBindingRedirect()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
+            {
+                if (resolveArgs.Name.Contains("resources"))
+                {
+                    return null;
+                }
+
                 //Bruteforce bidning redirect
                 // Get just the name of assmebly
                 // Aseembly name excluding version and other metadata
                 string name = new Regex(",.*").Replace(resolveArgs.Name, string.Empty);
+
+                if (name.Equals(resolveArgs.Name))
+                    return null;
 
                 // Load whatever version available
                 return Assembly.Load(name);
@@ -258,22 +292,29 @@ namespace Jpp.Ironstone.Core
             serviceCollection.AddSingleton<IDataService, DataService>();
             serviceCollection.AddSingleton<LayerManager>();
             serviceCollection.AddSingleton<IReviewManager, ReviewManager>();
+            serviceCollection.AddSingleton<IModuleLoader, ModuleLoader>();
+
 
             var serilog = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .WriteTo.File("IronstoneLog.txt", retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
-                    buffered: true)
+                    buffered: false)
                 .CreateLogger();
 
-            /*ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+            ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddConsole()
-                    .AddSerilog(serilog, true);
-            });*/
-            ILoggerFactory loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
+                builder.AddFilter("Default", LogLevel.Debug)
+                    .AddConsole().AddSerilog(serilog, true);
+            });
+
             serviceCollection.AddSingleton<ILoggerFactory>(loggerFactory);
             serviceCollection.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
             _logger = loggerFactory.CreateLogger<CoreExtensionApplication>();
+            _authLogger = loggerFactory.CreateLogger<IAuthentication>();
+
+
+            //ILoggerFactory loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
+
 
             //TODO: Add in file logger and autocad console logger
 
@@ -406,10 +447,11 @@ namespace Jpp.Ironstone.Core
             }
 
             _logger.LogDebug($"{extension.GetType().ToString()} registration started");
-            DataService.Current.InvalidateStoreTypes();
+            
             try
             {
-                extension.InjectContainer(_current.Container);
+                //extension.InjectContainer(_current.Container);
+                extension.RegisterServices(serviceCollection);
                 _extensions.Add(extension);
 
                 _logger.LogInformation($"{extension.GetType().ToString()} registration completed");

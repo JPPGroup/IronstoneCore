@@ -276,6 +276,10 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             try
             {
                 _settings.GetSection("standarddetaillibrary").Bind(RootLibraries);
+
+                if (RootLibraries == null)
+                    return;
+
                 _logger.LogDebug(String.Format(Resources.DataService_Inform_LoadingStandardLibraries, RootLibraries.Count));
                 foreach (LibraryNode rootLibrary in RootLibraries)
                 {

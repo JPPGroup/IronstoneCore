@@ -4,32 +4,32 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using Autodesk.AutoCAD.Runtime;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Exception = Autodesk.AutoCAD.Runtime.Exception;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
+    //TODO: Is required?
     internal class ModuleLoader : IModuleLoader
     {
         private readonly Dictionary<string, Module> _loadedModules;
         private readonly IAuthentication _authentication;
         private readonly ILogger<CoreExtensionApplication> _logger;
-        private readonly IDataService _dataService;
-        private readonly Configuration _config;
+        private readonly IConfiguration _config;
 
         public string BinPath { get; set; }
         public string DataPath { get; set; }
 
-        public ModuleLoader(IAuthentication authentication, IDataService dataService, ILogger<CoreExtensionApplication> logger, Configuration config)
+        public ModuleLoader(IAuthentication authentication, ILogger<CoreExtensionApplication> logger, IConfiguration config)
         {
             _authentication = authentication;
-            _dataService = dataService;
             _logger = logger;
             _config = config;
             
             BinPath = Assembly.GetExecutingAssembly().Location;
             BinPath = BinPath.Substring(0, BinPath.LastIndexOf('\\'));
-            DataPath = _config.AppData;
+            DataPath = _config["AppData"];
 
             _loadedModules = new Dictionary<string, Module>();
 
@@ -48,7 +48,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             {
                 GetAssemblyInfo(dll);
             }
-            if (Directory.Exists(DataPath) && _config.LoadAppDirectory)
+            if (Directory.Exists(DataPath))
             {
                 foreach (string dll in Directory.GetFiles(DataPath, "*.dll"))
                 {
@@ -97,87 +97,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     {
                         LoadAssembly(m.Path);
                     }
-                }
-            }
-
-            //Once modules loaded, create any required stores for documents that might already open.
-            _dataService.CreateStoresFromAppDocumentManager();
-        }
-
-        public void ProcessManifest()
-        {
-            string moduleFile = DataPath + "\\" + _config.ModuleManifest;
-            //UpdateManifest(moduleFile);
-
-            //Verify the file actually existis
-            if (File.Exists(moduleFile))
-            {
-                try
-                {
-                    Dictionary<string, bool> manifest = new Dictionary<string, bool>();
-                    using (TextReader reader = File.OpenText(moduleFile))
-                    {
-                        while (reader.Peek() != -1)
-                        {
-                            string m = reader.ReadLine();
-                            if (m == null) continue;
-
-                            string[] values = m.Split(',');
-                            manifest.Add(values[0], bool.Parse(values[1]));
-                        }
-                    }
-
-                    string[] existingModules = Directory.GetFiles(DataPath);
-
-                    foreach (KeyValuePair<string, bool> module in manifest)
-                    {
-                        if (!module.Value) continue;
-                        
-                        bool found = false;
-                        string fileName = module.Key + ".dll";
-                        string filePath = DataPath + "\\" + fileName;
-
-                        /*
-                         * TODO: Need to add version information, etc to correctly updated.
-                         * For now just download/replace the module every time.
-                         * Will need the correct version is present.
-                         * Regardless of whether Core or Object Model is updated.
-                         * A module might change without changes to O/M or Core.
-                         */
-
-                        //foreach (string existingModule in existingModules)
-                        //{
-                        //    if (existingModule == (filePath))
-                        //    {
-                        //        found = true;
-                        //    }
-                        //}
-
-                        if (!found)
-                        {
-                            if (_authentication.VerifyLicense(module.Key))
-                            {
-                                using (var client = new WebClient())
-                                {
-                                    string downloadPath = CoreExtensionApplication._current.Configuration.BaseUrl + fileName;
-                                    try
-                                    {
-                                        client.DownloadFile(downloadPath, filePath);
-                                    }
-                                    catch (System.Exception e)
-                                    {
-                                        //_logger.Entry($"Unable to download module {module.Key} from {downloadPath}", Severity.Error);
-                                        //_logger.LogException(e);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (System.Exception e)
-                {
-                    //_logger.Entry($"Unable to process latest manifest file {moduleFile}", Severity.Error);
-                    //_logger.LogException(e);
                 }
             }
         }

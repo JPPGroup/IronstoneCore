@@ -36,7 +36,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
         public bool Authenticated()
         {
 #if DEBUG
-            _logger.Entry("Debug authentication enabled");
+            _logger.LogDebug("Debug authentication enabled");
             return true;
 #endif
 #if !DEBUG
@@ -65,7 +65,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
         public bool AuthenticateModule(string Path)
         {
 #if DEBUG
-            _logger.Entry("Module debug authentication enabled");
+            _logger.LogDebug("Module debug authentication enabled");
             return true;
 #endif
 #if !DEBUG
@@ -98,7 +98,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
         public bool VerifyLicense(string LicenseName)
         {
 #if DEBUG
-            _logger.Entry("Module debug authentication enabled");
+            _logger.LogDebug("Module debug authentication enabled");
             return true;
 #endif
 #if !DEBUG

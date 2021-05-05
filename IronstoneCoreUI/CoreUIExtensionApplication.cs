@@ -37,6 +37,9 @@ namespace Jpp.Ironstone.Core.UI
             container.AddSingleton<About>();
             container.AddSingleton<AboutViewModel>();
             container.AddSingleton<Review>();
+            container.AddSingleton<ReviewViewModel>();
+            container.AddSingleton<Libraries>();
+            container.AddSingleton<LibrariesViewModel>();
         }
 
         public void InjectContainer(IServiceProvider container)
