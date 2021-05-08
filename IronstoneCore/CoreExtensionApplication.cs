@@ -293,12 +293,14 @@ namespace Jpp.Ironstone.Core
             serviceCollection.AddSingleton<LayerManager>();
             serviceCollection.AddSingleton<IReviewManager, ReviewManager>();
             serviceCollection.AddSingleton<IModuleLoader, ModuleLoader>();
-
+            serviceCollection.AddSingleton<Civil3DAspect>();
+            serviceCollection.AddSingleton<IronstoneCommandAspect>();
+            serviceCollection.AddSingleton<ICivil3dController>(this);
 
             var serilog = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .WriteTo.File("IronstoneLog.txt", retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
-                    buffered: false)
+                    buffered: false, shared: true)
                 .CreateLogger();
 
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
@@ -521,3 +523,4 @@ namespace Jpp.Ironstone.Core
 #endregion
     }
 }
+

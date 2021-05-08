@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using NUnit.Framework;
 
@@ -14,12 +15,9 @@ namespace Jpp.Ironstone.Core.Tests.Attributes
         public void Civil3DFailed()
         {
             bool result = RunTest<bool>(nameof(Civil3DFailedResident));
-
-            Configuration config = new Configuration();
-            config.TestSettings();
             string contents;
-
-            using (TextReader tr = File.OpenText(config.LogFile))
+            
+            using (TextReader tr = LogHelper.GetLogReader())
             {
                 contents = tr.ReadToEnd();
             }

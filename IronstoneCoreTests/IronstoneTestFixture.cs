@@ -23,9 +23,9 @@ namespace Jpp.Ironstone.Core.Tests
             config.TestSettings();
             ConfigurationHelper.CreateConfiguration(config);
 
-            if (File.Exists(config.LogFile))
+            if (File.Exists(LogHelper.GetLogName()))
             {
-                File.Delete(config.LogFile);
+                File.Delete(LogHelper.GetLogName());
             }
         }
     }

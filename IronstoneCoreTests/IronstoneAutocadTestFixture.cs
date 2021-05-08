@@ -2,7 +2,6 @@
 using System.IO;
 using System.Reflection;
 using Jpp.AcTestFramework;
-using Jpp.Ironstone.Core.Mocking;
 
 namespace Jpp.Ironstone.Core.Tests
 {
@@ -19,13 +18,9 @@ namespace Jpp.Ironstone.Core.Tests
 
         public override void Setup()
         {
-            var config = new Configuration();
-            config.TestSettings();
-            ConfigurationHelper.CreateConfiguration(config);
-
-            if (File.Exists(config.LogFile))
+            if (File.Exists(LogHelper.GetLogName()))
             {
-                File.Delete(config.LogFile);
+                File.Delete(LogHelper.GetLogName());
             }
         }
     }

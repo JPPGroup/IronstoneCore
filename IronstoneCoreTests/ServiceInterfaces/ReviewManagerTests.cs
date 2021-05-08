@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.IO;
 using System.Linq;
@@ -41,7 +40,6 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         {
             try
             {
-                Debugger.Launch();
                 Document doc = Application.DocumentManager.MdiActiveDocument;
                 IReviewManager reviewer = CoreExtensionApplication._current.Container.GetRequiredService<IReviewManager>();
                 DataService data = DataService.Current;

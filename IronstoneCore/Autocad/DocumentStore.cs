@@ -496,7 +496,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
             if (foundManager != null) return foundManager;
 
-            foundManager = (T)Activator.CreateInstance(typeof(T), AcDoc, _log);
+            foundManager = (T)Activator.CreateInstance(typeof(T), AcDoc, _log, _settings);
             Managers.Add(foundManager);
             PopulateLayers();
 
