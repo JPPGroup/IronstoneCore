@@ -185,13 +185,13 @@ namespace Jpp.Ironstone.Core
                 
                 _logger.LogInformation(Resources.ExtensionApplication_Inform_LoadingMain);
                 _authentication = new DinkeyAuthentication(_authLogger);
+                serviceCollection.AddSingleton<ILogger<IAuthentication>>(_authLogger);
                 
                 IModuleLoader moduleLoader = new ModuleLoader(_authentication, _logger, config);
+                serviceCollection.AddSingleton<IModuleLoader>(moduleLoader);
+                
                 moduleLoader.Scan();
                 moduleLoader.Load();
-
-                serviceCollection.AddSingleton<ILogger<IAuthentication>>(_authLogger);
-                serviceCollection.AddSingleton<IModuleLoader>(moduleLoader);
                 
                 //TODO: Check position
                 Container = serviceCollection.BuildServiceProvider();
@@ -279,7 +279,7 @@ namespace Jpp.Ironstone.Core
 
                 if (name.Equals(resolveArgs.Name))
                     return null;
-
+                
                 // Load whatever version available
                 return Assembly.Load(name);
             };
