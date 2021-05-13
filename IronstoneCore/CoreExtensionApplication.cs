@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -19,7 +18,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Module = Jpp.Ironstone.Core.ServiceInterfaces.Module;
 
 [assembly: ExtensionApplication(typeof(CoreExtensionApplication))]
 [assembly: CommandClass(typeof(CoreExtensionApplication))]
@@ -236,18 +234,7 @@ namespace Jpp.Ironstone.Core
             AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
             {
                 string toassname = resolveArgs.Name.Split(',')[0];
-                if (!toassname.Contains("Ironstone")) return null;
-                if (toassname.Contains("resources"))
-                {
-                    _logger.LogWarning($"Localized resource for {CultureInfo.CurrentCulture} not found.");
-                    return null;
-                }
-
-                if (toassname.Contains("XmlSerializer"))
-                {
-                    _logger.LogDebug($"Serialization library {toassname} not pregenerated");
-                    return null;
-                }
+                if (!CheckValidCustomResolve(toassname)) return null;
 
                 _logger.LogDebug($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
                 Assembly[] asmblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -263,6 +250,27 @@ namespace Jpp.Ironstone.Core
             };
         }
 
+        private bool CheckValidCustomResolve(string toassname)
+        {
+            if (!toassname.Contains("Ironstone")) return false;
+            if (toassname.Contains("resources"))
+            {
+                _logger.LogWarning($"Localized resource for {CultureInfo.CurrentCulture} not found.");
+                return false;
+            }
+
+            if (toassname.Contains("XmlSerializer"))
+            {
+                _logger.LogDebug($"Serialization library {toassname} not pregenerated");
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Method overrides default binding as config file cannot be used
+        /// </summary>
         private void SetBindingRedirect()
         {
             AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
@@ -297,6 +305,13 @@ namespace Jpp.Ironstone.Core
             serviceCollection.AddSingleton<IronstoneCommandAspect>();
             serviceCollection.AddSingleton<ICivil3dController>(this);
 
+            BuildLoggers(serviceCollection);
+            return serviceCollection;
+        }
+
+        //TODO: Add in autocad console logger
+        private void BuildLoggers(IServiceCollection collection)
+        {
             var serilog = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .WriteTo.File("IronstoneLog.txt", retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
@@ -309,18 +324,10 @@ namespace Jpp.Ironstone.Core
                     .AddConsole().AddSerilog(serilog, true);
             });
 
-            serviceCollection.AddSingleton<ILoggerFactory>(loggerFactory);
-            serviceCollection.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
+            collection.AddSingleton<ILoggerFactory>(loggerFactory);
+            collection.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
             _logger = loggerFactory.CreateLogger<CoreExtensionApplication>();
             _authLogger = loggerFactory.CreateLogger<IAuthentication>();
-
-
-            //ILoggerFactory loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
-
-
-            //TODO: Add in file logger and autocad console logger
-
-            return serviceCollection;
         }
 
         private void DocumentManagerOnDocumentCreated(object sender, DocumentCollectionEventArgs e)
@@ -367,78 +374,44 @@ namespace Jpp.Ironstone.Core
                 .GetManifestResourceStream("Jpp.Ironstone.Core.Resources.BaseConfig.json");
             IConfiguration root = rootBuilder.AddJsonStream(resStream).Build();
 
-
-            IConfiguration local;
-            if (File.Exists("config.json"))
-            {
-                ConfigurationBuilder localBuilder = new ConfigurationBuilder();
-                local = rootBuilder.AddConfiguration(root).AddJsonFile("config.json").Build();
-            }
-            else
-            {
-                local = root;
-            }
-
+            IConfiguration local = LoadAdditionalSettings(root, "config.json");
 #if DEBUG
             _logger.LogDebug("User and network setting skipped as running in debug.");
             return local;
 #endif
-            string networkPath = local["Settings:NetworkPath"];
-            IConfiguration network;
-            if (!string.IsNullOrEmpty(networkPath) && File.Exists(networkPath))
-            {
-                ConfigurationBuilder localBuilder = new ConfigurationBuilder();
-                network = rootBuilder.AddConfiguration(local).AddJsonFile(networkPath).Build();
-            }
-            else
-            {
-                _logger.LogWarning($"Network settings not found at {networkPath}");
-                network = local;
-            }
-
-            string userPath = local["Settings:UserPath"];
-            IConfiguration user;
-            if (!string.IsNullOrEmpty(networkPath) && File.Exists(networkPath))
-            {
-                ConfigurationBuilder localBuilder = new ConfigurationBuilder();
-                user = rootBuilder.AddConfiguration(network).AddJsonFile(userPath).Build();
-            }
-            else
-            {
-                _logger.LogWarning($"User settings not found at {userPath}");
-                user = network;
-            }
-
+            IConfiguration network = LoadAdditionalSettingsFromValue(local, "Settings:NetworkPath");
+            IConfiguration user = LoadAdditionalSettingsFromValue(network, "Settings:UserPath");
             return user;
-
-            /*XmlSerializer xml = new XmlSerializer(typeof(Configuration));
-            string dll = Assembly.GetExecutingAssembly().Location;
-            string containingFoler = dll.Remove(dll.LastIndexOf("\\"));
-            string configPath = Path.Combine(containingFoler, "IronstoneConfig.xml");
-            if (File.Exists(configPath))
-            {
-                using (Stream s = File.Open(configPath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    Configuration = xml.Deserialize(s) as Configuration;
-                }
-            }
-            else
-            {
-                Configuration = new Configuration();
-            }
-
-            //TODO: Remove once implemented iterator on serial dict
-            for (int i = 0; i < Configuration.ContainerResolvers.Values.Count; i++)
-            {
-                Type from = Type.GetType(Configuration.ContainerResolvers.Keys.ElementAt(i));
-                Type to = Type.GetType(Configuration.ContainerResolvers.Values.ElementAt(i));
-                //Container.(from, to, new ContainerControlledLifetimeManager());
-            }
-
-            //Container.RegisterInstance<Configuration>(Configuration, new ContainerControlledLifetimeManager());*/
         }
 
-#endregion
+        private IConfiguration LoadAdditionalSettings(IConfiguration baseConfig, string path)
+        {
+            if (File.Exists(path))
+            {
+                ConfigurationBuilder builder = new ConfigurationBuilder();
+                return builder.AddConfiguration(baseConfig).AddJsonFile(path).Build();
+            }
+            else
+            {
+                return baseConfig;
+            }
+        }
+
+        private IConfiguration LoadAdditionalSettingsFromValue(IConfiguration baseConfig, string settings)
+        {
+            string networkPath = baseConfig["Settings:NetworkPath"];
+            if (!string.IsNullOrEmpty(networkPath) && File.Exists(networkPath))
+            {
+                return LoadAdditionalSettings(baseConfig, networkPath);
+            }
+            else
+            {
+                _logger.LogWarning($"Settings not found at {networkPath}");
+                return baseConfig;
+            }
+        }
+
+        #endregion
 
         public void RegisterExtension(IIronstoneExtensionApplication extension)
         {
