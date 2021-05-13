@@ -1,7 +1,7 @@
 ﻿using System;
 using AspectInjector.Broker;
-using Jpp.Ironstone.Core.ServiceInterfaces;
-using Unity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Jpp.Ironstone.Core
 {
@@ -14,8 +14,8 @@ namespace Jpp.Ironstone.Core
     [Aspect(Scope.Global, Factory = typeof(IronstoneCommandAspectFactory))]
     public class IronstoneCommandAspect
     {
-        private ILogger _logger;
-        public IronstoneCommandAspect(ILogger logger)
+        private ILogger<CoreExtensionApplication> _logger;
+        public IronstoneCommandAspect(ILogger<CoreExtensionApplication> logger)
         {
             _logger = logger;
         }
@@ -23,7 +23,7 @@ namespace Jpp.Ironstone.Core
         [Advice(Kind.Before)]
         public void LogEnter([Argument(Source.Name)] string name, [Argument(Source.Type)] Type type)
         {
-            _logger.LogCommand(type, name);
+            _logger.LogInformation($"Command {name} from {type} run");
         }
 
         [Advice(Kind.Around, Targets = Target.Method)]
@@ -36,7 +36,7 @@ namespace Jpp.Ironstone.Core
             }
             catch (Exception e)
             {
-                _logger.Entry($"Unknown exception: {e.Message}", Severity.Crash);
+                _logger.LogCritical($"Unknown exception: {e.Message}");
                 return null;
             }
         }
@@ -52,7 +52,7 @@ namespace Jpp.Ironstone.Core
             }
 
             //Realise this is an Anti-Pattern but this is better than remembering to set properties on the factory at runtime
-            IronstoneCommandAspect aspect = CoreExtensionApplication._current.Container.Resolve<IronstoneCommandAspect>();
+            IronstoneCommandAspect aspect = CoreExtensionApplication._current.Container.GetRequiredService<IronstoneCommandAspect>();
             return aspect;
         }
     }

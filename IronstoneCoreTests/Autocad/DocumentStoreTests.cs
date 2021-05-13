@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,8 +21,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
         [Test]
         public void VerifyDocumentStoreSaveCommand()
         {
-            string filename = $"{Guid.NewGuid()}.dwg";
-            Assert.IsTrue(RunTest<bool>(nameof(VerifyDocumentStoreSaveCommandResident), filename));
+            string filename = $"TestSave.dwg";
             string testFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename);
             if (File.Exists(testFile))
             {
@@ -47,6 +47,8 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                     }
                 }
             }
+            
+            Assert.IsTrue(RunTest<bool>(nameof(VerifyDocumentStoreSaveCommandResident), filename));
         }
 
         public bool VerifyDocumentStoreSaveCommandResident(string filename)

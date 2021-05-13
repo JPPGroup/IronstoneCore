@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 using Jpp.Common;
+using Microsoft.Extensions.Logging;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 {
@@ -31,9 +25,9 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
         }
 
         private AuthStatus _status;
-        private ILogger _logger;
+        private ILogger<IAuthentication> _logger;
 
-        public DinkeyAuthentication(ILogger logger)
+        public DinkeyAuthentication(ILogger<IAuthentication> logger)
         {
             _logger = logger;
             ErrorCode = -1;
@@ -42,7 +36,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
         public bool Authenticated()
         {
 #if DEBUG
-            _logger.Entry("Debug authentication enabled");
+            _logger.LogDebug("Debug authentication enabled");
             return true;
 #endif
 #if !DEBUG
@@ -60,8 +54,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 
             if (ErrorCode != 0)
             {
-                //DisplayError(ret_code, dris.ext_err);
-                _logger.Entry("Authentication failed - " + ErrorCode, Severity.Warning);
+                _logger.LogCritical("Authentication failed - " + ErrorCode);
                 return false;
             }
 
@@ -72,7 +65,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
         public bool AuthenticateModule(string Path)
         {
 #if DEBUG
-            _logger.Entry("Module debug authentication enabled");
+            _logger.LogDebug("Module debug authentication enabled");
             return true;
 #endif
 #if !DEBUG
@@ -94,8 +87,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
             
             if (LocalErrorCode != 0)
             {
-                //DisplayError(ret_code, dris.ext_err);
-                _logger.Entry("Module " + moduleName + "authentication failed - " + LocalErrorCode, Severity.Warning);
+                _logger.LogCritical("Module " + moduleName + "authentication failed - " + LocalErrorCode);
                 return false;
             }
 
@@ -106,7 +98,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
         public bool VerifyLicense(string LicenseName)
         {
 #if DEBUG
-            _logger.Entry("Module debug authentication enabled");
+            _logger.LogDebug("Module debug authentication enabled");
             return true;
 #endif
 #if !DEBUG
@@ -124,8 +116,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Authentication
 
             if (LocalErrorCode != 0)
             {
-                //DisplayError(ret_code, dris.ext_err);
-                _logger.Entry("Module " + LicenseName + " license not found - " + LocalErrorCode, Severity.Debug);
+                _logger.LogCritical("Module " + LicenseName + " license not found - " + LocalErrorCode);
                 return false;
             }
 

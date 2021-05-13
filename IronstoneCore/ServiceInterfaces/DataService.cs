@@ -8,6 +8,8 @@ using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces.Library;
 using Jpp.Ironstone.Core.ServiceInterfaces.Template;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
@@ -37,15 +39,15 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private static DataService _current;
 
-        private ILogger _logger;
+        private ILogger<CoreExtensionApplication> _logger;
         private LayerManager _layerManager;
-        private readonly IUserSettings _settings;
+        private readonly IConfiguration _settings;
         internal List<Type> _storesList;
         internal List<Type> _managersList;
 
         public IReadOnlyList<LibraryNode> RootLibraries { get; private set; }
 
-        public DataService(ILogger logger, LayerManager lm, IUserSettings settings)
+        public DataService(ILogger<CoreExtensionApplication> logger, LayerManager lm, IConfiguration settings)
         {
             _layerManager = lm;
             _settings = settings;
@@ -73,7 +75,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             foreach (Document d in Application.DocumentManager)
             {
                 CreateStoresOnDocument(d);
-                _logger.Entry("Document existed before extension was loaded.\n", Severity.Warning);
+                _logger.LogWarning("Document existed before extension was loaded");
             }
         }
 
@@ -85,7 +87,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
             else
             {
-                _logger.Entry("Document does not exist.\n", Severity.Error);
+                _logger.LogError("Document does not exist");
             }
         }
 
@@ -95,14 +97,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             if (!_stores.ContainsKey(ID))
             {
-                _logger.Entry("Store not found.\n", Severity.Warning);
+                _logger.LogWarning("Store not found");
                 if (doc != null)
                 {
                     CreateStoresOnDocument(doc);
                 }
                 else
                 {
-                    _logger.Entry("Document not found for store creation.\n", Severity.Crash);
+                    _logger.LogCritical("Document not found for store creation");
                     throw new ArgumentException();
                 }
             }
@@ -144,7 +146,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             if (_stores.ContainsKey(e.Document.Name))
             {
-                _logger.Entry("Document already exists.\n", Severity.Error);
+                _logger.LogError("Document already exists");
             }
             else
             {
@@ -201,7 +203,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
             if (!_storesList.Contains(T))
             {
-                _logger.Entry("Store type not recognised.\n", Severity.Crash);
+                _logger.LogCritical("Store type not recognised");
                 throw new ArgumentException("Store type not recognised.");
             }
 
@@ -238,7 +240,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     }
                     catch (Exception e)
                     {
-                        _logger.LogException(e);
+                        _logger.LogError(e, "Unknown error");
                     }
                 }
             }
@@ -273,8 +275,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             try
             {
-                RootLibraries = _settings.GetObject<List<DirectoryNode>>("standarddetaillibrary");
-                _logger.Entry(String.Format(Resources.DataService_Inform_LoadingStandardLibraries, RootLibraries.Count), Severity.Information);
+                _settings.GetSection("standarddetaillibrary").Bind(RootLibraries);
+
+                if (RootLibraries == null)
+                    return;
+
+                _logger.LogDebug(String.Format(Resources.DataService_Inform_LoadingStandardLibraries, RootLibraries.Count));
                 foreach (LibraryNode rootLibrary in RootLibraries)
                 {
                     if (!rootLibrary.PreloadDisabled)
@@ -283,15 +289,14 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     }
                     else
                     {
-                        _logger.Entry(String.Format(Resources.DataService_Inform_SkippingLibrary, rootLibrary.Name), Severity.Information);
+                        _logger.LogDebug(String.Format(Resources.DataService_Inform_SkippingLibrary, rootLibrary.Name));
                     }
 
                 }
             }
             catch (Exception e)
             {
-                _logger.Entry("Unexpected failure loading template libraries.", Severity.Error);
-                _logger.LogException(e);
+                _logger.LogError(e, "Unexpected failure loading template libraries.");
             }
         }
     }

@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
-using Jpp.Ironstone.Core.ServiceInterfaces.Loggers;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Unity;
 
 namespace Jpp.Ironstone.Core.Tests
 {
@@ -12,7 +11,7 @@ namespace Jpp.Ironstone.Core.Tests
     {
         public CoreExtensionApplicationTests() : base(Assembly.GetExecutingAssembly(), typeof(CoreExtensionApplicationTests)) { }
 
-        [Test]
+        /*[Test]
         public void VerifyDefaultResolvers()
         {
             Assert.IsTrue(RunTest<bool>(nameof(VerifyDefaultResolversResident)));
@@ -20,9 +19,9 @@ namespace Jpp.Ironstone.Core.Tests
 
         public bool VerifyDefaultResolversResident()
         {
-            bool auth = CoreExtensionApplication._current.Container.Resolve<IAuthentication>() is PassDummyAuth;
-            bool logger = CoreExtensionApplication._current.Container.Resolve<ILogger>() is CollectionLogger;
-            bool moduleLoader = CoreExtensionApplication._current.Container.Resolve<IModuleLoader>() is ModuleLoader;
+            bool auth = CoreExtensionApplication._current.Container.GetRequiredService<IAuthentication>() is PassDummyAuth;
+            bool logger = CoreExtensionApplication._current.Container.GetRequiredService<ILogger>() is CollectionLogger;
+            bool moduleLoader = CoreExtensionApplication._current.Container.GetRequiredService<IModuleLoader>() is ModuleLoader;
 
             return (auth && logger && moduleLoader);
         }
@@ -35,8 +34,8 @@ namespace Jpp.Ironstone.Core.Tests
 
         public bool VerifyConfigurationResolverResident()
         {            
-            Configuration config = CoreExtensionApplication._current.Container.Resolve<Configuration>();
+            Configuration config = CoreExtensionApplication._current.Container.GetRequiredService<Configuration>();
             return (config.LogFileRelative.Equals("UnitTestsIronstone.Log"));
-        }
+        }*/
     }
 }

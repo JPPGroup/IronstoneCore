@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Autodesk.AutoCAD.Runtime;
-using Unity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Jpp.Ironstone.Core
 {
@@ -13,7 +9,9 @@ namespace Jpp.Ironstone.Core
     /// </summary>
     public interface IIronstoneExtensionApplication : IExtensionApplication
     {
-        void InjectContainer(IUnityContainer container);
+        void RegisterServices(IServiceCollection container);
+
+        void InjectContainer(IServiceProvider provider);
 
         void CreateUI();
     }

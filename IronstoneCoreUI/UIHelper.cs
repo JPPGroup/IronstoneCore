@@ -7,10 +7,12 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using Jpp.Ironstone.Core.UI.Views;
 using Orientation = System.Windows.Controls.Orientation;
 
@@ -60,7 +62,7 @@ namespace Jpp.Ironstone.Core.UI
         /// <param name="size">Small or Large</param>
         /// <param name="command">Command string to be called on button press</param>
         /// <returns></returns>
-        public static RibbonButton CreateButton(string buttonText, Bitmap icon, RibbonItemSize size, string command)
+        public static RibbonButton CreateButton(string buttonText, Bitmap icon, RibbonItemSize size, string command, Func<bool> canExecute)
         {
             RibbonButton newButton = new RibbonButton();
             newButton.ShowText = true;
@@ -68,7 +70,7 @@ namespace Jpp.Ironstone.Core.UI
             newButton.Text = buttonText;
             newButton.Name = buttonText;            
             newButton.Size = size;
-            newButton.CommandHandler = new RibbonCommandHandler();
+            newButton.CommandHandler = new RibbonCommandHandler(canExecute);
             newButton.CommandParameter = "._" + command + " ";
 
             switch (size)
@@ -86,6 +88,19 @@ namespace Jpp.Ironstone.Core.UI
             }
 
             return newButton;
+        }
+        
+        /// <summary>
+        /// Helper for creating a UI button
+        /// </summary>
+        /// <param name="buttonText">Text to display</param>
+        /// <param name="icon">Icon to display</param>
+        /// <param name="size">Small or Large</param>
+        /// <param name="command">Command string to be called on button press</param>
+        /// <returns></returns>
+        public static RibbonButton CreateButton(string buttonText, Bitmap icon, RibbonItemSize size, string command)
+        {
+            return CreateButton(buttonText, icon, size, command, () => true);
         }
 
 

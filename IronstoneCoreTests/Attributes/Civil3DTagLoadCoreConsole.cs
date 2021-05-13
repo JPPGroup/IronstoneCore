@@ -13,11 +13,9 @@ namespace Jpp.Ironstone.Core.Tests.Attributes
         [Test]
         public void VerifyDrawingCantOpen()
         {
-            Configuration config = new Configuration();
-            config.TestSettings();
             string contents;
-
-            using (TextReader tr = File.OpenText(config.LogFile))
+            
+            using (TextReader tr = LogHelper.GetLogReader())
             {
                 contents = tr.ReadToEnd();
             }

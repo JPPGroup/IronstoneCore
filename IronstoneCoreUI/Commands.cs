@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using Jpp.Ironstone.Core.UI;
+using Microsoft.Extensions.Logging;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 using Exception = Autodesk.AutoCAD.BoundaryRepresentation.Exception;
 
@@ -44,7 +45,7 @@ namespace Jpp.Ironstone.Core.UI
             }
             catch (System.Exception e)
             {
-                CoreUIExtensionApplication.Current.Logger.LogException(e);
+                CoreUIExtensionApplication.Current.Logger.LogError(e, "Unkown error");
                 throw;
             }
         }
@@ -68,7 +69,7 @@ namespace Jpp.Ironstone.Core.UI
             }
             catch (Exception e)
             {
-                CoreUIExtensionApplication.Current.Logger.LogException(e);
+                CoreUIExtensionApplication.Current.Logger.LogError(e, "Unkown error");
             }
         }
 

@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Jpp.Common;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -29,9 +31,10 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public List<IDrawingObjectManager> Managers { get; private set; }
         private readonly Type[] _managerTypes;
-        private readonly ILogger _log;
+        private readonly ILogger<CoreExtensionApplication> _log;
         private readonly LayerManager _layerManager;
         private readonly Document _host;
+        private IConfiguration _settings;
 
         public LayerManager LayerManager
         {
@@ -41,7 +44,7 @@ namespace Jpp.Ironstone.Core.Autocad
         /// <summary>
         /// Create a new document store
         /// </summary>
-        public DocumentStore(Document doc, Type[] managerTypes, ILogger log, LayerManager lm, IUserSettings settings)
+        public DocumentStore(Document doc, Type[] managerTypes, ILogger<CoreExtensionApplication> log, LayerManager lm, IConfiguration settings)
         {
             if(doc is null)
                 throw new ArgumentNullException(nameof(doc));
@@ -56,9 +59,10 @@ namespace Jpp.Ironstone.Core.Autocad
             _log = log;
             _layerManager = lm;
             _host = doc;
+            _settings = settings;
 
-            ShouldUnlockUnfreeze = bool.TryParse(settings.GetValue("layers-unlock-unfreeze"), out var unlockUnfreeze) && unlockUnfreeze;
-            ShouldSwitchOn = bool.TryParse(settings.GetValue("layers-switch-on"), out var switchOn) && switchOn;
+            ShouldUnlockUnfreeze = bool.TryParse(settings["layers-unlock-unfreeze"], out var unlockUnfreeze) && unlockUnfreeze;
+            ShouldSwitchOn = bool.TryParse(settings["layers-switch-on"], out var switchOn) && switchOn;
 
             Managers = new List<IDrawingObjectManager>();
 
@@ -122,7 +126,7 @@ namespace Jpp.Ironstone.Core.Autocad
                         if (layer == null)
                         {
                             // TODO: Redo this to use pull the correct name from the layer manager
-                            _log.Entry($"Layer {layerAttribute.Name} not found when attempting to save state.", Severity.Error);
+                            _log.LogError($"Layer {layerAttribute.Name} not found when attempting to save state.");
                             continue;
                         }
 
@@ -188,7 +192,7 @@ namespace Jpp.Ironstone.Core.Autocad
             var extension = Path.GetExtension(fileName);
             if (string.IsNullOrEmpty(extension) || !Constants.ValidDocumentExtensions.Contains(extension.ToLower()))
             {
-                _log.Entry($"Assumed AutoSave. Filename: {fileName}", Severity.Information);
+                _log.LogDebug($"Assumed AutoSave. Filename: {fileName}");
                 return;
             }
 
@@ -244,7 +248,7 @@ namespace Jpp.Ironstone.Core.Autocad
                     if (inactiveLayers.Count > 0)
                     {
                         var layersList = string.Join(", ", inactiveLayers.ToArray());
-                        _log.Entry($"Following layers need to be active; \n{layersList}");
+                        _log.LogWarning($"Following layers need to be active; \n{layersList}");
                         return;
                     }
                 }
@@ -262,7 +266,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                _log.Entry($"Unexpected error in command ended event: {e.Message}", Severity.Error);
+                _log.LogError(e, $"Unexpected error in command ended event");
             }
             
         }
@@ -309,7 +313,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                _log.LogException(e);
+                _log.LogError(e, "Unkown error saving");
             }
         }
 
@@ -331,7 +335,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
                         foreach (IDrawingObjectManager drawingObjectManager in mgrObjList)
                         {
-                            drawingObjectManager.SetDependencies(AcDoc, _log);
+                            drawingObjectManager.SetDependencies(AcDoc, _log, _settings);
                             drawingObjectManager.ActivateObjects();
                             Managers.Add(drawingObjectManager);
                         }
@@ -343,7 +347,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                _log.LogException(e);
+                _log.LogError(e, "Unkown error loading");
             }
         }
         #endregion
@@ -442,7 +446,7 @@ namespace Jpp.Ironstone.Core.Autocad
                     }
                     catch (Exception e)
                     {
-                        _log.LogException(e);
+                        _log.LogError(e, "Unkown error loading binary");
                         return new T();
                     }
                 }
@@ -492,7 +496,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
             if (foundManager != null) return foundManager;
 
-            foundManager = (T)Activator.CreateInstance(typeof(T), AcDoc, _log);
+            foundManager = (T)Activator.CreateInstance(typeof(T), AcDoc, _log, _settings);
             Managers.Add(foundManager);
             PopulateLayers();
 

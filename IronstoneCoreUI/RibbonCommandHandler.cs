@@ -8,9 +8,16 @@ namespace Jpp.Ironstone.Core.UI
 {
     class RibbonCommandHandler : ICommand
     {
+        private Func<bool> _canExecute;
+        
+        public RibbonCommandHandler(Func<bool> execute)
+        {
+            _canExecute = execute;
+        }
+        
         public bool CanExecute(object parameter)
         {
-            return true; //return true means the button always enabled
+            return _canExecute.Invoke();
         }
 
         public event EventHandler CanExecuteChanged;

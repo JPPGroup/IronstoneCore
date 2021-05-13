@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Autodesk.AutoCAD.ApplicationServices;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Jpp.Ironstone.Core.Autocad
 {
@@ -36,7 +38,7 @@ namespace Jpp.Ironstone.Core.Autocad
         /// </summary>
         /// <param name="doc">The host document</param>
         /// <param name="log"></param>
-        void SetDependencies(Document doc, ILogger log);
+        void SetDependencies(Document doc, ILogger<CoreExtensionApplication> log, IConfiguration settings);
 
         object[] GetRequiredLayers();
 

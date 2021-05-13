@@ -3,12 +3,11 @@ using System.Reflection;
 using System.IO;
 using System.Linq;
 using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.ApplicationServices.Core;
 using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.Tests.TestObjects;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using Unity;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
@@ -42,7 +41,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             try
             {
                 Document doc = Application.DocumentManager.MdiActiveDocument;
-                IReviewManager reviewer = CoreExtensionApplication._current.Container.Resolve<IReviewManager>();
+                IReviewManager reviewer = CoreExtensionApplication._current.Container.GetRequiredService<IReviewManager>();
                 DataService data = DataService.Current;
                 data.PopulateStoreTypes();
                 
@@ -76,7 +75,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             try
             {
                 Document doc = Application.DocumentManager.MdiActiveDocument;
-                IReviewManager reviewer = CoreExtensionApplication._current.Container.Resolve<IReviewManager>();
+                IReviewManager reviewer = CoreExtensionApplication._current.Container.GetRequiredService<IReviewManager>();
                 DataService data = DataService.Current;
                 data.PopulateStoreTypes();
 

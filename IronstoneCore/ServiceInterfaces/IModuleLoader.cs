@@ -15,8 +15,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         void Scan();
         void Load();
 
-        void ProcessManifest();
-
         IEnumerable<Module> GetModules();
     }
 

@@ -5,8 +5,7 @@ using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.Windows;
-using Jpp.Ironstone.Core.ServiceInterfaces;
-using ILogger = Jpp.Ironstone.Core.ServiceInterfaces.ILogger;
+using Microsoft.Extensions.Logging;
 
 namespace Jpp.Ironstone.Core.UI.Autocad
 {
@@ -15,10 +14,10 @@ namespace Jpp.Ironstone.Core.UI.Autocad
     {
         private List<ContextualTab> _contextTabs;
         private List<RibbonTab> _toActivate;
-        private ILogger _logger;
+        private ILogger<ContextualTabManager> _logger;
         private ContextualMode _mode = ContextualMode.None;
         
-        public ContextualTabManager(ILogger logger)
+        public ContextualTabManager(ILogger<ContextualTabManager> logger)
         {
             _contextTabs = new List<ContextualTab>();
             _toActivate = new List<RibbonTab>();
@@ -68,7 +67,7 @@ namespace Jpp.Ironstone.Core.UI.Autocad
             }
             catch (Exception e)
             {
-                _logger.Entry($"Unexpected error caught in update contextual mode event: {e.Message}", Severity.Error);
+                _logger.LogError(e, $"Unexpected error caught in update contextual mode event: {e.Message}");
             }
         }
 
@@ -163,7 +162,7 @@ namespace Jpp.Ironstone.Core.UI.Autocad
             }
             catch (Exception exception)
             {
-                _logger.Entry($"Unexpected error caught in idle event: {exception.Message}", Severity.Error);
+                _logger.LogError(exception, $"Unexpected error caught in idle event: {exception.Message}");
             }
             
         }
@@ -192,7 +191,7 @@ namespace Jpp.Ironstone.Core.UI.Autocad
             }
             catch (Exception exception)
             {
-                _logger.Entry($"Unexpected error caught in selection changed event: {exception.Message}", Severity.Error);
+                _logger.LogError(exception, $"Unexpected error caught in selection changed event: {exception.Message}");
             }
         }
     }

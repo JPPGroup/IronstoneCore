@@ -3,7 +3,6 @@ using System.Diagnostics;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using NUnit.Framework;
 using System.Reflection;
-using Unity;
 
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 {
@@ -12,7 +11,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
     {
         public StandardUserSettingsTests() : base(Assembly.GetExecutingAssembly(), typeof(StandardUserSettingsTests)) { }
 
-        [Test]
+        /*[Test]
         public void VerifyConcreteResolve()
         {
             Assert.IsTrue(RunTest<bool>(nameof(VerifyConcreteResolveResident)));
@@ -124,6 +123,6 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
         {
             CastSucceeded,
             CastFailed
-        }
+        }*/
     }
 }
