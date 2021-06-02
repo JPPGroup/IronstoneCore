@@ -18,10 +18,7 @@ namespace Jpp.Ironstone.Core.Tests
 
         public override void Setup()
         {
-            if (File.Exists(LogHelper.GetLogName()))
-            {
-                File.Delete(LogHelper.GetLogName());
-            }
+            LogHelper.ClearLog();
         }
     }
 }

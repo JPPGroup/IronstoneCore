@@ -23,10 +23,7 @@ namespace Jpp.Ironstone.Core.Tests
             config.TestSettings();
             ConfigurationHelper.CreateConfiguration(config);
 
-            if (File.Exists(LogHelper.GetLogName()))
-            {
-                File.Delete(LogHelper.GetLogName());
-            }
+            LogHelper.ClearLog();
         }
     }
 }
