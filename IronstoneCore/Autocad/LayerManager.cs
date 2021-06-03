@@ -22,13 +22,13 @@ namespace Jpp.Ironstone.Core.Autocad
             {
                 newLayerInfo = new LayerInfo()
                 {
-                    IndexColor = short.Parse(_settings.GetValue($"{name}.color")),
-                    LayerId = _settings.GetValue($"{name}.name"),
-                    Linetype = "Continuous")
+                    IndexColor = short.Parse(_settings[$"{name}:color"]),
+                    LayerId = _settings[$"{name}:name"],
+                    Linetype = "Continuous"
                 };
 
                 //TODO: Add unit test to confirm that the fallback works
-                string linetype = _settings.GetValue($"{name}.linetype");
+                string linetype = _settings[$"{name}:linetype"];
                 if (VerifyLinetype(targetDatabase, linetype))
                     newLayerInfo.Linetype = linetype;
             }
@@ -45,9 +45,9 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public string GetLayerName(string name)
         {
-            if (_settings[$"{name}.name"] != null)
+            if (_settings[$"{name}:name"] != null)
             {
-                return _settings[$"{name}.name"];
+                return _settings[$"{name}:name"];
             }
             else
             {
