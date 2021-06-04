@@ -5,12 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Jpp.Ironstone.Core.ServiceInterfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Jpp.Ironstone.Core.Mocking
 {
     class PassDummyAuth : IAuthentication
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public PassDummyAuth(ILogger<IAuthentication> logger)
+        {
+
+        }
 
         public AuthStatus Status
         {

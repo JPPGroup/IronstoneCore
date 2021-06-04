@@ -11,6 +11,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Autocad;
+using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
@@ -133,6 +134,7 @@ namespace Jpp.Ironstone.Core
         // ReSharper disable once UnusedMember.Global
         public void Terminate()
         {
+            _logger.LogInformation("Application Shutdown");
         }
 
         /// <summary>
@@ -147,13 +149,16 @@ namespace Jpp.Ironstone.Core
             //Call the initialize method now the application is loaded
             if (!CoreConsole)
             {
+                _logger.LogTrace("Creating extensions UI");
                 foreach (IIronstoneExtensionApplication ironstoneExtensionApplication in _extensions)
                 {
                     ironstoneExtensionApplication.CreateUI();
                 }
+                _logger.LogTrace("UI Created");
             }
 
             _uiCreated = true;
+            _logger.LogInformation("Application Startup Complete");
         }
 
         #endregion
@@ -174,7 +179,7 @@ namespace Jpp.Ironstone.Core
 
             try
             {
-                
+                _logger.LogInformation("===================");
                 _logger.LogInformation("Application Startup");
 
                 SetCustomAssemblyResolve();
@@ -182,15 +187,20 @@ namespace Jpp.Ironstone.Core
                 serviceCollection.AddSingleton<IConfiguration>(config);
                 
                 _logger.LogInformation(Resources.ExtensionApplication_Inform_LoadingMain);
-                _authentication = new DinkeyAuthentication(_authLogger);
+                _authentication = new PassDummyAuth(_authLogger);
+                serviceCollection.AddSingleton<IAuthentication>(_authentication);
                 serviceCollection.AddSingleton<ILogger<IAuthentication>>(_authLogger);
                 
                 IModuleLoader moduleLoader = new ModuleLoader(_authentication, _logger, config);
                 serviceCollection.AddSingleton<IModuleLoader>(moduleLoader);
                 
+                _logger.LogTrace("Modules loading...");
+
                 moduleLoader.Scan();
                 moduleLoader.Load();
-                
+
+                _logger.LogTrace("Modules load complete");
+
                 //TODO: Check position
                 Container = serviceCollection.BuildServiceProvider();
 
@@ -214,18 +224,21 @@ namespace Jpp.Ironstone.Core
             // If not running in civil 3d, hook into document creation events to monitor for civil3d drawings being opened
             if (!Civil3D)
             {
-                _logger.LogInformation($"Application is not running in Civil3d, checking documents...");
+                _logger.LogInformation($"Application is not running in Civil3d, checking open documents...");
                 foreach (Document doc in Application.DocumentManager)
                 {
                     CheckDocument(doc);
                     AddRegAppKey(doc);
                 }
                 Application.DocumentManager.DocumentCreated += DocumentManagerOnDocumentCreated;
+                _logger.LogInformation($"Document check finished");
             }
             else
             {
                 _logger.LogInformation($"Application is running in Civil3d, document checks bypassed.");
             }
+
+            _logger.LogTrace("Initi finished, awaiitng idle for UI construction");
         }
 
         private void SetCustomAssemblyResolve()
@@ -296,11 +309,11 @@ namespace Jpp.Ironstone.Core
         private IServiceCollection BuildServiceCollection()
         {
             IServiceCollection serviceCollection = new ServiceCollection();
-            serviceCollection.AddSingleton<IAuthentication, DinkeyAuthentication>();
+            //serviceCollection.AddSingleton<IAuthentication, PassDummyAuth>();
             serviceCollection.AddSingleton<IDataService, DataService>();
             serviceCollection.AddSingleton<LayerManager>();
             serviceCollection.AddSingleton<IReviewManager, ReviewManager>();
-            serviceCollection.AddSingleton<IModuleLoader, ModuleLoader>();
+            //serviceCollection.AddSingleton<IModuleLoader, ModuleLoader>();
             serviceCollection.AddSingleton<Civil3DAspect>();
             serviceCollection.AddSingleton<IronstoneCommandAspect>();
             serviceCollection.AddSingleton<ICivil3dController>(this);
@@ -312,15 +325,20 @@ namespace Jpp.Ironstone.Core
         //TODO: Add in autocad console logger
         private void BuildLoggers(IServiceCollection collection)
         {
+            string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\JPP Consulting\\Ironstone\\IronstoneLog.txt";
+
             var serilog = new LoggerConfiguration()
                 .Enrich.FromLogContext()
+                .MinimumLevel.Verbose()
+                .WriteTo.File(path, retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
+                    buffered: false, shared: true)
                 .WriteTo.File("IronstoneLog.txt", retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
                     buffered: false, shared: true)
                 .CreateLogger();
-
+            
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddFilter("Default", LogLevel.Debug)
+                builder.AddFilter("Default", LogLevel.Trace)
                     .AddConsole().AddSerilog(serilog, true);
             });
 
@@ -340,8 +358,12 @@ namespace Jpp.Ironstone.Core
         {
             if (CheckDrawingForCivil3D(doc))
             {
-                _logger.LogWarning("Civil3D features will not function in this drawing. Proceed at own risk.");
+                _logger.LogWarning($"Civil3D features will not function in drawing {doc.Name}. Proceed at own risk.");
                 Civil3DTagWarning?.Invoke(this, doc);
+            }
+            else
+            {
+                _logger.LogTrace($"{doc.Name} ok.");
             }
         }
 
@@ -399,14 +421,22 @@ namespace Jpp.Ironstone.Core
 
         private IConfiguration LoadAdditionalSettingsFromValue(IConfiguration baseConfig, string settings)
         {
-            string networkPath = baseConfig["Settings:NetworkPath"];
-            if (!string.IsNullOrEmpty(networkPath) && File.Exists(networkPath))
+            string networkPath = baseConfig[settings];
+            if (!string.IsNullOrEmpty(networkPath))
             {
-                return LoadAdditionalSettings(baseConfig, networkPath);
+                if (File.Exists(networkPath))
+                {
+                    return LoadAdditionalSettings(baseConfig, networkPath);
+                }
+                else
+                {
+                    _logger.LogWarning($"Settings not found at {networkPath}");
+                    return baseConfig;
+                }
             }
             else
             {
-                _logger.LogWarning($"Settings not found at {networkPath}");
+                _logger.LogWarning($"Empty or missing settings value for {settings}");
                 return baseConfig;
             }
         }
