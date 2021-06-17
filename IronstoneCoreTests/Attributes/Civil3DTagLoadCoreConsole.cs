@@ -20,7 +20,7 @@ namespace Jpp.Ironstone.Core.Tests.Attributes
                 contents = tr.ReadToEnd();
             }
 
-            Assert.IsTrue(contents.Contains("Civil3D features will not function in this drawing. Proceed at own risk"));
+            Assert.IsTrue(contents.Contains("Civil3D features will not function"));
         }
 
         [Test]
