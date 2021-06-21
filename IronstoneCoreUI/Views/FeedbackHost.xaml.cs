@@ -25,6 +25,12 @@ namespace Jpp.Ironstone.Core.UI.Views
             InitializeComponent();
             DataContext = childElement;
             feedbackLink.Click += FeedbackLinkOnClick;
+
+            StyleResource.Source = new Uri("../AutocadStyleResourceDictionary.xaml", UriKind.Relative);
+
+#if AC2019
+            StyleResource.Source = new Uri("../AutocadStyleResourceDictionary.2019.xaml", UriKind.Relative);
+#endif
         }
 
         private void FeedbackLinkOnClick(object sender, RoutedEventArgs e)

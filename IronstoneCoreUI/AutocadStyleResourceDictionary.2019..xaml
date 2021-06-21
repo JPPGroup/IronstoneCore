@@ -45,12 +45,12 @@
 
     <!-- DockPanel -->
     <Style TargetType="DockPanel">
-        <Setter Property="Background" Value="#3B4453"/>
+        <Setter Property="Background" Value="#FF5C5C5C"/>
     </Style>
     
     <!-- Grid -->
     <Style TargetType="Grid">
-        <Setter Property="Background" Value="#3B4453"/>
+        <Setter Property="Background" Value="#FF5C5C5C"/>
     </Style>
 
     <!-- Label -->
@@ -61,7 +61,7 @@
     <!-- GroupBox -->
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
     <Style TargetType="GroupBox">
-        <Setter Property="Background" Value="#3B4453"/>
+        <Setter Property="Background" Value="#FF5C5C5C"/>
         <Setter Property="BorderBrush" Value="#6666"/>
         <Setter Property="Foreground" Value="White" />
         <Setter Property="Template">
@@ -105,19 +105,19 @@
 
     <!-- DataGrid -->
     <Style TargetType="DataGrid">
-        <Setter Property="Background" Value="#3B4453" />
+        <Setter Property="Background" Value="#FF5C5C5C" />
         <Setter Property="BorderBrush" Value="#FF333333" />
         <Setter Property="Foreground" Value="White" />
     </Style>
 
     <!-- StackPanel -->
     <Style TargetType="StackPanel">
-        <Setter Property="Background" Value="#3B4453" />
+        <Setter Property="Background" Value="#FF5C5C5C" />
     </Style>
 
     <!-- DataGridColumnHeader -->
     <Style TargetType="DataGridColumnHeader">
-        <Setter Property="Background" Value="#3B4453" />
+        <Setter Property="Background" Value="#FF525252" />
         <Setter Property="BorderBrush" Value="#FF333333"/>
         <Setter Property="BorderThickness" Value="1,0,0,0"/>
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -131,7 +131,7 @@
 
     <!--TreeView-->
     <Style TargetType="TreeView">
-        <Setter Property="Background" Value="#3B4453" />
+        <Setter Property="Background" Value="#FF5C5C5C" />
         <Setter Property="BorderBrush" Value="#FF333333" />
         <Style.Triggers>
             <Trigger Property="HasItems" Value="False">
