@@ -96,12 +96,11 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             }
         }
 
-        //TODO: Fix the below tests
-        /*[Test]
+        [Test]
         public void CheckRootLibrariesLoadedFromSettings()
         {
             int result = RunTest<int>(nameof(CheckRootLibrariesLoadedFromSettingsResident));
-            Assert.AreEqual(2, result);
+            Assert.AreEqual(1, result);
         }
 
         public int CheckRootLibrariesLoadedFromSettingsResident()
@@ -112,7 +111,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 
         // TODO: Add test to check programfile library rewrite
         
-        [Test]
+        /*[Test]
         public void StoreCreationOnDocumentCreation()
         {
             //TODO: Why does this end with an excpetion??
@@ -120,9 +119,9 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
             string doc = Application.DocumentManager.CurrentDocument.Name;
 
             Assert.Pass("Test needs to be re-worked");
-        }*/
+        }
 
-        /*[Test]
+        [Test]
         public void StoreRemovaleOnDocumentDestruction()
         {
             var result = CoreExtensionApplication._current.SyncContext.BeginInvoke(new TestDelegate(() =>

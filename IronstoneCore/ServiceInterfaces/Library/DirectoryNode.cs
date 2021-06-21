@@ -10,14 +10,20 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Library
         [JsonConstructor]
         public DirectoryNode(string path, bool cacheDisabled, string name = null) : base(path, cacheDisabled, name)
         {
-            if (Path.Equals("ProgramFiles", StringComparison.CurrentCultureIgnoreCase))
-            {
-                Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Libraries");
-            }
+        }
+
+        internal DirectoryNode() : base()
+        {
+
         }
 
         public override void Load()
         {
+            if (Path.Equals("ProgramFiles", StringComparison.CurrentCultureIgnoreCase))
+            {
+                Path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Libraries");
+            }
+
             if (!Directory.Exists(Path))
             {
                 Status = NodeStatus.NotFound;
