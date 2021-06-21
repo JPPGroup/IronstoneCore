@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <ui:HostedUserControl.Resources>
-        <ResourceDictionary Source="../AutocadStyleResourceDictionary.xaml"/>
+        <ResourceDictionary x:Name="StyleResource"/>
     </ui:HostedUserControl.Resources>
     <Grid>
             <Grid.RowDefinitions>

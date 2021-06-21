@@ -14,6 +14,9 @@ namespace Jpp.Ironstone.Core.UI
 {
     public static class LibraryCommands
     {
+        /// <summary>
+        /// Method to create a new drawing, transfer block to it and mark as a template
+        /// </summary>
         [CommandMethod("Core_Lib_FromBlock")]
         [IronstoneCommand]
         public static void BlockToTemplate()
@@ -41,8 +44,8 @@ namespace Jpp.Ironstone.Core.UI
                             BlockRefDrawingObject reference = new BlockRefDrawingObject(newDoc, refObj);
 
                             Database source = Application.DocumentManager.MdiActiveDocument.Database;
-                            BlockDrawingObject newInsance = reference.GetBlock().TransferToDocument(newDoc);
-                            TemplateDrawingObject blockDefinition = newInsance.ConvertToTemplate();
+                            BlockDrawingObject newInstance = reference.GetBlock().TransferToDocument(newDoc);
+                            TemplateDrawingObject blockDefinition = newInstance.ConvertToTemplate();
 
                             destinationTrans.Commit();
                         }
