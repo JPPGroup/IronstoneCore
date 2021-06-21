@@ -1,10 +1,10 @@
 {
 	"standarddetaillibrary": [
-    {
-      "Path": "ProgramFiles",
-			"CacheDisabled": "true",
-			"Name": "Standard Libraries" 
-    },
+//    {
+//      "Path": "ProgramFiles",
+//			"CacheDisabled": "true",
+//			"Name": "Standard Libraries" 
+//    },
 		{
 			"Path": "N:\\Consulting\\Library\\Ironstone\\Details",
 			"CacheDisabled": "true",

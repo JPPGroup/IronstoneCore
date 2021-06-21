@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Properties;
@@ -11,6 +12,7 @@ using Jpp.Ironstone.Core.ServiceInterfaces.Template;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
+using IConfigurationSection = Microsoft.Extensions.Configuration.IConfigurationSection;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
@@ -275,8 +277,18 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
         {
             try
             {
-                _settings.GetSection("standarddetaillibrary").Bind(RootLibraries);
+                List<LibraryNode> nodes = new List<LibraryNode>();
+                var sections = _settings.GetSection("standarddetaillibrary").GetChildren();
 
+                foreach (IConfigurationSection configurationSection in sections)
+                {
+                    LibraryNode newNode = new DirectoryNode();
+                    configurationSection.Bind(newNode, c => c.BindNonPublicProperties = true);
+                    nodes.Add(newNode);
+                }
+
+                RootLibraries = nodes;
+                
                 if (RootLibraries == null)
                     return;
 
