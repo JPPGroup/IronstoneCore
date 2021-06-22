@@ -24,8 +24,13 @@ namespace Jpp.Ironstone.Core.Autocad
                 {
                     IndexColor = short.Parse(_settings[$"{name}:color"]),
                     LayerId = _settings[$"{name}:name"],
-                    Linetype = _settings[$"{name}:linetype"]
+                    Linetype = "Continuous"
                 };
+
+                //TODO: Add unit test to confirm that the fallback works
+                string linetype = _settings[$"{name}:linetype"];
+                if (VerifyLinetype(targetDatabase, linetype))
+                    newLayerInfo.Linetype = linetype;
             }
             else
             {
@@ -40,15 +45,25 @@ namespace Jpp.Ironstone.Core.Autocad
 
         public string GetLayerName(string name)
         {
-            if (_settings[$"{name}.name"] != null)
+            if (_settings[$"{name}:name"] != null)
             {
-                return _settings[$"{name}.name"];
+                return _settings[$"{name}:name"];
             }
             else
             {
                 // TODO: Consider if this should cause an exception or if it should just log an error and set to layer 0
                 throw new ArgumentNullException("Layer not found");
             }
+        }
+
+        private bool VerifyLinetype(Database targetDatabase, string linetype)
+        {
+            Transaction trans = targetDatabase.TransactionManager.TopTransaction;
+
+            LinetypeTable acLineTypTbl;
+            acLineTypTbl = trans.GetObject(targetDatabase.LinetypeTableId, OpenMode.ForRead) as LinetypeTable;
+
+            return acLineTypTbl.Has(linetype);
         }
     }
 }

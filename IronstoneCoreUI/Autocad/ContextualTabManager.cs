@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
@@ -46,6 +45,9 @@ namespace Jpp.Ironstone.Core.UI.Autocad
             // TODO: Consider moving to attribute
             try
             {
+                if (Application.DocumentManager.MdiActiveDocument == null)
+                    return;
+
                 _mode = ContextualMode.None;
 
                 if (IsInModel() || IsInLayoutViewport())
@@ -146,18 +148,10 @@ namespace Jpp.Ironstone.Core.UI.Autocad
 
                 foreach (ContextualTab contextTab in _contextTabs)
                 {
-                    contextTab.Tab.IsVisible = false;
-                }
+                    contextTab.Tab.IsVisible = _toActivate.Contains(contextTab.Tab);
 
-                if (_toActivate.Any())
-                {
-
-                    foreach (RibbonTab ribbonTab in _toActivate)
-                    {
-                        ribbonTab.IsVisible = true;
-                    }
-
-                    _toActivate.Last().IsActive = true;
+                    //TODO: Review - do this work?
+                    //_toActivate.Last().IsActive = true;
                 }
             }
             catch (Exception exception)
