@@ -31,7 +31,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Library
             }
             else
             {
-                Status = NodeStatus.Cached;
+                Status = NodeStatus.Loaded;
             }
 
             foreach(string s in Directory.GetDirectories(Path))

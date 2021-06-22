@@ -268,13 +268,13 @@ namespace Jpp.Ironstone.Core
             if (!toassname.Contains("Ironstone")) return false;
             if (toassname.Contains("resources"))
             {
-                _logger.LogWarning($"Localized resource for {CultureInfo.CurrentCulture} not found.");
+                _logger.LogTrace($"Localized resource for {CultureInfo.CurrentCulture} not found.");
                 return false;
             }
 
             if (toassname.Contains("XmlSerializer"))
             {
-                _logger.LogDebug($"Serialization library {toassname} not pregenerated");
+                _logger.LogTrace($"Serialization library {toassname} not pregenerated");
                 return false;
             }
 

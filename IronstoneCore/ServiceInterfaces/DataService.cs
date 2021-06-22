@@ -275,6 +275,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 
         private void LoadLibraries()
         {
+            _logger.LogDebug("Beginning library load...");
             try
             {
                 List<LibraryNode> nodes = new List<LibraryNode>();
@@ -285,12 +286,16 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                     LibraryNode newNode = new DirectoryNode();
                     configurationSection.Bind(newNode, c => c.BindNonPublicProperties = true);
                     nodes.Add(newNode);
+                    _logger.LogTrace($"Root library {newNode.Name} at path {newNode.Path} added.");
                 }
 
                 RootLibraries = nodes;
-                
+
+                _logger.LogDebug($"{RootLibraries.Count} root libraries found.");
+
                 if (RootLibraries == null)
                     return;
+
 
                 _logger.LogDebug(String.Format(Resources.DataService_Inform_LoadingStandardLibraries, RootLibraries.Count));
                 foreach (LibraryNode rootLibrary in RootLibraries)

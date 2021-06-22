@@ -26,6 +26,7 @@ namespace Jpp.Ironstone.Core.UI
             SelectionFilter acSelFtr = new SelectionFilter(acTypValAr);
 
             PromptSelectionResult acSSPrompt = Application.DocumentManager.MdiActiveDocument.Editor.GetSelection(acSelFtr);
+            Document currentDoc = Application.DocumentManager.MdiActiveDocument;
 
             if (acSSPrompt.Status == PromptStatus.OK)
             {
@@ -41,7 +42,7 @@ namespace Jpp.Ironstone.Core.UI
                         using (Transaction destinationTrans = newDoc.TransactionManager.StartTransaction())
                         {
                             BlockReference refObj = (BlockReference) trans.GetObject(acSSPrompt.Value[0].ObjectId, OpenMode.ForWrite);
-                            BlockRefDrawingObject reference = new BlockRefDrawingObject(newDoc, refObj);
+                            BlockRefDrawingObject reference = new BlockRefDrawingObject(currentDoc, refObj);
 
                             Database source = Application.DocumentManager.MdiActiveDocument.Database;
                             BlockDrawingObject newInstance = reference.GetBlock().TransferToDocument(newDoc);
