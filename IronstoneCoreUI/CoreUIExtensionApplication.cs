@@ -15,15 +15,14 @@ namespace Jpp.Ironstone.Core.UI
         public static CoreUIExtensionApplication Current { get; private set; }
 
         private IServiceProvider _container;
-        private RibbonTab _designTab, _conceptTab;
+        private RibbonTab _generalTab, _designTab, _conceptTab;
         private ContextualTabManager _contextualTabManager;
 
         public void CreateUI()
         {
             //Create the main UI
             CreateTabs();
-            CreateCoreMenu(_designTab);
-            CreateCoreMenu(_conceptTab);
+            CreateCoreMenu(_generalTab);
         }
 
         public void Initialize()
@@ -83,6 +82,14 @@ namespace Jpp.Ironstone.Core.UI
         private void CreateTabs()
         {
             RibbonControl rc = ComponentManager.Ribbon;
+
+            _generalTab = new RibbonTab
+            {
+                Name = Resources.ExtensionApplication_IronstoneTab_General_Name,
+                Title = Resources.ExtensionApplication_IronstoneTab_General_Name,
+                Id = Ironstone.Core.Constants.IronstoneGeneralTabId
+            };
+
             _designTab = new RibbonTab
             {
                 Name = Resources.ExtensionApplication_IronstoneTab_Design_Name,
@@ -96,7 +103,8 @@ namespace Jpp.Ironstone.Core.UI
                 Title = Resources.ExtensionApplication_IronstoneTab_Concept_Name,
                 Id = Ironstone.Core.Constants.IronstoneConceptTabId
             };
-            
+
+            rc.Tabs.Add(_generalTab);
             rc.Tabs.Add(_conceptTab);
             rc.Tabs.Add(_designTab);
         }

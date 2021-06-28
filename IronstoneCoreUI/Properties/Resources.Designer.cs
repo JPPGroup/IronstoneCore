@@ -98,6 +98,15 @@ namespace Jpp.Ironstone.Core.UI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ironstone.
+        /// </summary>
+        internal static string ExtensionApplication_IronstoneTab_General_Name {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_IronstoneTab_General_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Template Libraries.
         /// </summary>
         internal static string ExtensionApplication_LibraryWindow_Name {
