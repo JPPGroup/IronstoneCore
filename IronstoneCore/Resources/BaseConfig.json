@@ -16,8 +16,7 @@
 		{
 			"linetype": "1MM-HIDDEN"
 		},
-		"defaultTemplateFile": "embedded",
-		// Standard drawing scales that can be used by the automated systems
+    // Standard drawing scales that can be used by the automated systems
 		"standardScales"
 		:
 		[
@@ -46,7 +45,7 @@
 				240,
 				160
 			]
-    },
+		},
 		"foundations": {
 			// Default color bands to be used for hatching foundation depth in concept drawings
 			"depthBands": [
@@ -103,12 +102,16 @@
 					"color": "40",
 					"linetype": "1DASH"
 				},
-        "treerings_label": {
-          "name": "JPP_Structures_Foundations_TreeRings_Text",
-          "color": "2",
-          "linetype": "Continuous"
-        }
+				"treerings_label": {
+					"name": "JPP_Structures_Foundations_TreeRings_Text",
+					"color": "2",
+					"linetype": "Continuous"
+				}
 			}
 		}
+	},
+	"documentmanagement": {
+    "defaultTemplateFile": "embedded", //Path to the template file for layouts (use "embedded" for the one that ships with IS)
+		"configfile": "project.json" //Name of porject file stored at root of working directory
 	}
 }
