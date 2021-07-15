@@ -15,8 +15,13 @@ namespace Jpp.Ironstone.Core.Autocad
     public abstract class DrawingObject
     {
         protected DBObject _activeObject;
-        protected Database _database { get; private set; }
-        
+        protected Database _database { get; set; }
+
+        public Database Database
+        {
+            get { return _database; }
+        }
+
         [Obsolete]
         public string DatabaseName
         {
@@ -39,7 +44,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
-        protected Document _document { get; private set; }
+        protected Document _document { get; set; }
 
         public Document Document
         {
