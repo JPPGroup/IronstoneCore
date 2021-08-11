@@ -6,6 +6,10 @@
     public static class Constants
     {
         /// <summary>
+        /// String ID for general tab
+        /// </summary>
+        public const string IronstoneGeneralTabId = "IRONSTONE_GENERAL";
+        /// <summary>
         /// String ID for concept tab
         /// </summary>
         public const string IronstoneConceptTabId = "IRONSTONE_CONCEPT";
