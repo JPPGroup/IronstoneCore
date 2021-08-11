@@ -3,21 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.Autocad;
-using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces.Library;
 using Jpp.Ironstone.Core.ServiceInterfaces.Template;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
-using IConfigurationSection = Microsoft.Extensions.Configuration.IConfigurationSection;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class DataService : IDataService
+    public partial class DataService : IDataService
     {
         /// <summary>
         /// Stores that are currently loaded into memory
@@ -271,50 +268,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
 
             return null;
-        }
-
-        private void LoadLibraries()
-        {
-            _logger.LogDebug("Beginning library load...");
-            try
-            {
-                List<LibraryNode> nodes = new List<LibraryNode>();
-                var sections = _settings.GetSection("standarddetaillibrary").GetChildren();
-
-                foreach (IConfigurationSection configurationSection in sections)
-                {
-                    LibraryNode newNode = new DirectoryNode();
-                    configurationSection.Bind(newNode, c => c.BindNonPublicProperties = true);
-                    nodes.Add(newNode);
-                    _logger.LogTrace($"Root library {newNode.Name} at path {newNode.Path} added.");
-                }
-
-                RootLibraries = nodes;
-
-                _logger.LogDebug($"{RootLibraries.Count} root libraries found.");
-
-                if (RootLibraries == null)
-                    return;
-
-
-                _logger.LogDebug(String.Format(Resources.DataService_Inform_LoadingStandardLibraries, RootLibraries.Count));
-                foreach (LibraryNode rootLibrary in RootLibraries)
-                {
-                    if (!rootLibrary.PreloadDisabled)
-                    {
-                        rootLibrary.Load();
-                    }
-                    else
-                    {
-                        _logger.LogDebug(String.Format(Resources.DataService_Inform_SkippingLibrary, rootLibrary.Name));
-                    }
-
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Unexpected failure loading template libraries.");
-            }
         }
     }
 }
