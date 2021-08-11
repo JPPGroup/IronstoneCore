@@ -5,7 +5,6 @@ using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.Autocad;
-using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces.Library;
 using Jpp.Ironstone.Core.ServiceInterfaces.Template;
 using Microsoft.Extensions.Configuration;
@@ -15,7 +14,7 @@ using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class DataService : IDataService
+    public partial class DataService : IDataService
     {
         /// <summary>
         /// Stores that are currently loaded into memory
@@ -269,35 +268,6 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
             }
 
             return null;
-        }
-
-        private void LoadLibraries()
-        {
-            try
-            {
-                _settings.GetSection("standarddetaillibrary").Bind(RootLibraries);
-
-                if (RootLibraries == null)
-                    return;
-
-                _logger.LogDebug(String.Format(Resources.DataService_Inform_LoadingStandardLibraries, RootLibraries.Count));
-                foreach (LibraryNode rootLibrary in RootLibraries)
-                {
-                    if (!rootLibrary.PreloadDisabled)
-                    {
-                        rootLibrary.Load();
-                    }
-                    else
-                    {
-                        _logger.LogDebug(String.Format(Resources.DataService_Inform_SkippingLibrary, rootLibrary.Name));
-                    }
-
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "Unexpected failure loading template libraries.");
-            }
         }
     }
 }

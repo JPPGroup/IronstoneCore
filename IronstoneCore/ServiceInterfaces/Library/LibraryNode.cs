@@ -8,12 +8,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces.Library
         public string Name { get; protected set; }
         public ObservableCollection<LibraryNode> Children { get; }
         public string Path { get; protected set; }
-        public bool PreloadDisabled { get; }
-        public bool CacheDisabled { get; }
+        public bool PreloadDisabled { get; protected set; }
+        public bool CacheDisabled { get; protected set; }
 
         public NodeStatus Status { get; protected set; } = NodeStatus.Unloaded;
 
-        private LibraryNode()
+        internal LibraryNode()
         {
             Children = new ObservableCollection<LibraryNode>();
         }

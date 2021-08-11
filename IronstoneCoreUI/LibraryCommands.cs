@@ -14,6 +14,9 @@ namespace Jpp.Ironstone.Core.UI
 {
     public static class LibraryCommands
     {
+        /// <summary>
+        /// Method to create a new drawing, transfer block to it and mark as a template
+        /// </summary>
         [CommandMethod("Core_Lib_FromBlock")]
         [IronstoneCommand]
         public static void BlockToTemplate()
@@ -23,6 +26,7 @@ namespace Jpp.Ironstone.Core.UI
             SelectionFilter acSelFtr = new SelectionFilter(acTypValAr);
 
             PromptSelectionResult acSSPrompt = Application.DocumentManager.MdiActiveDocument.Editor.GetSelection(acSelFtr);
+            Document currentDoc = Application.DocumentManager.MdiActiveDocument;
 
             if (acSSPrompt.Status == PromptStatus.OK)
             {
@@ -38,11 +42,11 @@ namespace Jpp.Ironstone.Core.UI
                         using (Transaction destinationTrans = newDoc.TransactionManager.StartTransaction())
                         {
                             BlockReference refObj = (BlockReference) trans.GetObject(acSSPrompt.Value[0].ObjectId, OpenMode.ForWrite);
-                            BlockRefDrawingObject reference = new BlockRefDrawingObject(newDoc, refObj);
+                            BlockRefDrawingObject reference = new BlockRefDrawingObject(currentDoc, refObj);
 
                             Database source = Application.DocumentManager.MdiActiveDocument.Database;
-                            BlockDrawingObject newInsance = reference.GetBlock().TransferToDocument(newDoc);
-                            TemplateDrawingObject blockDefinition = newInsance.ConvertToTemplate();
+                            BlockDrawingObject newInstance = reference.GetBlock().TransferToDocument(newDoc);
+                            TemplateDrawingObject blockDefinition = newInstance.ConvertToTemplate();
 
                             destinationTrans.Commit();
                         }
