@@ -6,12 +6,22 @@
     <Description>Common library for all ironstone projects</Description>
     <Copyright>Copyright ©  2020</Copyright>
     <Company>JPP Consulting Ltd.</Company>
-    <Product>Ironstone Core</Product>
-    <Authors>JPPGroup</Authors>
+    <Product>Ironstone Core</Product>    
     <AssemblyVersion>9.9.9.9</AssemblyVersion>
     <FileVersion>9.9.9.9</FileVersion>    
-    <PackageId>Jpp.Ironstone.Core</PackageId>    
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PackageId>Jpp.Ironstone.Core.$(Id)</PackageId>    
+	<Version>0.6.0-alpha.4</Version>
+	<Authors>JPP Consulting</Authors>
+	<Title>Ironstone Core $(Id)</Title>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>		
+	<RepositoryType>git</RepositoryType>
+	<RepositoryUrl>https://github.com/JPPGroup/IronstoneCore</RepositoryUrl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\BaseConfig.json" />
@@ -48,12 +58,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="NLog">
-      <Version>4.7.2</Version>
-    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="NLog" Version="4.7.2" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="System.Memory" Version="4.5.4" />
