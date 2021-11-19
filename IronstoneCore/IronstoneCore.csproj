@@ -9,7 +9,7 @@
     <Product>Ironstone Core</Product>    
     <AssemblyVersion>9.9.9.9</AssemblyVersion>
     <FileVersion>9.9.9.9</FileVersion>    
-    <PackageId>Jpp.Ironstone.Core.$(Id)</PackageId>    
+    <PackageId>Jpp.Ironstone.Core$(Id)</PackageId>    
 	<Version>0.6.0-alpha.4</Version>
 	<Authors>JPP Consulting</Authors>
 	<Title>Ironstone Core $(Id)</Title>
