@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
@@ -72,6 +73,14 @@ namespace Jpp.Ironstone.Core
                 _civil3D = Civil3DTest();
 
                 return _civil3D.Value;
+            }
+        }
+
+        public static bool ForgeDesignAutomation
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DAS_WORKITEM_ID"));
             }
         }
 
@@ -523,7 +532,26 @@ namespace Jpp.Ironstone.Core
 
             return false;
         }
-#endregion
+        #endregion
+
+        [CommandMethod("IRONSTONE_HELLOWORLD")]
+        [IronstoneCommand]
+        public void HelloWorld()
+        {
+            HelloWordStructure structure = new HelloWordStructure();
+            string contents = JsonSerializer.Serialize(structure);
+
+            string path;
+            if (!ForgeDesignAutomation)
+            {
+                path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "helloworld.json");
+            }
+            else
+            {
+                path = "helloworld.json";
+            }
+            File.WriteAllText(path, contents);
+        }
     }
 }
 

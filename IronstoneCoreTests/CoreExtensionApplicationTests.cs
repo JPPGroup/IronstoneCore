@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using Autodesk.AutoCAD.ApplicationServices.Core;
 using Jpp.Ironstone.Core.Mocking;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,5 +40,29 @@ namespace Jpp.Ironstone.Core.Tests
             Configuration config = CoreExtensionApplication._current.Container.GetRequiredService<Configuration>();
             return (config.LogFileRelative.Equals("UnitTestsIronstone.Log"));
         }*/
+        [Test]
+        public void RunHelloWorld()
+        {
+            bool result = RunTest<bool>(nameof(RunHelloWorldResident));
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "helloworld.json");
+            Assert.True(File.Exists(path));
+        }
+
+        public bool RunHelloWorldResident()
+        {
+            CoreExtensionApplication._current.HelloWorld();
+            return true;
+        }
+
+        [Test]
+        public void IsForgeDesignAutomation()
+        {            
+            Assert.False(RunTest<bool>(nameof(IsForgeDesignAutomationResident)));
+        }
+
+        public bool IsForgeDesignAutomationResident()
+        {            
+            return CoreExtensionApplication.ForgeDesignAutomation;
+        }
     }
 }
