@@ -247,7 +247,7 @@ namespace Jpp.Ironstone.Core
                 _logger.LogInformation($"Application is running in Civil3d, document checks bypassed.");
             }
 
-            _logger.LogTrace("Initi finished, awaiitng idle for UI construction");
+            _logger.LogTrace("Init finished, awaitng application idle for UI construction");
         }
 
         private void SetCustomAssemblyResolve()
@@ -335,20 +335,23 @@ namespace Jpp.Ironstone.Core
         private void BuildLoggers(IServiceCollection collection)
         {
             string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\JPP Consulting\\Ironstone\\IronstoneLog.txt";
+            string localPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "IronstoneLog.txt");
 
             var serilog = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .MinimumLevel.Verbose()
                 .WriteTo.File(path, retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
                     buffered: false, shared: true)
-                .WriteTo.File("IronstoneLog.txt", retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
+                .WriteTo.File(localPath, retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
                     buffered: false, shared: true)
                 .CreateLogger();
             
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddFilter("Default", LogLevel.Trace)
-                    .AddConsole().AddSerilog(serilog, true);
+                builder.AddFilter<AcConsoleLoggerProvider>(null, LogLevel.Warning).AddAcConsoleLogger();                
+
+                builder.AddFilter(null, LogLevel.Trace)
+                    .AddConsole().AddSerilog(serilog, true);                
             });
 
             collection.AddSingleton<ILoggerFactory>(loggerFactory);
