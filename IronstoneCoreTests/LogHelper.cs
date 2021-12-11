@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 
 namespace Jpp.Ironstone.Core.Tests
@@ -12,7 +13,11 @@ namespace Jpp.Ironstone.Core.Tests
         public static string GetLogName()
         {
             DateTime time = DateTime.Now;
-            return $"IronstoneLog{time.ToString("yyyyMMdd")}.txt";
+
+            string filename = $"IronstoneLog{time.ToString("yyyyMMdd")}.txt";
+            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), filename);
+
+            return path;
         }
 
         public static TextReader GetLogReader()

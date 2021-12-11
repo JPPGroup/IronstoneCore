@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
@@ -72,6 +73,14 @@ namespace Jpp.Ironstone.Core
                 _civil3D = Civil3DTest();
 
                 return _civil3D.Value;
+            }
+        }
+
+        public static bool ForgeDesignAutomation
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DAS_WORKITEM_ID"));
             }
         }
 
@@ -238,7 +247,7 @@ namespace Jpp.Ironstone.Core
                 _logger.LogInformation($"Application is running in Civil3d, document checks bypassed.");
             }
 
-            _logger.LogTrace("Initi finished, awaiitng idle for UI construction");
+            _logger.LogTrace("Init finished, awaitng application idle for UI construction");
         }
 
         private void SetCustomAssemblyResolve()
@@ -326,20 +335,23 @@ namespace Jpp.Ironstone.Core
         private void BuildLoggers(IServiceCollection collection)
         {
             string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\JPP Consulting\\Ironstone\\IronstoneLog.txt";
+            string localPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "IronstoneLog.txt");
 
             var serilog = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 .MinimumLevel.Verbose()
                 .WriteTo.File(path, retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
                     buffered: false, shared: true)
-                .WriteTo.File("IronstoneLog.txt", retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
+                .WriteTo.File(localPath, retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
                     buffered: false, shared: true)
                 .CreateLogger();
             
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddFilter("Default", LogLevel.Trace)
-                    .AddConsole().AddSerilog(serilog, true);
+                builder.AddFilter<AcConsoleLoggerProvider>(null, LogLevel.Warning).AddAcConsoleLogger();                
+
+                builder.AddFilter(null, LogLevel.Trace)
+                    .AddConsole().AddSerilog(serilog, true);                
             });
 
             collection.AddSingleton<ILoggerFactory>(loggerFactory);
@@ -523,7 +535,26 @@ namespace Jpp.Ironstone.Core
 
             return false;
         }
-#endregion
+        #endregion
+
+        [CommandMethod("IRONSTONE_HELLOWORLD")]
+        [IronstoneCommand]
+        public void HelloWorld()
+        {
+            HelloWordStructure structure = new HelloWordStructure();
+            string contents = JsonSerializer.Serialize(structure);
+
+            string path;
+            if (!ForgeDesignAutomation)
+            {
+                path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "helloworld.json");
+            }
+            else
+            {
+                path = "helloworld.json";
+            }
+            File.WriteAllText(path, contents);
+        }
     }
 }
 

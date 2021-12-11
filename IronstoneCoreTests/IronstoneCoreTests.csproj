@@ -17,10 +17,6 @@
     </PackageReference>
   </ItemGroup>       
   <ItemGroup>
-    <ProjectReference Include="..\IronstoneCore\IronstoneCore.csproj" />
-	<ProjectReference Include="..\IronstoneCoreUI\IronstoneCoreUI.csproj" />
-  </ItemGroup>       
-  <ItemGroup>
     <None Update="BaseConfig.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -33,5 +29,9 @@
   </ItemGroup>       
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>       
+  <ItemGroup>
+    <ProjectReference Include="..\IronstoneCoreUI\IronstoneCoreUI.csproj" />
+    <ProjectReference Include="..\IronstoneCore\IronstoneCore.csproj" />
   </ItemGroup>
 </Project>

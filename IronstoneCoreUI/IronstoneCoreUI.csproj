@@ -53,6 +53,10 @@
       <Version>2.0.20525</Version>
     </PackageReference>
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\IronstoneCore\IronstoneCore.csproj" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
