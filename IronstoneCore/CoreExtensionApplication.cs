@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -125,12 +126,19 @@ namespace Jpp.Ironstone.Core
         /// </summary>
         // ReSharper disable once UnusedMember.Global
         public void Initialize()
-        {
+        {            
             _current = this;
+            SetBindingRedirect();
 
             //If not running in console only, detect if ribbon is currently loaded, and if not wait until the application is Idle.
             //Throws an error if try to add to the menu with the ribbon unloaded
-            InitExtension();
+            try
+            {
+                InitExtension();
+            } catch (System.Exception ex)
+            {
+                int i = 0;
+            }
             if (!CoreConsole)
             { 
                 Autodesk.AutoCAD.ApplicationServices.Core.Application.Idle += Application_Idle;
@@ -179,11 +187,10 @@ namespace Jpp.Ironstone.Core
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public void InitExtension()
-        {
+        {            
             _extensions = new List<IIronstoneExtensionApplication>();
             _uiCreated = false;
-            
-            SetBindingRedirect();
+                        
             serviceCollection = BuildServiceCollection();
 
             try
@@ -345,10 +352,20 @@ namespace Jpp.Ironstone.Core
                 .WriteTo.File(localPath, retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
                     buffered: false, shared: true)
                 .CreateLogger();
-            
+
+            Microsoft.Extensions.Logging.LogLevel level;
+
+            if (ForgeDesignAutomation)
+            {
+                level = Microsoft.Extensions.Logging.LogLevel.Trace;
+            } else
+            {
+             level = Microsoft.Extensions.Logging.LogLevel.Warning;
+            }
+
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddFilter<AcConsoleLoggerProvider>(null, LogLevel.Warning).AddAcConsoleLogger();                
+                builder.AddFilter<AcConsoleLoggerProvider>(null, level).AddAcConsoleLogger();                
 
                 builder.AddFilter(null, LogLevel.Trace)
                     .AddConsole().AddSerilog(serilog, true);                
@@ -408,7 +425,8 @@ namespace Jpp.Ironstone.Core
                 .GetManifestResourceStream("Jpp.Ironstone.Core.Resources.BaseConfig.json");
             IConfiguration root = rootBuilder.AddJsonStream(resStream).Build();
 
-            IConfiguration local = LoadAdditionalSettings(root, "config.json");
+            string localPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.json");
+            IConfiguration local = LoadAdditionalSettings(root, localPath);
 #if DEBUG
             _logger.LogDebug("User and network setting skipped as running in debug.");
             return local;
@@ -422,6 +440,7 @@ namespace Jpp.Ironstone.Core
         {
             if (File.Exists(path))
             {
+                _logger.LogInformation($"Loading settings from {path}");
                 ConfigurationBuilder builder = new ConfigurationBuilder();
                 return builder.AddConfiguration(baseConfig).AddJsonFile(path).Build();
             }
