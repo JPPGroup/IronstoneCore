@@ -121,17 +121,22 @@ namespace Jpp.Ironstone.Core.Autocad
             if(!_properties.ContainsKey(name))
                 GetProperties();
 
+            return GetCachedProperty<T>(name);
+        }
+
+        public T GetCachedProperty<T>(string name)
+        {           
             if (!_properties.ContainsKey(name))
                 return default(T);
 
-            return (T) _properties[name];
+            return (T)_properties[name];
         }
 
         public void SetProperty(string name, object value)
         {
             SetPropertyOnObject(name, value);
 
-            if (!_properties.ContainsKey(name))
+            if (_properties.ContainsKey(name))
                 _properties[name] = value;
         }
 
