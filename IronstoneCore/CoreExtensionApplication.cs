@@ -81,7 +81,7 @@ namespace Jpp.Ironstone.Core
         {
             get
             {
-                return !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DAS_WORKITEM_ID"));
+                return (!String.IsNullOrEmpty(Environment.GetEnvironmentVariable("DAS_WORKITEM_ID")) || !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("FORGE")));
             }
         }
 
