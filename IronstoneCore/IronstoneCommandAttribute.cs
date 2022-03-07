@@ -36,7 +36,7 @@ namespace Jpp.Ironstone.Core
             }
             catch (Exception e)
             {
-                _logger.LogCritical($"Unknown exception: {e.Message}");
+                _logger.LogCritical(e, $"Unknown exception: {e.Message}");                
                 return null;
             }
         }
