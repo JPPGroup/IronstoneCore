@@ -18,6 +18,7 @@
         </Setter>
         <Setter Property="Width" Value="21" />
         <Setter Property="Height" Value="21" />
+        <Setter Property="Foreground" Value="White" />        
     </Style>
 
     <!--<FormatConvertedBitmap x:Key="convertFormatImage" DestinationFormat="Gray32Float" />-->

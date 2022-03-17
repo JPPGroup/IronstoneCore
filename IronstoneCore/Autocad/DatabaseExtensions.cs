@@ -320,6 +320,32 @@ namespace Jpp.Ironstone.Core.Autocad
             return result;
         }
 
+        //TODO: Add dedicated tests
+        public static void BindAlResolvedXrefs(this Database db)
+        {
+            ObjectIdCollection xrefCollection = new ObjectIdCollection();
+
+            using (XrefGraph xg = db.GetHostDwgXrefGraph(false))
+            {
+                int numOfNodes = xg.NumNodes;
+                for (int cnt = 0; cnt < xg.NumNodes; cnt++)
+                {
+                    XrefGraphNode xNode = xg.GetXrefNode(cnt) as XrefGraphNode;
+
+                    if (!xNode.Database.Filename.Equals(db.Filename))
+                    {
+                        if (xNode.XrefStatus == XrefStatus.Resolved)
+                        {
+                            xrefCollection.Add(xNode.BlockTableRecordId);
+                        }
+                    }
+                }
+            }
+
+            if (xrefCollection.Count != 0)
+                db.BindXrefs(xrefCollection, true);
+        }
+
         public static void SetXrefRelative(this Database currentDatabase, string basePath)
         {            
             Transaction tr = currentDatabase.TransactionManager.TopTransaction;
