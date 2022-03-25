@@ -319,5 +319,10 @@ namespace Jpp.Ironstone.Core.Autocad
 
             return result;
         }
+
+        public static void SetXrefRelative(this Database currentDatabase)
+        {
+
+        }
     }
 }

@@ -111,7 +111,19 @@
 		}
 	},
 	"documentmanagement": {
-    "defaultTemplateFile": "embedded", //Path to the template file for layouts (use "embedded" for the one that ships with IS)
+		"defaultTemplateFile": "embedded", //Path to the template file for layouts (use "embedded" for the one that ships with IS)
 		"configfile": "project.json" //Name of project file stored at root of working directory
+	},
+	"nl": {
+		"general": {
+			"viewportlayer": {
+				"name": "Defpoints"
+			}
+		},
+		"treesheet": {
+			"name": "Tree Layout",
+			"number": "002",
+			"notes": "General Notes \n test note 1 \n test note 2"
+		}
 	}
 }

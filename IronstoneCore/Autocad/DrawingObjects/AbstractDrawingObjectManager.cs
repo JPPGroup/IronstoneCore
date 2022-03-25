@@ -178,5 +178,17 @@ namespace Jpp.Ironstone.Core.Autocad
         {
             return ManagedObjects;
         }
+
+        public virtual Extents3d GetBoundingBox()
+        {
+            Extents3d extents = new Extents3d();
+
+            foreach(var t in ManagedObjects)
+            {
+                extents.AddExtents(t.GetBoundingBox());
+            }
+
+            return extents;
+        }
     }
 }
