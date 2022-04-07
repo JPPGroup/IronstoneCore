@@ -182,6 +182,7 @@ namespace Jpp.Ironstone.Core.Autocad
             return blockDrawingObject;
         }
 
+        //TODO: This cannot handle an annotative block for some reason
         public static BlockRefDrawingObject Create(Database target, Point3d insertionPoint, BlockDrawingObject sourceBlock)
         {
             ObjectId newRefId;

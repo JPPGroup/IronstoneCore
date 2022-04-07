@@ -268,7 +268,7 @@ namespace Jpp.Ironstone.Core.Autocad
                 ResultBuffer newBuffer = new ResultBuffer();
                 newBuffer.Add(new TypedValue(1001, "JPP"));
 
-                if (rb != null && _XData.ContainsKey(key))
+                if (rb != null && _XData != null && _XData.ContainsKey(key))
                 {
                     for(int i = 0; i < rb.AsArray().Length; i++)//foreach (TypedValue tv in rb)
                     {
@@ -310,10 +310,13 @@ namespace Jpp.Ironstone.Core.Autocad
                 foreach (TypedValue tv in rb)
                 {
                     string data = tv.Value as string;
-                    string[] keyvalue = data.Split(':');
-                    if (keyvalue.Length == 2)
+                    if (!string.IsNullOrEmpty(data))
                     {
-                        _XData.Add(keyvalue[0], keyvalue[1]);
+                        string[] keyvalue = data.Split(':');
+                        if (keyvalue.Length == 2)
+                        {
+                            _XData.Add(keyvalue[0], keyvalue[1]);
+                        }
                     }
                 }
             }
