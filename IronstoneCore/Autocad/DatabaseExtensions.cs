@@ -324,5 +324,32 @@ namespace Jpp.Ironstone.Core.Autocad
         {
 
         }
+
+        public static AnnotationScale GetOrCreateAnnotativeScale(this Database currentDatabase, string scaleName, double scale)
+        {
+            ObjectContextManager ocm = currentDatabase.ObjectContextManager;
+
+            if (ocm != null)
+            {
+                ObjectContextCollection occ = ocm.GetContextCollection("ACDB_ANNOTATIONSCALES");
+
+                if (occ != null)
+                {
+                    var context = occ.GetContext("scaleName");
+                    if (context != null)
+                        return (AnnotationScale)context;
+
+                    AnnotationScale asc = new AnnotationScale();
+                    asc.Name = scaleName;
+                    asc.PaperUnits = 1;
+                    asc.DrawingUnits = 1d / scale;
+
+                    occ.AddContext(asc);
+                    return asc;
+                }
+            }
+
+            throw new InvalidOperationException("Retireval of annotation scale failed");
+        }
     }
 }
