@@ -42,7 +42,7 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
                 }
             }
         }
-        public override double Rotation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override double Rotation { get => 0; set { } }
 
         public string Contents
         {
@@ -116,9 +116,10 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
             {
                 // Add the new object to the block table record and the transaction
                 mText.Location = location;
-                mText.Contents = text;
+                mText.Contents = text;                
+                mText.TextHeight = 2;
                 newTextDrawingObject.BaseObject = parent.AppendEntity(mText);
-                trans.AddNewlyCreatedDBObject(mText, true);
+                trans.AddNewlyCreatedDBObject(mText, true);                
             }
 
             return newTextDrawingObject;

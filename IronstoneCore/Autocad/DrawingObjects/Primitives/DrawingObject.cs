@@ -142,8 +142,8 @@ namespace Jpp.Ironstone.Core.Autocad
             set
             {
                 Transaction trans = _database.TransactionManager.TopTransaction;
-                Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForRead);
-                if(ent.Annotative != AnnotativeStates.NotApplicable)
+                Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForWrite);
+                if(ent.Annotative == AnnotativeStates.NotApplicable)
                 {
                     throw new InvalidOperationException($"Annotative not supported");
                 }
@@ -415,9 +415,8 @@ namespace Jpp.Ironstone.Core.Autocad
         }
 
         public void AddAnnotativeScale(double scale)
-        {
-            double scaleName = 1d / scale;
-            var context = this.Database.GetOrCreateAnnotativeScale($"1:{scaleName}", scale);
+        {            
+            var context = this.Database.GetOrCreateAnnotativeScale($"I 1:{scale}", 1d/scale);
 
             Transaction trans = _database.TransactionManager.TopTransaction;
             Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForWrite);

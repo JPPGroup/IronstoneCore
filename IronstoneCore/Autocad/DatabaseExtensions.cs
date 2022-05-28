@@ -320,9 +320,30 @@ namespace Jpp.Ironstone.Core.Autocad
             return result;
         }
 
-        public static void SetXrefRelative(this Database currentDatabase)
-        {
+        public static void SetXrefRelative(this Database currentDatabase, string basePath)
+        {            
+            Transaction tr = currentDatabase.TransactionManager.TopTransaction;
+            BlockTable bt = tr.GetObject(currentDatabase.BlockTableId, OpenMode.ForRead) as BlockTable;
 
+            string terminator = basePath.Split('\\').Last();
+
+            ObjectIdCollection collection = new ObjectIdCollection();
+
+            foreach (ObjectId btrId in bt)
+            {
+                BlockTableRecord btr = tr.GetObject(btrId, OpenMode.ForRead) as BlockTableRecord;
+
+                if (btr.IsFromExternalReference)
+                {
+                    btr.UpgradeOpen();
+                    String oldPath = btr.PathName;
+
+                    var parts = oldPath.Split(new[] { terminator }, StringSplitOptions.RemoveEmptyEntries);
+                    string relative = parts.Last();
+                    btr.PathName = $".{relative}";
+                    collection.Add(btrId);
+                }                
+            }            
         }
 
         public static AnnotationScale GetOrCreateAnnotativeScale(this Database currentDatabase, string scaleName, double scale)
@@ -335,14 +356,14 @@ namespace Jpp.Ironstone.Core.Autocad
 
                 if (occ != null)
                 {
-                    var context = occ.GetContext("scaleName");
+                    var context = occ.GetContext(scaleName);
                     if (context != null)
                         return (AnnotationScale)context;
 
                     AnnotationScale asc = new AnnotationScale();
                     asc.Name = scaleName;
                     asc.PaperUnits = 1;
-                    asc.DrawingUnits = 1d / scale;
+                    asc.DrawingUnits = scale;
 
                     occ.AddContext(asc);
                     return asc;
