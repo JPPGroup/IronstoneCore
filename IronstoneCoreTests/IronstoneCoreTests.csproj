@@ -31,7 +31,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>       
   <ItemGroup>
-    <ProjectReference Include="..\IronstoneCoreUI\IronstoneCoreUI.csproj" />
+    <!--<ProjectReference Include="..\IronstoneCoreUI\IronstoneCoreUI.csproj" />-->
     <ProjectReference Include="..\IronstoneCore\IronstoneCore.csproj" />
   </ItemGroup>
 </Project>

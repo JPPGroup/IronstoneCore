@@ -427,13 +427,18 @@ namespace Jpp.Ironstone.Core
 
             string localPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.json");
             IConfiguration local = LoadAdditionalSettings(root, localPath);
+                        
 #if DEBUG
             _logger.LogDebug("User and network setting skipped as running in debug.");
             return local;
 #endif
             IConfiguration network = LoadAdditionalSettingsFromValue(local, "Settings:NetworkPath");
             IConfiguration user = LoadAdditionalSettingsFromValue(network, "Settings:UserPath");
-            return user;
+            
+            string workingPath = "config.json";
+            IConfiguration working = LoadAdditionalSettings(user, workingPath);
+            
+            return working;
         }
 
         private IConfiguration LoadAdditionalSettings(IConfiguration baseConfig, string path)

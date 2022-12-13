@@ -130,6 +130,33 @@ namespace Jpp.Ironstone.Core.Autocad
             }
         }
 
+        [XmlIgnore]
+        public bool Annotative
+        {
+            get
+            {
+                Transaction trans = _database.TransactionManager.TopTransaction;
+                Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForRead);
+                return (ent.Annotative == AnnotativeStates.True);
+            }
+            set
+            {
+                Transaction trans = _database.TransactionManager.TopTransaction;
+                Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForWrite);
+                if(ent.Annotative == AnnotativeStates.NotApplicable)
+                {
+                    throw new InvalidOperationException($"Annotative not supported");
+                }
+                if(value)
+                {
+                    ent.Annotative = AnnotativeStates.True;
+                } else
+                {
+                    ent.Annotative = AnnotativeStates.False;
+                }
+            }
+        }
+
         protected virtual bool VerifyBaseObject()
         {
             return true;
@@ -385,6 +412,15 @@ namespace Jpp.Ironstone.Core.Autocad
                 ids.Add(BaseObject);
                 _document.Database.GetDrawOrderTable(true).MoveToBottom(ids);
             }
+        }
+
+        public void AddAnnotativeScale(double scale)
+        {            
+            var context = this.Database.GetOrCreateAnnotativeScale($"I 1:{scale}", 1d/scale);
+
+            Transaction trans = _database.TransactionManager.TopTransaction;
+            Entity ent = (Entity)trans.GetObject(this.BaseObject, OpenMode.ForWrite);
+            ent.AddContext(context);
         }
     }
 }

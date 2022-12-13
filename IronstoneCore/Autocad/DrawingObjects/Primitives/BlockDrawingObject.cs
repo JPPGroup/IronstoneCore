@@ -101,5 +101,14 @@ namespace Jpp.Ironstone.Core.Autocad
             blockDrawingObject.BaseObject = btrId;
             return blockDrawingObject;
         }
+
+        public static BlockDrawingObject Get(Database target, string blockName)
+        {
+            var obj = target.GetBlockDefinition(blockName);
+            return new BlockDrawingObject(target)
+            {
+                BaseObject = obj.ObjectId
+            };
+        }
     }
 }
