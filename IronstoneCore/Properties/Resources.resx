@@ -130,12 +130,6 @@
   <data name="DataService_Inform_SkippingLibrary" xml:space="preserve">
     <value>Cache disabled for {0}, loading skipped.</value>
   </data>
-  <data name="ExtensionApplication_Inform_LoadedMain" xml:space="preserve">
-    <value>Core loaded successfully.</value>
-  </data>
-  <data name="ExtensionApplication_Inform_LoadingMain" xml:space="preserve">
-    <value>Core extension loading begun...</value>
-  </data>
   <data name="LogCommand_Inform_Not" xml:space="preserve">
     <value>Method is not a valid command method</value>
   </data>

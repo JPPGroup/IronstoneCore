@@ -202,7 +202,7 @@ namespace Jpp.Ironstone.Core
                 IConfiguration config = LoadConfiguration(_logger);
                 serviceCollection.AddSingleton<IConfiguration>(config);
                 
-                _logger.LogInformation(Resources.ExtensionApplication_Inform_LoadingMain);
+                _logger.LogInformation("Core extension loading begun...");
                 _authentication = new PassDummyAuth(_authLogger);
                 serviceCollection.AddSingleton<IAuthentication>(_authentication);
                 serviceCollection.AddSingleton<ILogger<IAuthentication>>(_authLogger);
@@ -232,10 +232,11 @@ namespace Jpp.Ironstone.Core
             }
             catch (System.Exception e)
             {
-                _logger.LogCritical($"Exception thrown in core main resolver block - {e.Message}");
+                _logger.LogCritical(e, "Exception thrown in core main resolver block");
+                
             }
 
-            _logger.LogInformation(Resources.ExtensionApplication_Inform_LoadedMain);
+            _logger.LogInformation("Core loaded successfully.");
 
             // If not running in civil 3d, hook into document creation events to monitor for civil3d drawings being opened
             if (!Civil3D)
@@ -265,7 +266,7 @@ namespace Jpp.Ironstone.Core
                 string toassname = resolveArgs.Name.Split(',')[0];
                 if (!CheckValidCustomResolve(toassname)) return null;
 
-                _logger.LogDebug($"Fail assembly resolution for {resolveArgs.Name}.\nAttempting custom resolve.");
+                _logger.LogDebug("Fail assembly resolution for {Name}. Attempting custom resolve.", resolveArgs.Name);
                 Assembly[] asmblies = AppDomain.CurrentDomain.GetAssemblies();
                 foreach (Assembly ass in asmblies)
                 {
@@ -284,13 +285,13 @@ namespace Jpp.Ironstone.Core
             if (!toassname.Contains("Ironstone")) return false;
             if (toassname.Contains("resources"))
             {
-                _logger.LogTrace($"Localized resource for {CultureInfo.CurrentCulture} not found.");
+                _logger.LogTrace("Localized resource for {CurrentCulture} not found.", CultureInfo.CurrentCulture);
                 return false;
             }
 
             if (toassname.Contains("XmlSerializer"))
             {
-                _logger.LogTrace($"Serialization library {toassname} not pregenerated");
+                _logger.LogTrace("Serialization library {toassname} not pregenerated", toassname);
                 return false;
             }
 
@@ -300,7 +301,7 @@ namespace Jpp.Ironstone.Core
         /// <summary>
         /// Method overrides default binding as config file cannot be used
         /// </summary>
-        private void SetBindingRedirect()
+        private static void SetBindingRedirect()
         {
             AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
             {
@@ -314,7 +315,7 @@ namespace Jpp.Ironstone.Core
                 // Aseembly name excluding version and other metadata
                 string name = new Regex(",.*").Replace(resolveArgs.Name, string.Empty);
 
-                if (name.Equals(resolveArgs.Name))
+                if (name.Equals(resolveArgs.Name, StringComparison.Ordinal))
                     return null;
                 
                 // Load whatever version available
@@ -346,11 +347,16 @@ namespace Jpp.Ironstone.Core
 
             var serilog = new LoggerConfiguration()
                 .Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentUserName()
                 .MinimumLevel.Verbose()
                 .WriteTo.File(path, retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
                     buffered: false, shared: true)
                 .WriteTo.File(localPath, retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
                     buffered: false, shared: true)
+#if !DEBUG
+                .WriteTo.Seq("http://seqingest.services.cedarbarn.local", apiKey: "Cp5KJHS7eelC1u2z7Tn5")
+#endif
                 .CreateLogger();
 
             Microsoft.Extensions.Logging.LogLevel level;
@@ -387,12 +393,12 @@ namespace Jpp.Ironstone.Core
         {
             if (CheckDrawingForCivil3D(doc))
             {
-                _logger.LogWarning($"Civil3D features will not function in drawing {doc.Name}. Proceed at own risk.");
+                _logger.LogWarning("Civil3D features will not function in drawing {doc}. Proceed at own risk.", doc.Name);
                 Civil3DTagWarning?.Invoke(this, doc);
             }
             else
             {
-                _logger.LogTrace($"{doc.Name} ok.");
+                _logger.LogTrace("{doc} ok.", doc.Name);
             }
         }
 
@@ -407,8 +413,10 @@ namespace Jpp.Ironstone.Core
                     regTable.UpgradeOpen();
 
                     // Add the application names that would be used to add Xdata
-                    RegAppTableRecord app = new RegAppTableRecord();
-                    app.Name = "JPP";
+                    RegAppTableRecord app = new RegAppTableRecord
+                    {
+                        Name = "JPP"
+                    };
 
                     regTable.Add(app);
                     trans.AddNewlyCreatedDBObject(app, true);
@@ -445,7 +453,7 @@ namespace Jpp.Ironstone.Core
         {
             if (File.Exists(path))
             {
-                _logger.LogInformation($"Loading settings from {path}");
+                _logger.LogInformation("Loading settings from {path}", path);
                 ConfigurationBuilder builder = new ConfigurationBuilder();
                 return builder.AddConfiguration(baseConfig).AddJsonFile(path).Build();
             }
@@ -466,18 +474,18 @@ namespace Jpp.Ironstone.Core
                 }
                 else
                 {
-                    _logger.LogWarning($"Settings not found at {networkPath}");
+                    _logger.LogWarning("Settings not found at {networkPath}", networkPath);
                     return baseConfig;
                 }
             }
             else
             {
-                _logger.LogWarning($"Empty or missing settings value for {settings}");
+                _logger.LogWarning("Empty or missing settings value for {settings}", settings);
                 return baseConfig;
             }
         }
 
-        #endregion
+#endregion
 
         public void RegisterExtension(IIronstoneExtensionApplication extension)
         {
@@ -487,7 +495,7 @@ namespace Jpp.Ironstone.Core
                 return;
             }
 
-            _logger.LogDebug($"{extension.GetType().ToString()} registration started");
+            _logger.LogDebug("{extension} registration started", extension.GetType().ToString());
             
             try
             {
@@ -495,11 +503,11 @@ namespace Jpp.Ironstone.Core
                 extension.RegisterServices(serviceCollection);
                 _extensions.Add(extension);
 
-                _logger.LogInformation($"{extension.GetType().ToString()} registration completed");
+                _logger.LogInformation("{extension} registration completed", extension.GetType().ToString());
             }
             catch (System.Exception e)
             {
-                _logger.LogError(e, $"{extension.GetType().ToString()} registration failed");
+                _logger.LogError(e, "{extension} registration failed", extension.GetType().ToString());
             }
         }
 
@@ -559,11 +567,11 @@ namespace Jpp.Ironstone.Core
 
             return false;
         }
-        #endregion
+#endregion
 
         [CommandMethod("IRONSTONE_HELLOWORLD")]
         [IronstoneCommand]
-        public void HelloWorld()
+        public static void HelloWorld()
         {
             HelloWordStructure structure = new HelloWordStructure();
             string contents = JsonSerializer.Serialize(structure);
