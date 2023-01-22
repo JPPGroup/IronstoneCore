@@ -1,39 +1,35 @@
 {
 	"standarddetaillibrary": [
-//    {
-//      "Path": "ProgramFiles",
-//			"CacheDisabled": "true",
-//			"Name": "Standard Libraries" 
-//    },
+		//    {
+		//      "Path": "ProgramFiles",
+		//			"CacheDisabled": "true",
+		//			"Name": "Standard Libraries" 
+		//    },
 		{
 			"Path": "N:\\Consulting\\Library\\Ironstone\\Details",
 			"CacheDisabled": "true",
-      "Name": "JPP Library"
+			"Name": "JPP Library"
 		}
 	],
-		"JPP_Foundations_TreeRings_Existing"
-		:
-		{
-			"linetype": "1MM-HIDDEN"
-		},
-    // Standard drawing scales that can be used by the automated systems
-		"standardScales"
-		:
-		[
-			2,
-			5,
-			10,
-			20,
-			50,
-			100,
-			200,
-			500,
-			1000,
-			1250,
-			2500,
-			5000,
-			10000
-		],
+	"JPP_Foundations_TreeRings_Existing": {
+		"linetype": "1MM-HIDDEN"
+	},
+	// Standard drawing scales that can be used by the automated systems
+	"standardScales": [
+		2,
+		5,
+		10,
+		20,
+		50,
+		100,
+		200,
+		500,
+		1000,
+		1250,
+		2500,
+		5000,
+		10000
+	],
 	"structures": {
 		"treeRings": {
 			"ringColors": [ //Controls the colors tree rings are drawn as , starting with first and then looping thorugh till done
@@ -125,5 +121,15 @@
 			"number": "002",
 			"notes": "General Notes \n test note 1 \n test note 2"
 		}
+	},
+	"TestDocumentStoreWithSettingsLayer": {
+		"color": "6",
+		"name": "TestDocumentStoreWithSettingsLayer",
+		"linetype": "Continuous"
+	},
+	"TestDrawingObjectLayer": {
+		"color": "6",
+		"name": "TestDrawingObjectLayer",
+		"linetype": "Continuous"
 	}
 }

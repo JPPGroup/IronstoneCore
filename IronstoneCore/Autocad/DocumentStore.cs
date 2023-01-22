@@ -3,6 +3,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -122,35 +123,43 @@ namespace Jpp.Ironstone.Core.Autocad
                 {
                     if (layerObj is LayerAttribute layerAttribute)
                     {
-                        var layer = AcCurDb.GetLayer(_layerManager.GetLayerName(layerAttribute.Name));
-                        if (layer == null)
+                        try
                         {
-                            // TODO: Redo this to use pull the correct name from the layer manager
-                            _log.LogError("Layer {name} not found when attempting to save state.", _layerManager.GetLayerName(layerAttribute.Name));
-                            continue;
-                        }
-
-                        var status = new LayerState(layer);
-
-                        if (status.IsInvalid)
-                        {
-                            layersToRevert.Add(status);
-
-                            if (ShouldUnlockUnfreeze || ShouldSwitchOn)
+                            string layerName = _layerManager.GetLayerName(layerAttribute.Name);
+                            var layer = AcCurDb.GetLayer(layerName);
+                            if (layer == null)
                             {
-                                layer.UpgradeOpen();
+                                // TODO: Redo this to use pull the correct name from the layer manager
+                                _log.LogError("Layer {name} not found when attempting to save state.", layerName);
+                                continue;
+                            }
 
-                                if (ShouldUnlockUnfreeze)
-                                {
-                                    layer.IsLocked = false;
-                                    layer.IsFrozen = false;
-                                }
+                            var status = new LayerState(layer);
 
-                                if (ShouldSwitchOn)
+                            if (status.IsInvalid)
+                            {
+                                layersToRevert.Add(status);
+
+                                if (ShouldUnlockUnfreeze || ShouldSwitchOn)
                                 {
-                                    layer.IsOff = false;
+                                    layer.UpgradeOpen();
+
+                                    if (ShouldUnlockUnfreeze)
+                                    {
+                                        layer.IsLocked = false;
+                                        layer.IsFrozen = false;
+                                    }
+
+                                    if (ShouldSwitchOn)
+                                    {
+                                        layer.IsOff = false;
+                                    }
                                 }
                             }
+                        }
+                        catch (ArgumentNullException e)
+                        {
+                            _log.LogError("Layer key {name} not found when attempting to save state.", layerAttribute.Name);
                         }
                     }
                 }

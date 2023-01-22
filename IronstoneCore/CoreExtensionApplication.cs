@@ -187,7 +187,7 @@ namespace Jpp.Ironstone.Core
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>")]
         public void InitExtension()
-        {            
+        {
             _extensions = new List<IIronstoneExtensionApplication>();
             _uiCreated = false;
                         

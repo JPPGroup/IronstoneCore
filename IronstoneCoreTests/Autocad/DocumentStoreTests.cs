@@ -364,7 +364,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
             manager.DidUpdateAll = false;
 
             acEd.Command("_regen");
-            
+
             if (manager.DidUpdateAll != expectMethodRun) return false;
 
             using (var trans = acDb.TransactionManager.StartTransaction())
