@@ -19,7 +19,7 @@ namespace Jpp.Ironstone.Core.UI.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -71,6 +71,16 @@ namespace Jpp.Ironstone.Core.UI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Debug {
+            get {
+                object obj = ResourceManager.GetObject("Debug", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About.
         /// </summary>
         internal static string ExtensionApplication_AboutWindow_Name {
@@ -80,11 +90,29 @@ namespace Jpp.Ironstone.Core.UI.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Object Stores.
+        /// </summary>
+        internal static string ExtensionApplication_DebugStoreWindow_Name {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_DebugStoreWindow_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ironstone Concept.
         /// </summary>
         internal static string ExtensionApplication_IronstoneTab_Concept_Name {
             get {
                 return ResourceManager.GetString("ExtensionApplication_IronstoneTab_Concept_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debugging Tools.
+        /// </summary>
+        internal static string ExtensionApplication_IronstoneTab_Debug_Name {
+            get {
+                return ResourceManager.GetString("ExtensionApplication_IronstoneTab_Debug_Name", resourceCulture);
             }
         }
         
