@@ -75,8 +75,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 }
                 catch (System.Exception e)
                 {
-                    _logger.LogCritical(e, $"Unable to load Core UI library");
-                    throw;
+                    _logger.LogError(e, $"Unable to load Core UI library");
                 }
             }
 

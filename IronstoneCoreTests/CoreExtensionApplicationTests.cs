@@ -50,7 +50,7 @@ namespace Jpp.Ironstone.Core.Tests
 
         public bool RunHelloWorldResident()
         {
-            CoreExtensionApplication._current.HelloWorld();
+            CoreExtensionApplication.HelloWorld();
             return true;
         }
 

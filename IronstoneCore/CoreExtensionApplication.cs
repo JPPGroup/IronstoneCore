@@ -338,8 +338,7 @@ namespace Jpp.Ironstone.Core
             BuildLoggers(serviceCollection);
             return serviceCollection;
         }
-
-        //TODO: Add in autocad console logger
+                
         private void BuildLoggers(IServiceCollection collection)
         {
             string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\JPP Consulting\\Ironstone\\IronstoneLog.txt";
