@@ -23,7 +23,7 @@ namespace Jpp.Ironstone.Core
         [Advice(Kind.Before)]
         public void LogEnter([Argument(Source.Name)] string name, [Argument(Source.Type)] Type type)
         {
-            _logger.LogInformation($"Command {name} from {type} run");
+            _logger.LogInformation("Command {name} from {type} run", name, type);
         }
 
         [Advice(Kind.Around, Targets = Target.Method)]
@@ -36,7 +36,7 @@ namespace Jpp.Ironstone.Core
             }
             catch (Exception e)
             {
-                _logger.LogCritical(e, $"Unknown exception: {e.Message}");                
+                _logger.LogCritical(e, "Unknown exception in command wrapper");                
                 return null;
             }
         }

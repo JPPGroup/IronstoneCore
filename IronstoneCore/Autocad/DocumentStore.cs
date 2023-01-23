@@ -71,6 +71,7 @@ namespace Jpp.Ironstone.Core.Autocad
             _host.CommandEnded += (o, args) => CommandEnded(args.GlobalCommandName);
             _host.CommandCancelled += (o, args) => CommandEnded(args.GlobalCommandName);
 
+            _log.LogDebug("{storetype} created", this.GetType().ToString());
             PopulateLayers();
         }
 
@@ -234,6 +235,7 @@ namespace Jpp.Ironstone.Core.Autocad
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "No errors should propogate to Autocad to prevent crash")]
         private void CommandEnded(string globalCommandName)
         {
+            _log.LogDebug("CommandEnded started for {storetype}", this.GetType().ToString());
             try
             {
                 var layersToRevert = ActivateLayers();
@@ -275,7 +277,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                _log.LogError(e, $"Unexpected error in command ended event");
+                _log.LogError(e, "Unexpected error in command ended event for {storetype}", this.GetType().ToString());
             }
             
         }
@@ -305,6 +307,7 @@ namespace Jpp.Ironstone.Core.Autocad
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "All exceptions need to be caught to prevent autocad crashes")]
         internal void SaveWrapper()
         {
+            _log.LogDebug("SaveWrapper started for {storetype}", this.GetType().ToString());
             try
             {
                 using (DocumentLock dl = AcDoc?.LockDocument())
@@ -313,6 +316,11 @@ namespace Jpp.Ironstone.Core.Autocad
                     {
                         var mgrObjList = new List<object>();
                         Managers.ForEach(mgr => mgrObjList.Add(mgr));
+                        _log.LogDebug("{managercount} managers were added to save list", mgrObjList.Count);
+                        foreach (var mgrObj in mgrObjList)
+                        {
+                            _log.LogTrace("{managername} on save list", mgrObj.GetType().ToString() );
+                        }
 
                         SaveBinary("Managers", mgrObjList, _managerTypes);
                         Save();
@@ -322,7 +330,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                _log.LogError(e, "Unkown error saving");
+                _log.LogError(e, "Unkown error saving for {storetype}", this.GetType().ToString());
             }
         }
 
@@ -332,6 +340,7 @@ namespace Jpp.Ironstone.Core.Autocad
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "All exceptions need to be caught to prevent autocad crashes")]
         internal void LoadWrapper()
         {
+            _log.LogDebug("LoadWrapper started for {storetype}", this.GetType().ToString());
             try
             {
                 using (DocumentLock dl = AcDoc?.LockDocument())
@@ -341,6 +350,11 @@ namespace Jpp.Ironstone.Core.Autocad
                         Managers.Clear();
 
                         var mgrObjList = LoadBinary<List<object>>("Managers", _managerTypes);
+                        _log.LogDebug("{managercount} managers were found and loaded", mgrObjList.Count);
+                        foreach (var mgrObj in mgrObjList)
+                        {
+                            _log.LogTrace("{managername} loaded", mgrObj.GetType().ToString());
+                        }
 
                         foreach (IDrawingObjectManager drawingObjectManager in mgrObjList)
                         {
@@ -356,7 +370,7 @@ namespace Jpp.Ironstone.Core.Autocad
             }
             catch (Exception e)
             {
-                _log.LogError(e, "Unkown error loading");
+                _log.LogError(e, "Unkown error loading for {storetype}", this.GetType().ToString());
             }
         }
         #endregion
