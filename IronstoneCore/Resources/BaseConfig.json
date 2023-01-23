@@ -30,6 +30,25 @@
 		5000,
 		10000
 	],
+	"housing": {
+		"layers": {
+			"gradientblocks": {
+				"name": "JPP_ForReview_GradientBlocks",
+				"color": "2",
+				"linetype": "Continuous"
+			},
+			"levelblocks": {
+				"name": "JPP_ForReview_LevelBlocks",
+				"color": "6",
+				"linetype": "Continuous"
+			},
+			"plotboundary": {
+				"name": "PlotBoundaryLayer",
+				"color": "2",
+				"linetype": "Continuous"
+			}
+		}
+	},
 	"structures": {
 		"treeRings": {
 			"ringColors": [ //Controls the colors tree rings are drawn as , starting with first and then looping thorugh till done
@@ -111,6 +130,7 @@
 		"configfile": "project.json" //Name of project file stored at root of working directory
 	},
 	"nl": {
+		"uienable": false,
 		"general": {
 			"viewportlayer": {
 				"name": "Defpoints"
