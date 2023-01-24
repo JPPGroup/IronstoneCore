@@ -73,7 +73,7 @@ namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
                         return false;
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     return false;
                 }

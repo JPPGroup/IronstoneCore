@@ -63,7 +63,9 @@ namespace Jpp.Ironstone.Core
             }
 
             //Realise this is an Anti-Pattern but this is better than remembering to set properties on the factory at runtime
+#pragma warning disable CS0618
             Civil3DAspect aspect = CoreExtensionApplication._current.Container.GetRequiredService<Civil3DAspect>();
+#pragma warning restore CS0618
 
             return aspect;
         }

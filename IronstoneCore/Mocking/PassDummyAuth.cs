@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using Jpp.Ironstone.Core.ServiceInterfaces;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +6,7 @@ namespace Jpp.Ironstone.Core.Mocking
 {
     class PassDummyAuth : IAuthentication
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged { add { } remove { }}
 
         public PassDummyAuth(ILogger<IAuthentication> logger)
         {

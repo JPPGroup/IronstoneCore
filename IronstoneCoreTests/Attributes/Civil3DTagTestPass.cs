@@ -3,6 +3,7 @@ using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices;
 using NUnit.Framework;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
+#pragma warning disable CS0618
 
 namespace Jpp.Ironstone.Core.Tests.Attributes
 {
@@ -30,7 +31,9 @@ namespace Jpp.Ironstone.Core.Tests.Attributes
         [Civil3D]
         public void TagDrawing()
         {
+#pragma warning disable CS0168
             int i;
+#pragma warning restore CS0168
         }
 
         [Test]

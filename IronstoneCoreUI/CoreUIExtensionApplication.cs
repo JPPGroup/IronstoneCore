@@ -29,7 +29,9 @@ namespace Jpp.Ironstone.Core.UI
         public void Initialize()
         {
             Current = this;
+#pragma warning disable CS0618 // Type or member is obsolete
             CoreExtensionApplication._current.RegisterExtension(this);
+#pragma warning restore CS0618 // Type or member is obsolete
         }
 
         public void RegisterServices(IServiceCollection container)

@@ -12,6 +12,7 @@ namespace Jpp.Ironstone.Core.Autocad
         {
         }
 
+        [Obsolete]
         public TemplateDrawingObject(Database database) : base(database)
         {
         }

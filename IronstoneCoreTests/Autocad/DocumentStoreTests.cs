@@ -40,7 +40,7 @@ namespace Jpp.Ironstone.Core.Tests.Autocad
                         File.Delete(testFile);
                         loop = false;
                     }
-                    catch (IOException e)
+                    catch (IOException)
                     {
                         tries++;
                         Thread.Sleep(2000 * tries);

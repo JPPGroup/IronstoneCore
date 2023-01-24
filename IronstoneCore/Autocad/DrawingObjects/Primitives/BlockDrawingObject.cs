@@ -43,6 +43,7 @@ namespace Jpp.Ironstone.Core.Autocad
         {
         }
 
+        [Obsolete]
         public BlockDrawingObject(Database database) : base(database)
         {
         }

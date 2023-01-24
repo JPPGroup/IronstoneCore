@@ -8,12 +8,7 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
     public sealed class AcConsoleLoggerProvider : ILoggerProvider
     {
-        private readonly IDisposable _onChangeToken;
         private AcConsoleLogger _current;
-
-        public AcConsoleLoggerProvider()
-        {            
-        }
 
         public ILogger CreateLogger(string categoryName)
         {

@@ -9,6 +9,7 @@ using Jpp.Ironstone.Core.Tests.TestObjects;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
+#pragma warning disable CS0618
 
 namespace Jpp.Ironstone.Core.Tests.ServiceInterfaces
 {

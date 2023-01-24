@@ -17,7 +17,6 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
             get
             {
                 Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
-                Point3d result;
                 using (MText t = acTrans.GetObject(BaseObject, OpenMode.ForRead) as MText)
                 {
                     if (t == null)
@@ -49,7 +48,6 @@ namespace Jpp.Ironstone.Core.Autocad.DrawingObjects.Primitives
             get
             {
                 Transaction acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
-                Point3d result;
                 using (MText t = acTrans.GetObject(BaseObject, OpenMode.ForRead) as MText)
                 {
                     if (t == null)

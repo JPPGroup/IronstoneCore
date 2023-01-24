@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Xml.Linq;
 using AspectInjector.Broker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+#pragma warning disable CS0618
 
 namespace Jpp.Ironstone.Core
 {

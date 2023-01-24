@@ -21,6 +21,7 @@ namespace Jpp.Ironstone.Core.Autocad
             _properties = new Dictionary<string, object>();
         }
 
+        [Obsolete]
         public BlockRefDrawingObject(Database db, BlockReference reference) : base(db)
         {
             BaseObject = reference.ObjectId;

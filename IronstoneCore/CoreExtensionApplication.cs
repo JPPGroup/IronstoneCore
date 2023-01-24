@@ -21,6 +21,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+#pragma warning disable CS0618
 
 [assembly: ExtensionApplication(typeof(CoreExtensionApplication))]
 [assembly: CommandClass(typeof(CoreExtensionApplication))]
@@ -137,7 +138,7 @@ namespace Jpp.Ironstone.Core
                 InitExtension();
             } catch (System.Exception ex)
             {
-                int i = 0;
+                _logger.LogCritical(ex, "Core initialisation failed with unknown error.");
             }
             if (!CoreConsole)
             { 
@@ -438,7 +439,7 @@ namespace Jpp.Ironstone.Core
 #if DEBUG
             _logger.LogDebug("User and network setting skipped as running in debug.");
             return local;
-#endif
+#else
             IConfiguration network = LoadAdditionalSettingsFromValue(local, "Settings:NetworkPath");
             IConfiguration user = LoadAdditionalSettingsFromValue(network, "Settings:UserPath");
             
@@ -446,6 +447,7 @@ namespace Jpp.Ironstone.Core
             IConfiguration working = LoadAdditionalSettings(user, workingPath);
             
             return working;
+#endif
         }
 
         private IConfiguration LoadAdditionalSettings(IConfiguration baseConfig, string path)

@@ -91,8 +91,7 @@ namespace Jpp.Ironstone.Core.Autocad
 
                 if (_database != null)
                     return _database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
-
-                CoreExtensionApplication._current.Container.GetRequiredService<ILogger<CoreExtensionApplication>>().LogWarning("Drawing object does not have database or document set, reverting to active document fopr ObjectID creation.");
+                
                 return Application.DocumentManager.MdiActiveDocument.Database.GetObjectId(false, new Handle(BaseObjectPtr), 0);
             }
             set
@@ -188,7 +187,6 @@ namespace Jpp.Ironstone.Core.Autocad
 
                 if (acTrans == null)
                 {
-                    CoreExtensionApplication._current.Container.GetRequiredService<ILogger<CoreExtensionApplication>>().LogWarning("Drawing object does not have database or document set, reverting to active document.");
                     acTrans = Application.DocumentManager.MdiActiveDocument.TransactionManager.TopTransaction;
                 }
 

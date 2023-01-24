@@ -158,7 +158,7 @@ namespace Jpp.Ironstone.Core.Autocad
                                 }
                             }
                         }
-                        catch (ArgumentNullException e)
+                        catch (ArgumentNullException)
                         {
                             _log.LogError("Layer key {name} not found when attempting to save state.", layerAttribute.Name);
                         }
@@ -235,7 +235,7 @@ namespace Jpp.Ironstone.Core.Autocad
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "No errors should propogate to Autocad to prevent crash")]
         private void CommandEnded(string globalCommandName)
         {
-            _log.LogDebug("CommandEnded started for {storetype}", this.GetType().ToString());
+            _log.LogTrace("CommandEnded after {commandname} started for {storetype}", globalCommandName, this.GetType().ToString());
             try
             {
                 var layersToRevert = ActivateLayers();
@@ -274,6 +274,7 @@ namespace Jpp.Ironstone.Core.Autocad
                 }
 
                 RevertLayers(layersToRevert);
+                _log.LogTrace("CommandEnded complete for {storetype}", this.GetType().ToString());
             }
             catch (Exception e)
             {
@@ -316,7 +317,10 @@ namespace Jpp.Ironstone.Core.Autocad
                     {
                         var mgrObjList = new List<object>();
                         Managers.ForEach(mgr => mgrObjList.Add(mgr));
-                        _log.LogDebug("{managercount} managers were added to save list", mgrObjList.Count);
+                        if (mgrObjList.Count > 0)
+                        {
+                            _log.LogDebug("{managercount} managers were added to save list", mgrObjList.Count);
+                        }
                         foreach (var mgrObj in mgrObjList)
                         {
                             _log.LogTrace("{managername} on save list", mgrObj.GetType().ToString() );
