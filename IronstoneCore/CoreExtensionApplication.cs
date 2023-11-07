@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.RegularExpressions;
-using Autodesk.AutoCAD.ApplicationServices;
+﻿using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
 using Jpp.Ironstone.Core;
 using Jpp.Ironstone.Core.Autocad;
 using Jpp.Ironstone.Core.Mocking;
-using Jpp.Ironstone.Core.Properties;
 using Jpp.Ironstone.Core.ServiceInterfaces;
-using Jpp.Ironstone.Core.ServiceInterfaces.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 #pragma warning disable CS0618
 
 [assembly: ExtensionApplication(typeof(CoreExtensionApplication))]
@@ -111,7 +108,7 @@ namespace Jpp.Ironstone.Core
         /// </summary>
         private static bool? _civil3D;
 
-        
+
         private ILogger<CoreExtensionApplication> _logger;
         private ILogger<IAuthentication> _authLogger;
         private IAuthentication _authentication;
@@ -127,7 +124,7 @@ namespace Jpp.Ironstone.Core
         /// </summary>
         // ReSharper disable once UnusedMember.Global
         public void Initialize()
-        {            
+        {
             _current = this;
             SetBindingRedirect();
 
@@ -136,12 +133,13 @@ namespace Jpp.Ironstone.Core
             try
             {
                 InitExtension();
-            } catch (System.Exception ex)
+            }
+            catch (System.Exception ex)
             {
                 _logger.LogCritical(ex, "Core initialisation failed with unknown error.");
             }
             if (!CoreConsole)
-            { 
+            {
                 Autodesk.AutoCAD.ApplicationServices.Core.Application.Idle += Application_Idle;
             }
         }
@@ -191,7 +189,7 @@ namespace Jpp.Ironstone.Core
         {
             _extensions = new List<IIronstoneExtensionApplication>();
             _uiCreated = false;
-                        
+
             serviceCollection = BuildServiceCollection();
 
             try
@@ -202,15 +200,15 @@ namespace Jpp.Ironstone.Core
                 SetCustomAssemblyResolve();
                 IConfiguration config = LoadConfiguration(_logger);
                 serviceCollection.AddSingleton<IConfiguration>(config);
-                
+
                 _logger.LogInformation("Core extension loading begun...");
                 _authentication = new PassDummyAuth(_authLogger);
                 serviceCollection.AddSingleton<IAuthentication>(_authentication);
                 serviceCollection.AddSingleton<ILogger<IAuthentication>>(_authLogger);
-                
+
                 IModuleLoader moduleLoader = new ModuleLoader(_authentication, _logger, config);
                 serviceCollection.AddSingleton<IModuleLoader>(moduleLoader);
-                
+
                 _logger.LogTrace("Modules loading...");
 
                 moduleLoader.Scan();
@@ -225,7 +223,7 @@ namespace Jpp.Ironstone.Core
                 {
                     ironstoneExtensionApplication.InjectContainer(Container);
                 }
-                
+
                 IDataService dataService = Container.GetRequiredService<IDataService>();
                 //TODO: This needed??
                 DataService.Current.InvalidateStoreTypes();
@@ -234,7 +232,7 @@ namespace Jpp.Ironstone.Core
             catch (System.Exception e)
             {
                 _logger.LogCritical(e, "Exception thrown in core main resolver block");
-                
+
             }
 
             _logger.LogInformation("Core loaded successfully.");
@@ -318,7 +316,7 @@ namespace Jpp.Ironstone.Core
 
                 if (name.Equals(resolveArgs.Name, StringComparison.Ordinal))
                     return null;
-                
+
                 // Load whatever version available
                 return Assembly.Load(name);
             };
@@ -327,7 +325,7 @@ namespace Jpp.Ironstone.Core
         private IServiceCollection BuildServiceCollection()
         {
             IServiceCollection serviceCollection = new ServiceCollection();
-            //serviceCollection.AddSingleton<IAuthentication, PassDummyAuth>();
+            serviceCollection.AddSingleton<IAuthentication, PassDummyAuth>();
             serviceCollection.AddSingleton<IDataService, DataService>();
             serviceCollection.AddSingleton<LayerManager>();
             serviceCollection.AddSingleton<IReviewManager, ReviewManager>();
@@ -339,7 +337,7 @@ namespace Jpp.Ironstone.Core
             BuildLoggers(serviceCollection);
             return serviceCollection;
         }
-                
+
         private void BuildLoggers(IServiceCollection collection)
         {
             string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\JPP Consulting\\Ironstone\\IronstoneLog.txt";
@@ -355,7 +353,7 @@ namespace Jpp.Ironstone.Core
                 .WriteTo.File(localPath, retainedFileCountLimit: 30, rollingInterval: RollingInterval.Day,
                     buffered: false, shared: true)
 #if !DEBUG
-                .WriteTo.Seq("http://seqingest.services.cedarbarn.local", apiKey: "Cp5KJHS7eelC1u2z7Tn5")
+                .WriteTo.Seq("http://seqingest.services.cedarbarn.local:5341", apiKey: "Cp5KJHS7eelC1u2z7Tn5")
 #endif
                 .CreateLogger();
 
@@ -364,17 +362,16 @@ namespace Jpp.Ironstone.Core
             if (ForgeDesignAutomation)
             {
                 level = Microsoft.Extensions.Logging.LogLevel.Trace;
-            } else
+            }
+            else
             {
-             level = Microsoft.Extensions.Logging.LogLevel.Warning;
+                level = Microsoft.Extensions.Logging.LogLevel.Warning;
             }
 
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
             {
-                builder.AddFilter<AcConsoleLoggerProvider>(null, level).AddAcConsoleLogger();                
-
-                builder.AddFilter(null, LogLevel.Trace)
-                    .AddConsole().AddSerilog(serilog, true);                
+                builder.AddFilter(null, LogLevel.Trace).AddSerilog(serilog, true);
+                builder.AddFilter<AcConsoleLoggerProvider>(null, level).AddAcConsoleLogger();
             });
 
             collection.AddSingleton<ILoggerFactory>(loggerFactory);
@@ -408,7 +405,7 @@ namespace Jpp.Ironstone.Core
             {
                 RegAppTable regTable = (RegAppTable)trans.GetObject(doc.Database.RegAppTableId, OpenMode.ForRead);
 
-                if(!regTable.Has("JPP"))
+                if (!regTable.Has("JPP"))
                 {
                     regTable.UpgradeOpen();
 
@@ -435,17 +432,17 @@ namespace Jpp.Ironstone.Core
 
             string localPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "config.json");
             IConfiguration local = LoadAdditionalSettings(root, localPath);
-                        
+
 #if DEBUG
             _logger.LogDebug("User and network setting skipped as running in debug.");
             return local;
 #else
             IConfiguration network = LoadAdditionalSettingsFromValue(local, "Settings:NetworkPath");
             IConfiguration user = LoadAdditionalSettingsFromValue(network, "Settings:UserPath");
-            
+
             string workingPath = "config.json";
             IConfiguration working = LoadAdditionalSettings(user, workingPath);
-            
+
             return working;
 #endif
         }
@@ -486,7 +483,7 @@ namespace Jpp.Ironstone.Core
             }
         }
 
-#endregion
+        #endregion
 
         public void RegisterExtension(IIronstoneExtensionApplication extension)
         {
@@ -497,7 +494,7 @@ namespace Jpp.Ironstone.Core
             }
 
             _logger.LogDebug("{extension} registration started", extension.GetType().ToString());
-            
+
             try
             {
                 //extension.InjectContainer(_current.Container);
@@ -512,7 +509,7 @@ namespace Jpp.Ironstone.Core
             }
         }
 
-#region Civil3D Flag
+        #region Civil3D Flag
 
         public void MarkCurrentDrawingAsCivil3D()
         {
@@ -522,7 +519,7 @@ namespace Jpp.Ironstone.Core
                 Transaction tr = doc.TransactionManager.TopTransaction;
 
                 // Find the NOD in the database
-                DBDictionary nod = (DBDictionary) tr.GetObject(doc.Database.NamedObjectsDictionaryId, OpenMode.ForWrite);
+                DBDictionary nod = (DBDictionary)tr.GetObject(doc.Database.NamedObjectsDictionaryId, OpenMode.ForWrite);
 
                 // We use Xrecord class to store data in Dictionaries
                 Xrecord plotXRecord = new Xrecord();
@@ -554,7 +551,7 @@ namespace Jpp.Ironstone.Core
                     Xrecord XRecord = (Xrecord)trans.GetObject(objId, OpenMode.ForRead);
                     foreach (TypedValue value in XRecord.Data)
                     {
-                        if (value.TypeCode == (short) DxfCode.Bool)
+                        if (value.TypeCode == (short)DxfCode.Bool)
                         {
                             bool castValue = Convert.ToInt32(value.Value) != 0;
                             if (castValue)
@@ -568,7 +565,7 @@ namespace Jpp.Ironstone.Core
 
             return false;
         }
-#endregion
+        #endregion
 
         [CommandMethod("IRONSTONE_HELLOWORLD")]
         [IronstoneCommand]

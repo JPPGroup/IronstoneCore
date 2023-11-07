@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Configuration;
-using System;
 
 namespace Jpp.Ironstone.Core.ServiceInterfaces
 {
@@ -16,12 +14,12 @@ namespace Jpp.Ironstone.Core.ServiceInterfaces
                 _current = new AcConsoleLogger();
 
             return _current;
-        }       
+        }
         public void Dispose()
         {
-            
-        }        
-    }    
+
+        }
+    }
 
     public static class AcConsoleLoggerProviderExtensions
     {

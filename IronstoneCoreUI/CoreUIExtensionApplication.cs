@@ -1,5 +1,4 @@
-﻿using System;
-using Autodesk.Windows;
+﻿using Autodesk.Windows;
 using Jpp.Ironstone.Core.UI.Autocad;
 using Jpp.Ironstone.Core.UI.Debug;
 using Jpp.Ironstone.Core.UI.Properties;
@@ -7,6 +6,7 @@ using Jpp.Ironstone.Core.UI.ViewModels;
 using Jpp.Ironstone.Core.UI.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Jpp.Ironstone.Core.UI
 {
@@ -56,7 +56,7 @@ namespace Jpp.Ironstone.Core.UI
 
         public void Terminate()
         {
-            
+
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace Jpp.Ironstone.Core.UI
             RibbonButton feedbackButton = UIHelper.CreateButton(Resources.ExtensionApplication_UI_BtnFeedback, Resources.Feedback, RibbonItemSize.Standard, "Core_Feedback");
             RibbonToggleButton reviewButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_ReviewWindow_Name, Resources.Review, RibbonItemSize.Large, _container.GetRequiredService<Review>(), "18cd4414-8fc8-4978-9e97-ae3915e29e07");
             RibbonToggleButton libraryButton = UIHelper.CreateWindowToggle(Resources.ExtensionApplication_LibraryWindow_Name, Resources.Library_Small, RibbonItemSize.Standard, _container.GetRequiredService<Libraries>(), "08ccb73d-6e6b-4ea0-8d99-61bbeb7c20af");
-            
+
             RibbonRowPanel column = new RibbonRowPanel { IsTopJustified = true };
             column.Items.Add(aboutButton);
             column.Items.Add(new RibbonRowBreak());
