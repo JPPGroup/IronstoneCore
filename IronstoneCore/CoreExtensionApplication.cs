@@ -357,15 +357,15 @@ namespace Jpp.Ironstone.Core
 #endif
                 .CreateLogger();
 
-            Microsoft.Extensions.Logging.LogLevel level;
+            LogLevel level;
 
             if (ForgeDesignAutomation)
             {
-                level = Microsoft.Extensions.Logging.LogLevel.Trace;
+                level = LogLevel.Trace;
             }
             else
             {
-                level = Microsoft.Extensions.Logging.LogLevel.Warning;
+                level = LogLevel.Warning;
             }
 
             ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
